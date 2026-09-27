@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.sites-runtime/
+
+# Cópia solta da trilha original — o arquivo realmente servido pelo site vive em
+# public/media/tema-1.wav (já rastreado).
+/A Vida Nao Para - Tema 1.wav
+
+# Rascunho local de estilos, não importado por nenhum componente.
+src/styles copy.css

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 2000" role="img" aria-label="Ilustração de duas mãos se encontrando, representando cuidado">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3a1e10"/>
+      <stop offset="60%" stop-color="#1c0d06"/>
+      <stop offset="100%" stop-color="#0a0503"/>
+    </linearGradient>
+    <radialGradient id="glow2" cx="50%" cy="42%" r="55%">
+      <stop offset="0%" stop-color="#e9b978" stop-opacity=".55"/>
+      <stop offset="100%" stop-color="#e9b978" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="2000" fill="url(#bg2)"/>
+  <ellipse cx="800" cy="900" rx="620" ry="520" fill="url(#glow2)"/>
+  <g fill="#0c0605" opacity=".92">
+    <path d="M470 1180 C 460 1100 480 1040 540 1020 C 580 1005 630 1020 660 1060 C 700 1015 760 1005 810 1030 C 860 1055 880 1110 865 1170 L 830 1300 C 760 1360 640 1360 570 1300 Z"/>
+    <path d="M1130 1180 C 1140 1100 1120 1040 1060 1020 C 1020 1005 970 1020 940 1060 C 900 1015 840 1005 790 1030 C 740 1055 720 1110 735 1170 L 770 1300 C 840 1360 960 1360 1030 1300 Z"/>
+  </g>
+  <path d="M660 1160 L 940 1160" stroke="#f4d9a6" stroke-width="6" stroke-dasharray="2 22" stroke-linecap="round" opacity=".7"/>
+</svg>
