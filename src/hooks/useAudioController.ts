@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { type MotionValue } from 'framer-motion';
 import { media } from '../config';
-import { audioMix } from '../timeline';
+import { audioMix, audioTone } from '../timeline';
 
 type Track = { element: HTMLAudioElement; gain: GainNode; source: MediaElementAudioSourceNode };
-type Engine = { ctx: AudioContext; tracks: (Track | null)[]; enabled: boolean; disposed: boolean };
+type Engine = { ctx: AudioContext; tracks: (Track | null)[]; tone: BiquadFilterNode; enabled: boolean; disposed: boolean };
 
 /** Scroll controla a mixagem; a música avança em tempo real, sem seek a cada pixel.
  * Ao recuar, as faixas pausam/retomam na posição em que estavam.
  * O silêncio é aplicado sem rampa: nenhuma cauda musical atravessa o ato II.
+ * Todas as faixas passam por um mesmo filtro passa-baixa (ver audioTone), que abafa o
+ * som na ruptura e o reabre quando a história recomeça.
  */
 export function useAudioController(progress: MotionValue<number>) {
   const engine = useRef<Engine | null>(null);
@@ -20,6 +22,7 @@ export function useAudioController(progress: MotionValue<number>) {
     if (!e || e.disposed) return;
     const mix = audioMix(p);
     const levels = [mix.opening, mix.finale];
+    e.tone.frequency.setTargetAtTime(audioTone(p), e.ctx.currentTime, .05);
     e.tracks.forEach((t,i) => {
       if (!t) return;
       const target = e.enabled && !document.hidden ? levels[i] : 0;
@@ -46,13 +49,16 @@ export function useAudioController(progress: MotionValue<number>) {
     try {
       if (!engine.current) {
         const ctx = new AudioContext();
-        const e:Engine = {ctx, tracks:[], enabled:false, disposed:false};
+        const tone = ctx.createBiquadFilter();
+        tone.type='lowpass'; tone.frequency.value=audioTone(progress.get()); tone.Q.value=.7;
+        tone.connect(ctx.destination);
+        const e:Engine = {ctx, tracks:[], tone, enabled:false, disposed:false};
         engine.current = e;
         e.tracks = [media.openingTrack,media.finalTrack].map(src => {
           if (!src) return null;
           const element = new Audio(src); element.loop=true; element.preload='metadata';
           const source=ctx.createMediaElementSource(element); const gain=ctx.createGain();
-          gain.gain.value=0; source.connect(gain).connect(ctx.destination);
+          gain.gain.value=0; source.connect(gain).connect(tone);
           return {element,source,gain};
         });
         // Chamadas play/resume originam-se no gesto do usuário, inclusive no Safari.
@@ -76,7 +82,7 @@ export function useAudioController(progress: MotionValue<number>) {
     return () => {
       unsub(); document.removeEventListener('visibilitychange',visibility);
       const e=engine.current;
-      if(e) { e.disposed=true; e.tracks.forEach(t=>{if(t){t.element.pause();t.element.removeAttribute('src');t.element.load();t.source.disconnect();t.gain.disconnect();}});void e.ctx.close();engine.current=null; }
+      if(e) { e.disposed=true; e.tracks.forEach(t=>{if(t){t.element.pause();t.element.removeAttribute('src');t.element.load();t.source.disconnect();t.gain.disconnect();}});e.tone.disconnect();void e.ctx.close();engine.current=null; }
     };
   },[progress,sync]);
   return {enabled,available,toggle,error};

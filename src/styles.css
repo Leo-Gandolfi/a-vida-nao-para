@@ -24,9 +24,28 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
   /* Reserva a faixa do cabeçalho/rodapé fixos para que o quadro centralizado e sua
      legenda nunca cresçam por baixo dos controles (ex.: legendas de 3 linhas). */
   padding:max(96px,calc(28px + env(safe-area-inset-top) + 40px)) 0 max(120px,calc(35px + env(safe-area-inset-bottom) + 70px));
-  background:radial-gradient(130% 100% at 50% 12%,#241b11 0%,#0e0b08 52%,#020202 100%)}
+  background:#050403}
 .stage-rail{position:absolute;left:0;right:0;top:50%;height:1px;transform:translateY(-50%);
   background:linear-gradient(90deg,transparent,#c8a77545 20%,#c8a77545 80%,transparent);z-index:0}
+
+/* Banho de cor que acompanha a temperatura da história (dourado → gélido → breu → calor).
+   A cor de fundo é animada por JS; o gradiente por cima (parcialmente transparente) é que
+   dá o relevo de iluminação, deixando a cor aparecer por baixo. */
+.stage-wash{position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background-image:radial-gradient(130% 100% at 50% 10%,#ffffff12 0%,transparent 46%,#00000070 100%)}
+
+/* ===== Objetos simbólicos flutuando fora do rolo ===== */
+.floater{position:absolute;left:0;display:grid;place-items:center;pointer-events:none;
+  will-change:transform,opacity}
+.floater svg{width:100%;height:100%;overflow:visible}
+.floater-mote{width:100%;height:100%;border-radius:50%}
+.floater-mote--warm{background:radial-gradient(circle,#f6e2b8 0%,#e9c98e55 38%,transparent 70%)}
+.floater-mote--cold{background:radial-gradient(circle,#c8d8e6 0%,#8fa6b855 38%,transparent 70%)}
+
+/* A luz quente que invade a tela quando "a vida não parou" */
+.light-sweep{position:absolute;top:0;bottom:0;left:0;width:60vw;z-index:3;pointer-events:none;
+  mix-blend-mode:screen;
+  background:linear-gradient(90deg,transparent,#c8a7751f 22%,#f0d6a355 50%,#c8a7751f 78%,transparent)}
 
 .filmstrip-track{display:flex;align-items:center;gap:4vw;padding-left:14vw;will-change:transform;position:relative;z-index:1}
 .frame-slot{flex:0 0 72vw;width:72vw;display:flex;flex-direction:column;align-items:center;gap:20px}
@@ -137,8 +156,13 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 
 .final-actions{position:absolute;z-index:12;left:5vw;right:5vw;bottom:11vh;display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
 .button{text-decoration:none;display:inline-flex;justify-content:center;align-items:center;gap:32px;border-radius:2px;min-height:52px;padding:17px 24px;font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;transition:background .3s,box-shadow .3s;line-height:1.5}
-.button--primary{background:#d6b888;color:#17110a;border:1px solid #ead0a5;box-shadow:0 0 35px #d4b17c1c,inset 0 1px 0 #fff6}
-.button--primary:hover{background:#efcf9f;box-shadow:0 0 45px #d4b17c35}
+.button--primary{background:#d6b888;color:#17110a;border:1px solid #ead0a5;box-shadow:0 0 35px #d4b17c1c,inset 0 1px 0 #fff6;
+  animation:cta-glow 3.6s ease-in-out infinite}
+.button--primary:hover{background:#efcf9f;box-shadow:0 0 45px #d4b17c35;animation:none}
+@keyframes cta-glow{
+  0%,100%{box-shadow:0 0 28px #d4b17c1c,inset 0 1px 0 #fff6}
+  50%{box-shadow:0 0 52px #f0cf9a4d,inset 0 1px 0 #fff8}
+}
 .button--ghost{background:#0003;border:1px solid #726a5d;color:#e1dace}
 .button--ghost:hover{background:#ffffff0d}
 .final-actions>p{width:100%;margin:0;text-align:center;color:var(--dim);font-size:.8rem}
@@ -194,6 +218,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 @media(prefers-reduced-motion:reduce){
   *{scroll-behavior:auto!important;transition:none!important}
   .word{opacity:1!important;transform:none!important;filter:none!important}
-  .dust,.film-grain,.equalizer span{display:none;animation:none!important}
+  .dust,.film-grain,.equalizer span,.floater,.light-sweep{display:none;animation:none!important}
   .frame-slot:first-child .frame-card{animation:none}
+  .button--primary{animation:none}
 }

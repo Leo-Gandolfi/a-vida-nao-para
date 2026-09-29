@@ -38,4 +38,19 @@ export function audioMix(p:number) {
   const finale = p >= .64 ? .46 * clamp((p-.64)/.025) * (p >= .70 ? .56 : 1) : 0;
   return { opening, finale, silence: p >= .30 && p < .45 };
 }
+
+/** Corte do filtro passa-baixa, em Hz. O volume some na ruptura, mas antes disso o som
+ * "afunda": entre 20% e 30% o timbre fecha até ficar abafado, como ouvir debaixo d'água
+ * — a perda chegando antes do silêncio. Reabre entre 45% e 52%, quando a luz volta.
+ * A interpolação é exponencial porque a audição é logarítmica: uma varredura linear em
+ * Hz soaria como se quase nada acontecesse até o fim do trecho. */
+export const TONE_OPEN = 20000, TONE_MUFFLED = 180;
+export function audioTone(p:number) {
+  const sweep = (k:number) => TONE_OPEN * Math.pow(TONE_MUFFLED/TONE_OPEN, clamp(k));
+  if (p < .20) return TONE_OPEN;
+  if (p < .30) return sweep((p-.20)/.10);
+  if (p < .45) return TONE_MUFFLED;
+  if (p < .52) return sweep(1-(p-.45)/.07);
+  return TONE_OPEN;
+}
 export function beatAt(p:number) { return beats.find(b => p >= b.start && (p < b.end || b.end === 1 && p === 1)); }

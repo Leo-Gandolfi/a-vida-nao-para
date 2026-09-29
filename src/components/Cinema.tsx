@@ -4,6 +4,7 @@ import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform 
 import { acts, beats, beatAt } from '../timeline';
 import { useAudioController } from '../hooks/useAudioController';
 import FilmFrame from './FilmFrame';
+import FloatingElements from './FloatingElements';
 import ProjectDialog from './ProjectDialog';
 
 /** Distância (em vw) entre o início de um quadro e o início do próximo.
@@ -59,6 +60,17 @@ export default function Cinema() {
     [0,...beats.map((_,i)=>-i*SLOT_VW),-(beats.length-1)*SLOT_VW],
   );
   const trackXvw=useTransform(trackX,v=>`${v}vw`);
+
+  // A tela inteira muda de temperatura junto com a história: dourado quente na promessa,
+  // azul gélido na ruptura, breu absoluto no silêncio, calor de volta com Mallu.
+  const washColor=useTransform(
+    p,
+    [0,   .20,      .26,       .34,       .45,       .52,       .70,       1],
+    ['#241b11','#241b11','#101b26','#050a10','#050a10','#241b11','#2a2014','#1d1a17'],
+  );
+  // Em "A vida não parou", uma luz quente atravessa a tela da esquerda para a direita.
+  const sweepX=useTransform(p,[.450,.515],['-120%','120%']);
+  const sweepOpacity=useTransform(p,[.450,.470,.500,.515],[0,.85,.85,0]);
 
   useMotionValueEvent(p,'change',v=>{
     const next=acts.reduce((index,a,i)=>v>=a.at?i:index,0);
@@ -168,7 +180,10 @@ export default function Cinema() {
     <main ref={container} tabIndex={0} aria-label="A Vida Não Para — narrativa cinematográfica, em formato de rolo de filme. Arraste ou role para o lado." className={`scroll-viewport ${reading?'is-reading':''}`}>
       <div className="scroll-track">
       <div className="stage">
+        <motion.div className="stage-wash" aria-hidden="true" style={{backgroundColor:washColor}}/>
         <div className="stage-rail" aria-hidden="true"/>
+        <FloatingElements p={p} reduced={reduced}/>
+        {!reduced && <motion.div className="light-sweep" aria-hidden="true" style={{x:sweepX,opacity:sweepOpacity}}/>}
         <motion.div className="filmstrip-track" style={{x:trackXvw}}>
           {beats.map((beat,i)=>{
             const prevMid=i>0?mids[i-1]:mids[0]-(mids[1]-mids[0]);

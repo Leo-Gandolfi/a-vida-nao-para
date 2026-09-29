@@ -19,12 +19,26 @@ Um rolo de filme sobre uma mesa de edição, não uma sequência de seções nem
 
 O visitante controla a duração. `.scroll-viewport` é a própria janela que rola (a roda vertical do mouse é convertida em deslocamento lateral automaticamente, assim como as setas ↑/↓ e Page Up/Down, para quem está acostumado com a convenção vertical); setas ←/→ funcionam nativamente. `.scroll-track` é a fita larga interna (`1800svw`, cerca de 17 telas de percurso) que dá a ela algo para rolar; ajuste sua largura para editar a cadência. Não há bloqueio de toque nem rolagem automática — só a conversão de eixo do wheel. `sticky` mantém o palco (`.stage`) grudado à esquerda em `100vw`×`100dvh` enquanto a fita passa por baixo. Textos maiores que o espaço disponível podem ser consultados em “Ler a história”.
 
+### Camadas de dramaturgia
+
+Além do rolo, quatro camadas acompanham a história e são todas dirigidas pelo mesmo progresso de scroll:
+
+1. **Temperatura da tela** (`.stage-wash`): dourado quente na promessa → azul gélido na ruptura → breu no silêncio → calor de volta com Mallu → tom sóbrio no convite.
+2. **Objetos simbólicos** (`FloatingElements.tsx`): pétalas e partículas de luz no primeiro ato, uma pulseirinha de maternidade atravessando devagar na ruptura, papéis/livro/folhas na retomada. Cada um tem uma *profundidade*; o plano focal é o próprio rolo, então quem está mais longe **ou mais perto** que ele sai de foco, e os mais próximos passam na frente do rolo, como um elemento de primeiro plano sujando o quadro numa filmagem real.
+3. **Timbre do som** (`audioTone` em `timeline.ts`): antes de o volume sumir, o som **afunda** — um passa-baixa fecha de 20 kHz até 180 Hz entre 20% e 30%, como ouvir debaixo d'água. Reabre entre 45% e 52%, quando a luz volta.
+4. **Luz que invade** (`.light-sweep`): em "A vida não parou", uma faixa quente cruza a tela da esquerda para a direita.
+
+O intervalo 39,5%–45% é **deliberadamente vazio em todas as camadas**: nenhum objeto é agendado ali, o som está em silêncio e a interface se apaga. Depois que Samuel parte, nada atravessa a tela até "Mallu ficou". Se for acrescentar elementos flutuantes, respeite essa janela.
+
+Tudo isso é desligado sob `prefers-reduced-motion: reduce`.
+
 ## Onde editar
 
-- `src/components/Cinema.tsx`: componente principal, progresso horizontal global (via `scrollXProgress`), conversão de wheel/teclado, capítulos, compartilhamento e CTA.
-- `src/components/FilmFrame.tsx`: cada quadro do rolo — foco/desfoque por proximidade do centro, revelação de texto palavra por palavra, mídia por ato e crossfade de elenco.
-- `src/timeline.ts`: os 14 movimentos e seus submomentos, com intervalos de 0 a 1.
-- `src/hooks/useAudioController.ts`: controlador funcional via Web Audio, não apenas pseudocódigo.
+- `src/components/Cinema.tsx`: componente principal, progresso horizontal global (via `scrollXProgress`), conversão de wheel/teclado, temperatura da tela, luz que invade, capítulos, compartilhamento e CTA.
+- `src/components/FilmFrame.tsx`: cada quadro do rolo — foco/desfoque por proximidade do centro, revelação de texto palavra por palavra, tremor na ruptura, mídia por ato e a metamorfose Gledson → Sidney.
+- `src/components/FloatingElements.tsx`: os objetos simbólicos e suas profundidades/janelas de scroll.
+- `src/timeline.ts`: os 14 movimentos e seus submomentos, a mixagem (`audioMix`) e o timbre (`audioTone`), todos com intervalos de 0 a 1.
+- `src/hooks/useAudioController.ts`: controlador funcional via Web Audio (ganho por faixa + um passa-baixa compartilhado), não apenas pseudocódigo.
 - `src/config.ts`: único lugar para injetar fotos, vídeos, música e canal de contato.
 - `src/styles.css`: direção de arte e adaptações de tela.
 

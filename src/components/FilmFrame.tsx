@@ -79,7 +79,18 @@ export default function FilmFrame({beat,index,total,p,mid,prevMid,nextMid,reduce
   const scale=useTransform(focus,v=>reduced?1:.9+.1*v);
   const filter=useTransform(focus,v=>reduced?'none':`blur(${(1-v)*5}px) saturate(${.55+.45*v})`);
 
+  // Na ruptura o quadro perde firmeza: um tremor mínimo, preso ao scroll (não ao relógio),
+  // para que a imagem pareça vacilar na mão de quem a segura, sem virar efeito decorativo.
+  const trembles=beat.treatment==='cold' && !reduced;
+  const tremorX=useTransform(p,v=>trembles?Math.sin(v*640)*1.7:0);
+  const tremorY=useTransform(p,v=>trembles?Math.cos(v*530)*1.1:0);
+
+  // Metamorfose Gledson → Sidney: no meio da travessia os dois rostos ficam levemente
+  // fora de foco e maiores, para o corte ler como transformação e não como dissolução.
   const cross=useTransform(p,[.793,.827],[0,1]);
+  const morphK=useTransform(cross,v=>reduced?0:1-Math.abs(v*2-1));
+  const morphFilter=useTransform(morphK,k=>`blur(${(k*3.2).toFixed(2)}px)`);
+  const morphScale=useTransform(morphK,k=>1+k*.035);
   const span=beat.end-beat.start;
   const eyebrowPoints=[beat.start,beat.start+span*.10,beat.end-span*.30,beat.end];
   const eyebrowOpacity=useTransform(p,eyebrowPoints,[0,1,1,0]);
@@ -91,7 +102,7 @@ export default function FilmFrame({beat,index,total,p,mid,prevMid,nextMid,reduce
   const roman=actRoman(beat.start);
 
   return <motion.div className="frame-slot" inert={!active}>
-    <motion.article className={`frame-card frame-card--${t} ${isLeader?'frame-card--leader':''}`} style={{opacity,scale,filter}} aria-hidden={!active}>
+    <motion.article className={`frame-card frame-card--${t} ${isLeader?'frame-card--leader':''}`} style={{opacity,scale,filter,x:tremorX,y:tremorY}} aria-hidden={!active}>
       <div className="sprocket sprocket--top" aria-hidden="true"/>
       <div className="frame-window">
         {t==='couple' && <Photograph src={media.couple}/>}
@@ -102,7 +113,7 @@ export default function FilmFrame({beat,index,total,p,mid,prevMid,nextMid,reduce
         {t==='music' && (media.mioto ? <Photograph src={media.mioto}/> : <EqualizerBars/>)}
         {t==='social' && <Photograph src={media.social || media.family}/>}
         {/* INSERIR FOTO GLEDSON/SIDNEY AQUI: crossfade com caixas e object-position idênticos. */}
-        {t==='cast' && <div className="cast-frame"><Photograph src={media.gledsonPortrait || media.family}/><motion.div className="cast-overlay" style={{opacity:cross}}><Photograph src={media.sidneyPortrait}/></motion.div></div>}
+        {t==='cast' && <motion.div className="cast-frame" style={{filter:morphFilter,scale:morphScale}}><Photograph src={media.gledsonPortrait || media.family}/><motion.div className="cast-overlay" style={{opacity:cross}}><Photograph src={media.sidneyPortrait}/></motion.div></motion.div>}
         {isPress && <div className="press-mini">
           <div className="press-card"><span>2015</span>{media.news2015?<Photograph src={media.news2015}/>:<p>Uma história que mobilizou o Brasil.</p>}<small>Fantástico</small></div>
           <div className="press-card"><span>2026</span>{media.news2026?<Photograph src={media.news2026}/>:<p>A vida continuou. A história também.</p>}<small>Fantástico</small></div>
