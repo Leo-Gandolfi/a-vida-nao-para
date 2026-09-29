@@ -5,6 +5,7 @@ import { acts, beats, beatAt } from '../timeline';
 import { useAudioController } from '../hooks/useAudioController';
 import FilmFrame from './FilmFrame';
 import FloatingElements from './FloatingElements';
+import StageSky from './StageSky';
 import ProjectDialog from './ProjectDialog';
 
 /** Distância (em vw) entre o início de um quadro e o início do próximo.
@@ -61,16 +62,20 @@ export default function Cinema() {
   );
   const trackXvw=useTransform(trackX,v=>`${v}vw`);
 
-  // A tela inteira muda de temperatura junto com a história: dourado quente na promessa,
-  // azul gélido na ruptura, breu absoluto no silêncio, calor de volta com Mallu.
-  const washColor=useTransform(
-    p,
-    [0,   .20,      .26,       .34,       .45,       .52,       .70,       1],
-    ['#241b11','#241b11','#101b26','#050a10','#050a10','#241b11','#2a2014','#1d1a17'],
-  );
   // Em "A vida não parou", uma luz quente atravessa a tela da esquerda para a direita.
   const sweepX=useTransform(p,[.450,.515],['-120%','120%']);
   const sweepOpacity=useTransform(p,[.450,.470,.500,.515],[0,.85,.85,0]);
+
+  // A fita de sprockets que corre pelo alto e pela base da tela inteira, sempre —
+  // não só ao redor de cada quadro — para que a experiência inteira pareça acontecer
+  // dentro de um rolo de filme físico. Avança em passo com o scroll, não com o relógio.
+  const ribbonX=useTransform(p,[0,1],['0px','-4200px']);
+
+  // Cortina de abertura: nada na tela além do convite a rolar — a história só começa a
+  // aparecer no primeiro gesto. Passa a p=0,006 (bem no início do percurso); o quadro
+  // só é desmontado depois de o fade terminar (0,008), para não sumir de repente.
+  const gateOpacity=useTransform(p,[0,.006],[1,0]);
+  const [started,setStarted]=useState(p.get()>.008);
 
   useMotionValueEvent(p,'change',v=>{
     const next=acts.reduce((index,a,i)=>v>=a.at?i:index,0);
@@ -78,6 +83,7 @@ export default function Cinema() {
     const m=beatAt(v)?.movement??5;setMovement(old=>old===m?old:m);
     const f=v>=.983;setFinal(old=>old===f?old:f);
     const q=v>=.34&&v<.45;setQuiet(old=>old===q?old:q);
+    const s=v>.008;setStarted(old=>old||s);
   });
   function leftFor(value:number) {
     const el=container.current;if(!el)return null;
@@ -113,9 +119,6 @@ export default function Cinema() {
   // Um novo gesto do visitante (roda do mouse, toque ou teclado) cancela o deslize na hora.
   useEffect(()=>{
     const el=container.current;if(!el||reading)return;
-    // 65% da duração do quadro: ponto em que a última palavra de qualquer legenda já
-    // terminou de aparecer (mesmo em frases longas), mas antes de o texto começar a sumir.
-    const mids2=beats.map(b=>b.start+(b.end-b.start)*.65);
     let cancelAnim:(()=>void)|null=null,timer=0;
     function onScroll() {
       if(cancelAnim)return; // é o próprio deslize automático rolando a fita; ignorar
@@ -123,8 +126,11 @@ export default function Cinema() {
       timer=window.setTimeout(()=>{
         const current=p.get();
         if(current<=.001||current>=.999)return;
-        let nearest=mids2[0],best=Infinity;
-        for(const m of mids2){const d=Math.abs(current-m);if(d<best){best=d;nearest=m;}}
+        // O centro geométrico de cada quadro (mesmo ponto usado para deslocar a fita
+        // horizontalmente) — a legenda já está inteira antes disso, então parar aqui
+        // deixa o quadro estável exatamente no meio da tela, nunca deslocado à esquerda.
+        let nearest=mids[0],best=Infinity;
+        for(const m of mids){const d=Math.abs(current-m);if(d<best){best=d;nearest=m;}}
         if(Math.abs(current-nearest)<.002)return;
         const left=leftFor(nearest);if(left===null)return;
         cancelAnim=slowScrollTo(el!,left,reduced?0:1400,()=>{cancelAnim=null;});
@@ -142,7 +148,7 @@ export default function Cinema() {
       el.removeEventListener('keydown',onUserIntent);
       window.clearTimeout(timer);cancelAnim?.();
     };
-  },[reading,reduced,p]);
+  },[reading,reduced,p,mids]);
   // O áudio exige um gesto do usuário reconhecido pelo navegador para começar (rolar a
   // roda do mouse NÃO conta como gesto válido para essa política — só clique, toque e
   // tecla contam). Por isso a primeira dessas interações em qualquer lugar da página já
@@ -159,9 +165,11 @@ export default function Cinema() {
     }
     window.addEventListener('pointerdown',onFirstGesture,{once:true});
     window.addEventListener('keydown',onFirstGesture,{once:true});
+    window.addEventListener('touchstart',onFirstGesture,{once:true,passive:true});
     return ()=>{
       window.removeEventListener('pointerdown',onFirstGesture);
       window.removeEventListener('keydown',onFirstGesture);
+      window.removeEventListener('touchstart',onFirstGesture);
     };
   },[audio.available,audio.enabled,audio.toggle]);
   async function share() {
@@ -177,13 +185,18 @@ export default function Cinema() {
   const controls=<><button className="button button--primary" onClick={()=>setDialog(true)}>Quero conhecer o projeto <span aria-hidden="true">↗</span></button><button className="button button--ghost" onClick={share}>Compartilhar esta história</button></>;
   return <>
     <a className="skip-link" href="#convite" onClick={e=>{e.preventDefault();jump(1);requestAnimationFrame(()=>document.querySelector<HTMLButtonElement>('#convite button')?.focus());}}>Ir para o convite</a>
+    {!started && <motion.div className="intro-gate" aria-hidden="true" style={{opacity:gateOpacity}}>
+      <p className="intro-gate__prompt"><span>Role a tela</span><span className="intro-gate__arrow" aria-hidden="true">→</span></p>
+    </motion.div>}
     <main ref={container} tabIndex={0} aria-label="A Vida Não Para — narrativa cinematográfica, em formato de rolo de filme. Arraste ou role para o lado." className={`scroll-viewport ${reading?'is-reading':''}`}>
       <div className="scroll-track">
       <div className="stage">
-        <motion.div className="stage-wash" aria-hidden="true" style={{backgroundColor:washColor}}/>
+        <StageSky p={p} reduced={reduced}/>
         <div className="stage-rail" aria-hidden="true"/>
         <FloatingElements p={p} reduced={reduced}/>
         {!reduced && <motion.div className="light-sweep" aria-hidden="true" style={{x:sweepX,opacity:sweepOpacity}}/>}
+        <motion.div className="reel-ribbon reel-ribbon--top" aria-hidden="true" style={{backgroundPositionX:ribbonX}}/>
+        <motion.div className="reel-ribbon reel-ribbon--bottom" aria-hidden="true" style={{backgroundPositionX:ribbonX}}/>
         <motion.div className="filmstrip-track" style={{x:trackXvw}}>
           {beats.map((beat,i)=>{
             const prevMid=i>0?mids[i-1]:mids[0]-(mids[1]-mids[0]);
@@ -201,7 +214,6 @@ export default function Cinema() {
         <motion.div className="final-actions" id="convite" style={{opacity:finalOpacity}} inert={!final}><p className="final-lede">O próximo capítulo pode começar com uma conversa.</p>{controls}<p role="status">{shareMessage}</p>{shareFallback&&<input aria-label="Endereço para compartilhar" readOnly value={window.location.href} onFocus={e=>e.target.select()}/>}</motion.div>
         <motion.footer className="stage-footer" style={{opacity:chromeOpacity,pointerEvents:quiet?'none':'auto'}} inert={quiet}>
           <div className="reel-label"><span>{acts[act].roman}</span><p>{acts[act].label}</p></div>
-          <nav className="reel-scrubber" aria-label="Atos da história">{acts.map((a,i)=><button key={a.at} aria-label={`Ato ${a.roman}: ${a.label}`} aria-current={i===act?'step':undefined} onClick={()=>jump(a.at+.007)}><span/></button>)}</nav>
           <span className="frame-counter">{final?'Uma história que continua':`Quadro ${String(movement).padStart(2,'0')} / 14`}</span>
         </motion.footer>
         <motion.div className="progress-track" style={{opacity:chromeOpacity}}><motion.div style={{scaleX:p}}/></motion.div>

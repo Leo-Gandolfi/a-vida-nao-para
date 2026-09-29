@@ -16,12 +16,15 @@ function Video({src,poster,active}:{src:string|null;poster?:string;active:boolea
 function Photograph({src,className=''}:{src:string|null;className?:string}) {return src ? <img className={className} src={src} alt="" loading="eager" decoding="async"/> : null;}
 
 /** Uma palavra que voa de uma direção alternada até o lugar de leitura, com atraso
- * escalonado por índice: o texto "chega" na tela em vez de simplesmente aparecer. */
+ * escalonado por índice: o texto "chega" na tela em vez de simplesmente aparecer.
+ * Mesmo na frase mais longa do roteiro (10 palavras), a última termina de aparecer
+ * bem antes da metade do quadro — para que o ponto de leitura estável coincida com o
+ * centro geomético da tela (ver `mids` em Cinema.tsx), e não fique deslocado à esquerda. */
 function Word({children,index,total,p,start,end,reduced}:{children:string;index:number;total:number;p:MotionValue<number>;start:number;end:number;reduced:boolean}) {
   const span=end-start;
-  const perWordDelay=(span*.5)/Math.max(total,1);
+  const perWordDelay=(span*.30)/Math.max(total,1);
   const inStart=start+index*perWordDelay;
-  const inEnd=inStart+span*.16;
+  const inEnd=inStart+span*.12;
   const outStart=end-span*.16;
   const outEnd=end;
   const even=index%2===0;

@@ -34,6 +34,46 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .stage-wash{position:absolute;inset:0;z-index:-1;pointer-events:none;
   background-image:radial-gradient(130% 100% at 50% 10%,#ffffff12 0%,transparent 46%,#00000070 100%)}
 
+/* ===== Céu: sol, lua e estrelas, sempre montados e com opacidade zero fora da sua
+   própria janela — o astro "existe" ao longo de todo o percurso, só não se vê. ===== */
+.sky-disc{position:absolute;width:9vw;height:9vw;max-width:120px;max-height:120px;min-width:56px;min-height:56px;
+  border-radius:50%;translate:-50% -50%;pointer-events:none;z-index:-1}
+.sky-disc--sun{background:radial-gradient(circle,#fff3d6 0%,#f4d99a 45%,#f4d99a00 72%);
+  box-shadow:0 0 8vw 1vw #f0c98630}
+.sky-disc--moon{background:radial-gradient(circle at 38% 38%,#eef3f8 0%,#c9d6e2 55%,#c9d6e200 72%);
+  box-shadow:0 0 5vw 1vw #a9c0d51f}
+.sky-stars{position:absolute;inset:0;pointer-events:none;z-index:-1}
+.sky-stars span{position:absolute;width:2px;height:2px;border-radius:50%;background:#dce7f2}
+.sky-stars span:nth-child(1){top:8%;left:6%}.sky-stars span:nth-child(2){top:14%;left:22%}
+.sky-stars span:nth-child(3){top:6%;left:38%}.sky-stars span:nth-child(4){top:20%;left:52%}
+.sky-stars span:nth-child(5){top:10%;left:68%}.sky-stars span:nth-child(6){top:24%;left:80%}
+.sky-stars span:nth-child(7){top:16%;left:92%}.sky-stars span:nth-child(8){top:32%;left:12%}
+.sky-stars span:nth-child(9){top:38%;left:30%}.sky-stars span:nth-child(10){top:28%;left:44%}
+.sky-stars span:nth-child(11){top:42%;left:60%}.sky-stars span:nth-child(12){top:34%;left:74%}
+.sky-stars span:nth-child(13){top:46%;left:88%}.sky-stars span:nth-child(14){top:56%;left:4%}
+.sky-stars span:nth-child(15){top:62%;left:18%}.sky-stars span:nth-child(16){top:52%;left:34%}
+.sky-stars span:nth-child(17){top:68%;left:48%}.sky-stars span:nth-child(18){top:58%;left:64%}
+.sky-stars span:nth-child(19){top:72%;left:78%}.sky-stars span:nth-child(20){top:64%;left:94%}
+.sky-stars span:nth-child(21){top:80%;left:10%}.sky-stars span:nth-child(22){top:86%;left:26%}
+.sky-stars span:nth-child(23){top:78%;left:42%}.sky-stars span:nth-child(24){top:90%;left:58%}
+.sky-stars span:nth-child(25){top:82%;left:72%}.sky-stars span:nth-child(26){top:88%;left:90%}
+
+/* ===== Fita de sprockets ambiente: corre pela tela inteira, no alto e na base, sempre —
+   o "rolo de filme" não é só cada quadro, é a experiência inteira. Avança com o scroll. ===== */
+.reel-ribbon{position:absolute;left:0;right:0;height:14px;z-index:2;pointer-events:none;
+  background-color:#4c3c2799;
+  background-image:repeating-linear-gradient(90deg,#050403 0 9px,transparent 9px 24px)}
+.reel-ribbon--top{top:0}
+.reel-ribbon--bottom{bottom:0}
+
+/* ===== Cortina de abertura: nada além do convite a rolar ===== */
+.intro-gate{position:fixed;inset:0;z-index:30;background:#000;pointer-events:none;
+  display:grid;place-items:center}
+.intro-gate__prompt{margin:0;display:flex;align-items:center;gap:16px;
+  font:500 .8rem/1 var(--mono);letter-spacing:.35em;text-transform:uppercase;color:#e9d9b8}
+.intro-gate__arrow{display:inline-block;color:var(--gold);animation:gate-nudge 1.6s ease-in-out infinite}
+@keyframes gate-nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(10px)}}
+
 /* ===== Objetos simbólicos flutuando fora do rolo ===== */
 .floater{position:absolute;left:0;display:grid;place-items:center;pointer-events:none;
   will-change:transform,opacity}
@@ -146,10 +186,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .reel-label{display:flex;gap:16px;align-items:center;min-width:260px}
 .reel-label>span{font:italic 1.8rem Georgia;color:var(--gold)}
 .reel-label p{font-size:.75rem;letter-spacing:.04em;margin:0}
-.reel-scrubber{display:flex;gap:6px}
-.reel-scrubber button{padding:16px 4px}
-.reel-scrubber span{display:block;width:30px;height:2px;background:#ffffff30}
-.reel-scrubber [aria-current] span{background:var(--gold)}
 .frame-counter{font:.75rem var(--mono);color:var(--dim);min-width:260px;text-align:right;letter-spacing:.04em}
 .progress-track{position:absolute;bottom:0;left:0;right:0;height:2px;z-index:11}
 .progress-track>div{height:100%;background:var(--gold);transform-origin:left}
@@ -200,7 +236,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
   .reel-label{min-width:0;gap:10px}
   .reel-label p{max-width:125px;line-height:1.5}
   .reel-label>span{font-size:1.4rem}
-  .reel-scrubber{display:none}
   .frame-counter{min-width:0;font-size:.65rem;width:150px;line-height:1.6}
   .final-actions{bottom:9vh;gap:10px}
   .final-actions .button{width:100%;max-width:330px;min-height:48px;padding:13px 16px;font-size:.7rem}
@@ -221,4 +256,5 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
   .dust,.film-grain,.equalizer span,.floater,.light-sweep{display:none;animation:none!important}
   .frame-slot:first-child .frame-card{animation:none}
   .button--primary{animation:none}
+  .intro-gate__arrow{animation:none}
 }

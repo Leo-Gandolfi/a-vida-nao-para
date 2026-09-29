@@ -19,24 +19,40 @@ Um rolo de filme sobre uma mesa de edição, não uma sequência de seções nem
 
 O visitante controla a duração. `.scroll-viewport` é a própria janela que rola (a roda vertical do mouse é convertida em deslocamento lateral automaticamente, assim como as setas ↑/↓ e Page Up/Down, para quem está acostumado com a convenção vertical); setas ←/→ funcionam nativamente. `.scroll-track` é a fita larga interna (`1800svw`, cerca de 17 telas de percurso) que dá a ela algo para rolar; ajuste sua largura para editar a cadência. Não há bloqueio de toque nem rolagem automática — só a conversão de eixo do wheel. `sticky` mantém o palco (`.stage`) grudado à esquerda em `100vw`×`100dvh` enquanto a fita passa por baixo. Textos maiores que o espaço disponível podem ser consultados em “Ler a história”.
 
+### A cortina de abertura
+
+A primeira coisa que o visitante vê é preto absoluto — nenhuma imagem, nenhum quadro, nenhum som — com um único convite: "Role a tela →". Só no primeiro gesto de scroll (por menor que seja) a cortina desaparece suavemente (`gateOpacity`, em `Cinema.tsx`) e a história começa a aparecer aos poucos, junto com a trilha sonora, que liga sozinha nesse mesmo instante — sem exigir um clique separado no botão de som (ver "Som automático" abaixo).
+
 ### Camadas de dramaturgia
 
-Além do rolo, quatro camadas acompanham a história e são todas dirigidas pelo mesmo progresso de scroll:
+Além do rolo, várias camadas acompanham a história e são todas dirigidas pelo mesmo progresso de scroll:
 
-1. **Temperatura da tela** (`.stage-wash`): dourado quente na promessa → azul gélido na ruptura → breu no silêncio → calor de volta com Mallu → tom sóbrio no convite.
-2. **Objetos simbólicos** (`FloatingElements.tsx`): pétalas e partículas de luz no primeiro ato, uma pulseirinha de maternidade atravessando devagar na ruptura, papéis/livro/folhas na retomada. Cada um tem uma *profundidade*; o plano focal é o próprio rolo, então quem está mais longe **ou mais perto** que ele sai de foco, e os mais próximos passam na frente do rolo, como um elemento de primeiro plano sujando o quadro numa filmagem real.
+1. **O céu inteiro** (`StageSky.tsx`): sol, lua e estrelas percorrem um arco pelo fundo da tela, sincronizados com a temperatura de cada ato — o sol nasce na promessa, se põe na ruptura (quando a lua e as estrelas assumem) e nasce de novo com Mallu, ficando a pino até o entardecer do convite final. A cor de fundo (`.stage-wash`) acompanha o mesmo ciclo.
+2. **Objetos simbólicos** (`FloatingElements.tsx`): pétalas e partículas de luz no primeiro ato, uma pulseirinha de maternidade atravessando devagar na ruptura, papéis/livro/folhas na retomada, uma claquete e uma câmera voando quando a história vira filme, uma nota musical na canção, corações no propósito social, um envelope no convite final. Cada um tem uma *profundidade*; o plano focal é o próprio rolo, então quem está mais longe **ou mais perto** que ele sai de foco — os mais próximos passam na frente do rolo (desfocados, como primeiro plano), e os que estão exatamente na mesma profundidade do rolo passam *atrás* do quadro ao cruzá-lo, como um objeto real na mesma distância seria ocluído por ele.
 3. **Timbre do som** (`audioTone` em `timeline.ts`): antes de o volume sumir, o som **afunda** — um passa-baixa fecha de 20 kHz até 180 Hz entre 20% e 30%, como ouvir debaixo d'água. Reabre entre 45% e 52%, quando a luz volta.
 4. **Luz que invade** (`.light-sweep`): em "A vida não parou", uma faixa quente cruza a tela da esquerda para a direita.
+5. **A fita de sprockets ambiente** (`.reel-ribbon`): corre pelo alto e pela base da tela inteira, sempre — não só ao redor de cada quadro —, avançando em passo com o scroll (não com o relógio), para que a experiência inteira pareça acontecer dentro de um rolo de filme físico.
 
 O intervalo 39,5%–45% é **deliberadamente vazio em todas as camadas**: nenhum objeto é agendado ali, o som está em silêncio e a interface se apaga. Depois que Samuel parte, nada atravessa a tela até "Mallu ficou". Se for acrescentar elementos flutuantes, respeite essa janela.
 
-Tudo isso é desligado sob `prefers-reduced-motion: reduce`.
+Os astros/estrelas e os objetos simbólicos são desligados sob `prefers-reduced-motion: reduce`; o céu (cor de fundo) permanece, só sem o movimento.
+
+### Quadro estável sempre centralizado
+
+O ponto em que a fita "descansa" depois de parar de rolar é o mesmo centro geométrico usado para posicionar cada quadro (`mids`, em `Cinema.tsx`) — por isso o quadro legível sempre fica exatamente no meio da tela, nunca deslocado para um dos lados. Isso só funciona porque a revelação de texto palavra por palavra (`Word`, em `FilmFrame.tsx`) termina bem antes da metade do quadro, mesmo na legenda mais longa do roteiro (10 palavras) — se for reescrever falas muito mais longas que isso, verifique se a última palavra ainda termina de aparecer com folga antes de 50% do trecho, ou o quadro vai "descansar" com o texto ainda incompleto.
+
+### Som automático
+
+Ligar áudio exige um gesto reconhecido pelo navegador — rolar a *roda* do mouse sozinha não conta para essa política (só clique, toque e tecla contam), então o primeiro desses gestos em qualquer lugar da página já liga o som sozinho (ver o efeito `onFirstGesture` em `Cinema.tsx`). Quem usa só a roda do mouse ou o trackpad sem nunca clicar/tocar/apertar uma tecla não vai conseguir ligar o som automaticamente — é uma restrição do navegador, sem contorno possível; o botão de som manual continua funcionando normalmente para esse caso.
+
+`useAudioController.ts` tolera colisões entre `play()` e `pause()` que acontecem quando o scroll muda a mixagem no exato instante em que o áudio é ligado (isso rejeita com `AbortError`, não com uma recusa real do navegador) — só uma recusa genuína de autoplay (`NotAllowedError`) desliga o áudio e avisa o visitante.
 
 ## Onde editar
 
-- `src/components/Cinema.tsx`: componente principal, progresso horizontal global (via `scrollXProgress`), conversão de wheel/teclado, temperatura da tela, luz que invade, capítulos, compartilhamento e CTA.
+- `src/components/Cinema.tsx`: componente principal, progresso horizontal global (via `scrollXProgress`), conversão de wheel/teclado, cortina de abertura, luz que invade, fita de sprockets ambiente, som automático, compartilhamento e CTA.
+- `src/components/StageSky.tsx`: sol, lua, estrelas e a cor de fundo que muda com a história.
 - `src/components/FilmFrame.tsx`: cada quadro do rolo — foco/desfoque por proximidade do centro, revelação de texto palavra por palavra, tremor na ruptura, mídia por ato e a metamorfose Gledson → Sidney.
-- `src/components/FloatingElements.tsx`: os objetos simbólicos e suas profundidades/janelas de scroll.
+- `src/components/FloatingElements.tsx`: os objetos simbólicos, suas profundidades e janelas de scroll.
 - `src/timeline.ts`: os 14 movimentos e seus submomentos, a mixagem (`audioMix`) e o timbre (`audioTone`), todos com intervalos de 0 a 1.
 - `src/hooks/useAudioController.ts`: controlador funcional via Web Audio (ganho por faixa + um passa-baixa compartilhado), não apenas pseudocódigo.
 - `src/config.ts`: único lugar para injetar fotos, vídeos, música e canal de contato.
@@ -57,7 +73,7 @@ React JSX usa `{/* INSERIR ... AQUI */}`; os demais marcadores usam comentários
 | 45–70% | 6–8 | Cuidado, repercussão nacional, canção |
 | 70–100% | 9–14 | Filme, elenco, impacto social e convite |
 
-O intervalo 39,5–41,5% é vazio intencional. O ato final permanece visível a 100%. Navegação por capítulos salta de forma imediata para não obrigar pessoas a atravessar transições rapidamente. Toque, teclado e scroll nativo funcionam sem interceptação.
+O intervalo 39,5–41,5% é vazio intencional. O ato final permanece visível a 100%. Não há mais navegação por marcadores de ato no rodapé (removida a pedido — o nome do ato em texto continua lá, só os pontinhos clicáveis saíram); o link "Ir para o convite" (accessible skip-link) e `jump()` seguem disponíveis para navegação direta. Toque, teclado e scroll nativo funcionam sem interceptação.
 
 ## Assets reais já incluídos
 

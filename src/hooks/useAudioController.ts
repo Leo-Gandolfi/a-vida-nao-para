@@ -6,6 +6,14 @@ import { audioMix, audioTone } from '../timeline';
 type Track = { element: HTMLAudioElement; gain: GainNode; source: MediaElementAudioSourceNode };
 type Engine = { ctx: AudioContext; tracks: (Track | null)[]; tone: BiquadFilterNode; enabled: boolean; disposed: boolean };
 
+/** `play()` interrompido por um `pause()` quase simultâneo (ex.: o scroll muda de
+ * mixagem no exato instante em que o áudio é ligado) rejeita com AbortError — não é o
+ * navegador recusando a reprodução, é só a própria concorrência interna. Só uma recusa
+ * de verdade (NotAllowedError, política de autoplay) deve desligar o áudio e avisar. */
+function isBenignPlayInterruption(err:unknown) {
+  return err instanceof DOMException && err.name==='AbortError';
+}
+
 /** Scroll controla a mixagem; a música avança em tempo real, sem seek a cada pixel.
  * Ao recuar, as faixas pausam/retomam na posição em que estavam.
  * O silêncio é aplicado sem rampa: nenhuma cauda musical atravessa o ato II.
@@ -33,7 +41,8 @@ export function useAudioController(progress: MotionValue<number>) {
         t.element.pause();
       } else {
         t.gain.gain.setTargetAtTime(target,now,.09);
-        if (t.element.paused) void t.element.play().catch(() => {
+        if (t.element.paused) void t.element.play().catch(err => {
+          if (isBenignPlayInterruption(err)) return; // um pause() concorrente, nada de errado
           if (!e.enabled || e.disposed) return;
           e.enabled = false;
           e.tracks.forEach(track => { if (track) { track.gain.gain.cancelScheduledValues(e.ctx.currentTime); track.gain.gain.setValueAtTime(0,e.ctx.currentTime); track.element.pause(); } });
@@ -52,7 +61,10 @@ export function useAudioController(progress: MotionValue<number>) {
         const tone = ctx.createBiquadFilter();
         tone.type='lowpass'; tone.frequency.value=audioTone(progress.get()); tone.Q.value=.7;
         tone.connect(ctx.destination);
-        const e:Engine = {ctx, tracks:[], tone, enabled:false, disposed:false};
+        // enabled já começa true: se o scroll disparar um sync() concorrente enquanto o
+        // play() inicial ainda está em voo (linhas abaixo), ele calcula o ganho real da
+        // mixagem em vez de forçar silêncio — o que evitaria uma corrida play()/pause().
+        const e:Engine = {ctx, tracks:[], tone, enabled:true, disposed:false};
         engine.current = e;
         e.tracks = [media.openingTrack,media.finalTrack].map(src => {
           if (!src) return null;
@@ -62,8 +74,15 @@ export function useAudioController(progress: MotionValue<number>) {
           return {element,source,gain};
         });
         // Chamadas play/resume originam-se no gesto do usuário, inclusive no Safari.
+        // Uma rejeição isolada por AbortError (ver isBenignPlayInterruption) não derruba
+        // a ativação inteira — só uma recusa real de autoplay deve fazer isso.
         const resume = ctx.resume();
-        await Promise.all([resume,...e.tracks.map(t => t?.element.play())]);
+        const plays = e.tracks.map(t => t?.element.play().catch(err => {
+          if (isBenignPlayInterruption(err)) return;
+          throw err;
+        }));
+        await Promise.all([resume,...plays]);
+        e.enabled=false; // volta ao estado "ainda não ligado"; a linha abaixo é que liga de fato
       }
       const e = engine.current!;
       await e.ctx.resume(); e.enabled=!e.enabled; setEnabled(e.enabled);
