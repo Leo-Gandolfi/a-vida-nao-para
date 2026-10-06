@@ -30,35 +30,70 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .stage-rail{position:absolute;left:0;right:0;top:50%;height:1px;transform:translateY(-50%);
   background:linear-gradient(90deg,transparent,#c8a77545 20%,#c8a77545 80%,transparent);z-index:0}
 
-/* Banho de cor que acompanha a temperatura da história (dourado → gélido → breu → calor).
-   A cor de fundo é animada por JS; o gradiente por cima (parcialmente transparente) é que
-   dá o relevo de iluminação, deixando a cor aparecer por baixo. */
-.stage-wash{position:absolute;inset:0;z-index:-1;pointer-events:none;
-  background-image:radial-gradient(130% 100% at 50% 10%,#ffffff12 0%,transparent 46%,#00000070 100%)}
+/* ===== Céu: um dia de verdade atrás do rolo (ver StageSky.tsx) =====
+   Zênite (cor de fundo) + brilho do horizonte + sol/lua/estrelas/nuvens + morros em
+   silhueta na frente dos astros, para que o sol realmente nasça e se ponha atrás deles. */
+.sky{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.stage-wash{position:absolute;inset:0;
+  background-image:radial-gradient(130% 100% at 50% 10%,#ffffff10 0%,transparent 46%,#00000080 100%)}
+.sky-horizon{position:absolute;left:0;right:0;top:42%;bottom:0;opacity:.88;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 82%);mask-image:linear-gradient(to bottom,transparent 0%,#000 82%)}
 
-/* ===== Céu: sol, lua e estrelas, sempre montados e com opacidade zero fora da sua
-   própria janela — o astro "existe" ao longo de todo o percurso, só não se vê. ===== */
-.sky-disc{position:absolute;width:9vw;height:9vw;max-width:120px;max-height:120px;min-width:56px;min-height:56px;
-  border-radius:50%;translate:-50% -50%;pointer-events:none;z-index:-1}
-.sky-disc--sun{background:radial-gradient(circle,#fff3d6 0%,#f4d99a 45%,#f4d99a00 72%);
-  box-shadow:0 0 8vw 1vw #f0c98630}
-.sky-disc--moon{background:radial-gradient(circle at 38% 38%,#eef3f8 0%,#c9d6e2 55%,#c9d6e200 72%);
-  box-shadow:0 0 5vw 1vw #a9c0d51f}
-.sky-stars{position:absolute;inset:0;pointer-events:none;z-index:-1}
-.sky-stars span{position:absolute;width:2px;height:2px;border-radius:50%;background:#dce7f2}
-.sky-stars span:nth-child(1){top:8%;left:6%}.sky-stars span:nth-child(2){top:14%;left:22%}
-.sky-stars span:nth-child(3){top:6%;left:38%}.sky-stars span:nth-child(4){top:20%;left:52%}
-.sky-stars span:nth-child(5){top:10%;left:68%}.sky-stars span:nth-child(6){top:24%;left:80%}
-.sky-stars span:nth-child(7){top:16%;left:92%}.sky-stars span:nth-child(8){top:32%;left:12%}
-.sky-stars span:nth-child(9){top:38%;left:30%}.sky-stars span:nth-child(10){top:28%;left:44%}
-.sky-stars span:nth-child(11){top:42%;left:60%}.sky-stars span:nth-child(12){top:34%;left:74%}
-.sky-stars span:nth-child(13){top:46%;left:88%}.sky-stars span:nth-child(14){top:56%;left:4%}
-.sky-stars span:nth-child(15){top:62%;left:18%}.sky-stars span:nth-child(16){top:52%;left:34%}
-.sky-stars span:nth-child(17){top:68%;left:48%}.sky-stars span:nth-child(18){top:58%;left:64%}
-.sky-stars span:nth-child(19){top:72%;left:78%}.sky-stars span:nth-child(20){top:64%;left:94%}
-.sky-stars span:nth-child(21){top:80%;left:10%}.sky-stars span:nth-child(22){top:86%;left:26%}
-.sky-stars span:nth-child(23){top:78%;left:42%}.sky-stars span:nth-child(24){top:90%;left:58%}
-.sky-stars span:nth-child(25){top:82%;left:72%}.sky-stars span:nth-child(26){top:88%;left:90%}
+.sky-sun,.sky-moon{position:absolute;translate:-50% -50%;will-change:transform,left,top}
+.sky-sun{width:9vw;height:9vw;max-width:130px;max-height:130px;min-width:60px;min-height:60px}
+.sky-sun__disc{position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle,#fffaf0 0%,#ffe6a8 42%,#ffc46e 64%,#ffb05a00 72%)}
+.sky-sun__glow{position:absolute;inset:-260%;border-radius:50%;
+  background:radial-gradient(circle,#ffb46a66 0%,#ff8a4a33 22%,#ff6a3a14 42%,transparent 62%)}
+.sky-sun__rays{position:absolute;inset:-190%;border-radius:50%;
+  background:repeating-conic-gradient(from 0deg,#ffd9a033 0deg 3deg,transparent 3deg 14deg);
+  -webkit-mask-image:radial-gradient(circle,#000 8%,transparent 62%);mask-image:radial-gradient(circle,#000 8%,transparent 62%);
+  animation:sun-rays 70s linear infinite}
+@keyframes sun-rays{to{transform:rotate(360deg)}}
+.sky-moon{width:6.5vw;height:6.5vw;max-width:96px;max-height:96px;min-width:48px;min-height:48px;border-radius:50%;
+  background:radial-gradient(circle at 38% 38%,#f4f7fb 0%,#cfdbe6 55%,#b6c6d4 70%,#b6c6d400 72%);
+  box-shadow:0 0 6vw 1.2vw #a9c0d526}
+.sky-stars{position:absolute;inset:0}
+.sky-stars span{position:absolute;border-radius:50%;background:#e4edf7;box-shadow:0 0 6px #dce7f2aa;
+  animation:twinkle 3s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:1}50%{opacity:.25}}
+
+.sky-clouds{position:absolute;left:0;top:0;width:200vw;height:70%}
+.sky-cloud{position:absolute;border-radius:50%;
+  -webkit-mask-image:radial-gradient(closest-side,#000 30%,transparent);mask-image:radial-gradient(closest-side,#000 30%,transparent);
+  animation:cloud-drift 60s ease-in-out infinite alternate}
+.sky-cloud--0{left:4vw;top:14%;width:34vw;height:9vh}
+.sky-cloud--1{left:46vw;top:28%;width:26vw;height:7vh;animation-duration:48s;animation-delay:-12s}
+.sky-cloud--2{left:82vw;top:9%;width:40vw;height:11vh;animation-duration:72s;animation-delay:-30s}
+.sky-cloud--3{left:120vw;top:36%;width:22vw;height:6vh;animation-duration:54s;animation-delay:-20s}
+.sky-cloud--4{left:150vw;top:18%;width:30vw;height:8vh;animation-duration:66s;animation-delay:-41s}
+@keyframes cloud-drift{from{transform:translateX(-6vw)}to{transform:translateX(8vw)}}
+
+.sky-hills{position:absolute;left:0;right:0;bottom:0;background-repeat:repeat-x}
+.sky-hills--far{height:26%;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'><path d='M0 120 C80 90 150 70 240 88 S400 130 480 104 S640 52 760 74 S930 128 1020 98 S1140 70 1200 120 V200 H0Z' fill='%23140f1a'/></svg>");background-size:1200px 100%;opacity:.95}
+.sky-hills--near{height:20%;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1400 200' preserveAspectRatio='none'><path d='M0 150 C120 120 210 128 300 140 S470 104 560 118 L590 92 L600 118 C680 130 760 150 860 132 S1040 100 1120 124 L1150 96 L1162 124 C1240 140 1320 128 1400 150 V200 H0Z' fill='%23070506'/></svg>");background-size:1400px 100%}
+
+/* Estrelas cadentes: riscos rápidos e espaçados, em loop, só enquanto "Mallu ficou." está na tela. */
+.shooting-stars span{position:absolute;top:12%;left:72%;width:140px;height:2px;border-radius:2px;
+  background:linear-gradient(90deg,#fff,#dbe8ff88 30%,transparent);rotate:-160deg;opacity:0;
+  animation:shoot 5.5s ease-in infinite}
+.shooting-stars span:nth-child(2){top:22%;left:40%;animation-delay:1.9s;width:100px}
+.shooting-stars span:nth-child(3){top:8%;left:28%;animation-delay:3.7s;width:120px}
+@keyframes shoot{0%{opacity:0;transform:translateX(0)}4%{opacity:1}16%{opacity:0;transform:translateX(-34vw)}100%{opacity:0;transform:translateX(-34vw)}}
+
+/* Lanternas de papel subindo no crepúsculo da cartela final. */
+.lanterns{position:absolute;inset:0}
+.lanterns span{position:absolute;bottom:-10%;width:16px;height:22px;border-radius:6px 6px 9px 9px;
+  background:radial-gradient(circle at 50% 70%,#fff2c4 0%,#ffb35a 45%,#e0692e 100%);
+  box-shadow:0 0 18px 6px #ff9a4a55,0 0 50px 16px #ff8a3a22;
+  animation:lantern-rise 18s linear infinite}
+@keyframes lantern-rise{
+  0%{transform:translate(0,0);opacity:0}
+  8%{opacity:1}
+  50%{transform:translate(3vw,-55vh)}
+  85%{opacity:.9}
+  100%{transform:translate(-2vw,-112vh);opacity:0}
+}
 
 /* ===== Fita de sprockets ambiente: corre pela tela inteira, no alto e na base, sempre —
    o "rolo de filme" não é só cada quadro, é a experiência inteira. Avança com o scroll. ===== */
@@ -82,6 +117,16 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .floater{position:absolute;left:0;display:grid;place-items:center;pointer-events:none;
   will-change:transform,opacity}
 .floater svg{width:100%;height:100%;overflow:visible}
+.floater-bob{width:100%;height:100%;display:grid;place-items:center;animation:bob 4s ease-in-out infinite}
+.floater-bob--birds{animation-name:glide}
+.floater-bob--butterfly{animation-name:flutter}
+@keyframes bob{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(4px,-12px) rotate(5deg)}}
+@keyframes glide{0%,100%{transform:translate(0,0)}50%{transform:translate(-10px,-14px)}}
+@keyframes flutter{0%,100%{transform:translate(0,0) rotate(-8deg)}25%{transform:translate(10px,-16px) rotate(6deg)}60%{transform:translate(-8px,-6px) rotate(-12deg)}}
+.bird-wings{transform-box:fill-box;transform-origin:center;animation:flap .42s ease-in-out infinite alternate}
+@keyframes flap{from{transform:scaleY(1)}to{transform:scaleY(-.55)}}
+.butterfly-wings{transform-box:view-box;transform-origin:20px 16px;animation:wing .22s ease-in-out infinite alternate}
+@keyframes wing{from{transform:scaleX(1)}to{transform:scaleX(.18)}}
 .floater-mote{width:100%;height:100%;border-radius:50%}
 .floater-mote--warm{background:radial-gradient(circle,#f6e2b8 0%,#e9c98e55 38%,transparent 70%)}
 .floater-mote--cold{background:radial-gradient(circle,#c8d8e6 0%,#8fa6b855 38%,transparent 70%)}
@@ -120,6 +165,10 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
   line-height:1.18;letter-spacing:-.02em;white-space:pre-line;margin:0}
 .frame-caption--long h2{font-size:clamp(1.15rem,1.75vw,1.75rem);line-height:1.3}
 .frame-caption--leader{text-align:center;padding-top:4px}
+/* O céu agora clareia de verdade (amanhecer, dia, pôr do sol): a legenda ganha uma
+   sombra larga e macia para continuar legível sobre o horizonte claro e o próprio sol. */
+.frame-caption,.final-lede{text-shadow:0 0 18px #000,0 0 6px #000d,0 1px 2px #000}
+.frame-caption .eyebrow{text-shadow:0 0 12px #000,0 1px 2px #000}
 .frame-credit{margin:12px 0 0;font:.68rem/1.6 var(--mono);letter-spacing:.06em;color:var(--dim)}
 .cast-credit{margin-top:16px;color:var(--gold);font-size:.9rem;line-height:1.5}
 
@@ -186,7 +235,12 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .dust span:nth-child(1){top:22%;left:8%;animation-duration:17s}
 .dust span:nth-child(2){top:64%;left:52%;animation-duration:21s;animation-delay:-5s}
 .dust span:nth-child(3){top:82%;left:86%;animation-duration:13s;animation-delay:-9s}
-@keyframes dust-float{0%{transform:translate(0,0)}50%{transform:translate(26px,-36px)}100%{transform:translate(0,0)}}
+.dust span:nth-child(4){top:40%;left:30%;animation-duration:19s;animation-delay:-3s}
+.dust span:nth-child(5){top:12%;left:70%;animation-duration:16s;animation-delay:-11s}
+.dust span:nth-child(6){top:74%;left:20%;animation-duration:23s;animation-delay:-7s}
+.dust span:nth-child(7){top:52%;left:92%;animation-duration:14s;animation-delay:-2s}
+.dust span:nth-child(8){top:30%;left:48%;animation-duration:26s;animation-delay:-15s}
+@keyframes dust-float{0%{transform:translate(0,0)}33%{transform:translate(34px,-48px)}66%{transform:translate(-18px,-80px)}100%{transform:translate(0,0)}}
 .film-grain{position:fixed;inset:0;z-index:5;pointer-events:none;mix-blend-mode:overlay;opacity:.06;animation:grain-drift 8s steps(6) infinite;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");background-size:120px 120px}
 .vignette{position:fixed;inset:0;z-index:4;pointer-events:none;background:radial-gradient(ellipse at center,transparent 40%,#000b 100%)}
 @keyframes grain-drift{0%{transform:translate(0,0)}20%{transform:translate(-2%,1%)}40%{transform:translate(1%,-2%)}60%{transform:translate(-1%,2%)}80%{transform:translate(2%,1%)}100%{transform:translate(0,0)}}
@@ -280,7 +334,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 @media(prefers-reduced-motion:reduce){
   *{scroll-behavior:auto!important;transition:none!important}
   .word{opacity:1!important;transform:none!important;filter:none!important}
-  .dust,.film-grain,.equalizer span,.floater,.light-sweep{display:none;animation:none!important}
+  .dust,.film-grain,.equalizer span,.floater,.light-sweep,.lanterns,.shooting-stars{display:none;animation:none!important}
+  .sky-sun__rays,.sky-stars span,.sky-cloud{animation:none!important}
   .frame-slot:first-child .frame-card{animation:none}
   .button--primary{animation:none}
   .intro-gate__arrow{animation:none}

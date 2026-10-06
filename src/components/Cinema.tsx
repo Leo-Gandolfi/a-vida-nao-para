@@ -216,7 +216,7 @@ export default function Cinema() {
             return <FilmFrame key={beat.id} beat={beat} index={i} total={beats.length} p={p} mid={mids[i]} prevMid={prevMid} nextMid={nextMid} reduced={reduced}/>;
           })}
         </motion.div>
-        {!reduced && <div className="dust" aria-hidden="true"><span/><span/><span/></div>}
+        {!reduced && <div className="dust" aria-hidden="true">{Array.from({length:8}).map((_,i)=><span key={i}/>)}</div>}
         {!reduced && <div className="film-grain" aria-hidden="true"/>}
         <div className="vignette" aria-hidden="true"/>
         <motion.header className="stage-header" style={{opacity:chromeOpacity,pointerEvents:quiet?'none':'auto'}} inert={quiet}>

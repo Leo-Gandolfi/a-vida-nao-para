@@ -50,7 +50,8 @@ Ligar áudio exige um gesto reconhecido pelo navegador — rolar a *roda* do mou
 ## Onde editar
 
 - `src/components/Cinema.tsx`: componente principal, progresso horizontal global (via `scrollXProgress`), conversão de wheel/teclado, cortina de abertura, luz que invade, fita de sprockets ambiente, som automático, compartilhamento e CTA.
-- `src/components/StageSky.tsx`: sol, lua, estrelas e a cor de fundo que muda com a história.
+- `src/components/StageSky.tsx`: o céu como um dia de verdade — noite → amanhecer no prólogo, pôr do sol vermelho no nascimento, lua/estrelas e estrelas cadentes em "Mallu ficou.", segundo amanhecer na volta da luz, pôr do sol em Marília e lanternas subindo no crepúsculo final. Cores (zênite/horizonte) e altura do sol são tabelas de keyframes por progresso; morros em silhueta escondem o sol abaixo do horizonte.
+- Pássaros (amanheceres e Marília) e borboletas (volta da luz e piscina) ficam em `FloatingElements.tsx`; todos os objetos oscilam continuamente, mesmo com a fita parada.
 - `src/components/FilmFrame.tsx`: cada quadro do rolo — foco/desfoque por proximidade do centro, revelação de texto palavra por palavra, tremor na ruptura, mídia por ato e a metamorfose Gledson → Sidney.
 - `src/components/FloatingElements.tsx`: os objetos simbólicos, suas profundidades e janelas de scroll.
 - `src/timeline.ts`: as 28 telas do roteiro da página de captação (texto, foto, proporção da janela, destaques em laranja com `*palavra*`), a mixagem (`audioMix`) e o timbre (`audioTone`), todos com intervalos de 0 a 1.
