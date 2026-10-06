@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { motion, useMotionValueEvent, useTransform, type MotionValue } from 'framer-motion';
-import { acts, type Beat } from '../timeline';
+import { acts, plain, type Beat } from '../timeline';
 import { media, project } from '../config';
 
 function Video({src,poster,active}:{src:string|null;poster?:string;active:boolean}) {
@@ -13,40 +13,49 @@ function Video({src,poster,active}:{src:string|null;poster?:string;active:boolea
   },[active,src]);
   return src ? <video ref={ref} src={src} poster={poster} muted playsInline loop preload="metadata" aria-hidden="true"/> : poster ? <img src={poster} alt=""/> : null;
 }
-function Photograph({src,className=''}:{src:string|null;className?:string}) {return src ? <img className={className} src={src} alt="" loading="eager" decoding="async"/> : null;}
+function Photograph({src,alt='',className=''}:{src:string|null;alt?:string;className?:string}) {return src ? <img className={className} src={src} alt={alt} loading="eager" decoding="async"/> : null;}
+
+/** Trechos entre *asteriscos* recebem o laranja da identidade — usado com parcimônia:
+ * só VIDA e Marília, as duas âncoras que voltam a se encontrar no fim. */
+function Accented({text}:{text:string}) {
+  return <>{text.split(/(\*[^*]+\*)/).filter(Boolean).map((part,i)=>part.startsWith('*')?<span key={i} className="accent">{part.slice(1,-1)}</span>:part)}</>;
+}
 
 /** Uma palavra que voa de uma direção alternada até o lugar de leitura, com atraso
  * escalonado por índice: o texto "chega" na tela em vez de simplesmente aparecer.
- * Mesmo na frase mais longa do roteiro (10 palavras), a última termina de aparecer
- * bem antes da metade do quadro — para que o ponto de leitura estável coincida com o
- * centro geomético da tela (ver `mids` em Cinema.tsx), e não fique deslocado à esquerda. */
-function Word({children,index,total,p,start,end,reduced}:{children:string;index:number;total:number;p:MotionValue<number>;start:number;end:number;reduced:boolean}) {
+ * Mesmo na frase mais longa do roteiro, a última termina de aparecer bem antes da
+ * metade do quadro — para que o ponto de leitura estável coincida com o centro
+ * geométrico da tela (ver `mids` em Cinema.tsx), e não fique deslocado à esquerda.
+ * `soft` (prólogo): só um fade cinematográfico, sem deslocamento. Palavras em destaque
+ * chegam uma fração depois do resto da frase, de leve. */
+function Word({children,index,total,p,start,end,reduced,soft,accent}:{children:string;index:number;total:number;p:MotionValue<number>;start:number;end:number;reduced:boolean;soft:boolean;accent:boolean}) {
   const span=end-start;
   const perWordDelay=(span*.30)/Math.max(total,1);
-  const inStart=start+index*perWordDelay;
-  const inEnd=inStart+span*.12;
+  const inStart=start+index*perWordDelay+(accent?span*.07:0);
+  const inEnd=inStart+span*(soft?.16:.12);
   const outStart=end-span*.16;
   const outEnd=end;
   const even=index%2===0;
   const opacityW=useTransform(p,[inStart,inEnd,outStart,outEnd],[0,1,1,0]);
-  const yW=useTransform(p,[inStart,inEnd],reduced?[0,0]:[even?20:-16,0]);
-  const blurPx=useTransform(p,[inStart,inEnd],reduced?[0,0]:[7,0]);
+  const yW=useTransform(p,[inStart,inEnd],reduced||soft?[0,0]:[even?20:-16,0]);
+  const blurPx=useTransform(p,[inStart,inEnd],reduced?[0,0]:[soft?3:7,0]);
   const blurW=useTransform(blurPx,v=>`blur(${v}px)`);
-  return <motion.span className="word" style={{opacity:opacityW,y:yW,filter:blurW}}>{children}</motion.span>;
+  return <motion.span className={`word ${accent?'accent':''}`} style={{opacity:opacityW,y:yW,filter:blurW}}>{children}</motion.span>;
 }
 
-function RevealText({text,as,className,p,start,end,reduced}:{text:string;as:'h1'|'h2';className?:string;p:MotionValue<number>;start:number;end:number;reduced:boolean}) {
+function RevealText({text,as,className,p,start,end,reduced,soft=false}:{text:string;as:'h1'|'h2';className?:string;p:MotionValue<number>;start:number;end:number;reduced:boolean;soft?:boolean}) {
   const lines=text.split('\n');
   const totalWords=lines.join(' ').trim().split(/\s+/).filter(Boolean).length;
   let cursor=0;
   const Tag=as;
-  return <Tag className={className}>
+  return <Tag className={className} aria-label={plain(text).replace(/\n/g,' ')}>
     {lines.map((line,li)=>{
       const words=line.split(/\s+/).filter(Boolean);
-      return <span className="reveal-line" key={li}>
+      return <span className="reveal-line" key={li} aria-hidden="true">
         {words.map((w,wi)=>{
           const idx=cursor++;
-          return <span key={wi}><Word index={idx} total={totalWords} p={p} start={start} end={end} reduced={reduced}>{w}</Word>{wi<words.length-1?' ':''}</span>;
+          const accent=/^\*.+\*$/.test(w);
+          return <span key={wi}><Word index={idx} total={totalWords} p={p} start={start} end={end} reduced={reduced} soft={soft} accent={accent}>{accent?w.slice(1,-1):w}</Word>{wi<words.length-1?' ':''}</span>;
         })}
       </span>;
     })}
@@ -88,56 +97,70 @@ export default function FilmFrame({beat,index,total,p,mid,prevMid,nextMid,reduce
   const tremorX=useTransform(p,v=>trembles?Math.sin(v*640)*1.7:0);
   const tremorY=useTransform(p,v=>trembles?Math.cos(v*530)*1.1:0);
 
+  const span=beat.end-beat.start;
+  // Fotografias respiram com um zoom-in muito lento, quase imperceptível, preso ao scroll.
+  // (pontos sempre dentro de [0,1]: o framer quebra com offsets fora dessa faixa)
+  const zoom=useTransform(p,[Math.max(0,prevMid),Math.min(1,nextMid)],reduced?[1,1]:[1,1.06]);
+
   // Metamorfose Gledson → Sidney: no meio da travessia os dois rostos ficam levemente
   // fora de foco e maiores, para o corte ler como transformação e não como dissolução.
-  const cross=useTransform(p,[.793,.827],[0,1]);
+  const cross=useTransform(p,[beat.start+span*.24,beat.end-span*.24],[0,1]);
   const morphK=useTransform(cross,v=>reduced?0:1-Math.abs(v*2-1));
   const morphFilter=useTransform(morphK,k=>`blur(${(k*3.2).toFixed(2)}px)`);
   const morphScale=useTransform(morphK,k=>1+k*.035);
-  const span=beat.end-beat.start;
   const eyebrowPoints=[beat.start,beat.start+span*.10,beat.end-span*.30,beat.end];
   const eyebrowOpacity=useTransform(p,eyebrowPoints,[0,1,1,0]);
+  // Linhas de apoio (Tela 03) entram depois da frase principal, sem pressa.
+  const noteOpacity=useTransform(p,[beat.start+span*.22,beat.start+span*.40,beat.end-span*.16,beat.end],[0,1,1,0]);
 
   const t=beat.treatment;
-  const hasMedia=t==='couple'||t==='arrival'||t==='cold'||t==='warm'||t==='cast'||t==='social'||(t==='music' && Boolean(media.mioto));
-  const isPress=t==='press';
-  const isLeader=!hasMedia && !isPress;
+  const photo=beat.photo?media[beat.photo]:null;
+  const hasMedia=Boolean(photo)||t==='couple'||t==='arrival'||t==='cold'||t==='cast'||t==='music';
+  const isLeader=!hasMedia;
+  const showTag=t!=='title' && t!=='final';
   const roman=actRoman(beat.start);
+  const ar=beat.ar??4/3;
+  const alt=beat.composed?plain(beat.text):'';
 
-  return <motion.div className="frame-slot" inert={!active}>
-    <motion.article className={`frame-card frame-card--${t} ${isLeader?'frame-card--leader':''}`} style={{opacity,scale,filter,x:tremorX,y:tremorY}} aria-hidden={!active}>
+  return <motion.div className="frame-slot" inert={!active} style={{'--ar':ar} as CSSProperties}>
+    <motion.article className={`frame-card frame-card--${t} frame-card--${beat.id} ${isLeader?'frame-card--leader':''}`} style={{opacity,scale,filter,x:tremorX,y:tremorY}} aria-hidden={!active}>
       <div className="sprocket sprocket--top" aria-hidden="true"/>
       <div className="frame-window">
-        {t==='couple' && <Photograph src={media.couple}/>}
+        {photo && <motion.div className="photo-frame" style={{scale:beat.composed?1:zoom}}><Photograph src={photo} alt={alt}/></motion.div>}
+        {t==='couple' && <motion.div className="photo-frame" style={{scale:zoom}}><Photograph src={media.couple}/></motion.div>}
         {/* INSERIR VÍDEO DO ULTRASSOM AQUI: definir media.ultrasound em config.ts */}
         {t==='arrival' && <div className="memory-frame"><Video src={media.ultrasound} poster={media.arrival} active={active && !reduced}/></div>}
         {t==='cold' && <Photograph src={media.neonatal}/>}
-        {t==='warm' && <Video src={beat.id==='care'?media.school:media.care} poster={beat.id==='care'?media.familyCare:media.family} active={active && !reduced}/>}
-        {t==='music' && (media.mioto ? <Photograph src={media.mioto}/> : <EqualizerBars/>)}
-        {t==='social' && <Photograph src={media.social || media.family}/>}
+        {t==='music' && !photo && <EqualizerBars/>}
         {/* INSERIR FOTO GLEDSON/SIDNEY AQUI: crossfade com caixas e object-position idênticos. */}
         {t==='cast' && <motion.div className="cast-frame" style={{filter:morphFilter,scale:morphScale}}><Photograph src={media.gledsonPortrait || media.family}/><motion.div className="cast-overlay" style={{opacity:cross}}><Photograph src={media.sidneyPortrait}/></motion.div></motion.div>}
-        {isPress && <div className="press-mini">
-          <div className="press-card"><span>2015</span>{media.news2015?<Photograph src={media.news2015}/>:<p>Uma história que mobilizou o Brasil.</p>}<small>Fantástico</small></div>
-          <div className="press-card"><span>2026</span>{media.news2026?<Photograph src={media.news2026}/>:<p>A vida continuou. A história também.</p>}<small>Fantástico</small></div>
-        </div>}
         {isLeader && beat.text && <div className="leader-ring" aria-hidden="true"/>}
         {/* O último quadro não tem um próximo quadro para "receber" o texto — ele fica
             estático (sem a coreografia de palavras por scroll) para nunca desvanecer
             ao chegar no fim absoluto da rolagem. */}
         {isLeader && beat.text && t==='final' && <h1 className="film-title">{beat.text}</h1>}
-        {isLeader && beat.text && t!=='final' && <RevealText
-          as={t==='title'?'h1':'h2'}
-          className={t==='title'?'film-title':`leader-title ${beat.small?'leader-title--small':''}`}
-          text={beat.text} p={p} start={beat.start} end={beat.end} reduced={reduced}/>}
+        {isLeader && beat.text && t!=='final' && <div className="leader-copy">
+          <RevealText
+            as={t==='title'?'h1':'h2'}
+            className={t==='title'?'film-title':`leader-title ${beat.small?'leader-title--small':''}`}
+            text={beat.text} p={p} start={beat.start} end={beat.end} reduced={reduced} soft={t==='intro'}/>
+          {beat.note && <motion.p className="leader-note" style={{opacity:noteOpacity}}>
+            {beat.note.split('\n').map((line,i)=><span key={i}><Accented text={line}/></span>)}
+          </motion.p>}
+        </div>}
       </div>
       <div className="sprocket sprocket--bottom" aria-hidden="true"/>
-      <div className="frame-tag"><span>{roman}</span><span>{String(index+1).padStart(2,'0')}/{total}</span></div>
+      {showTag && <div className="frame-tag"><span>{roman}</span><span>{String(index+1).padStart(2,'0')}/{total}</span></div>}
     </motion.article>
 
-    {!isLeader && <div className="frame-caption">
+    {!isLeader && (beat.text || beat.eyebrow) && <div className={`frame-caption ${beat.text.length>60?'frame-caption--long':''}`}>
       {beat.eyebrow && <motion.p className="eyebrow" style={{opacity:eyebrowOpacity}}>{beat.eyebrow}</motion.p>}
-      {beat.text && <RevealText as="h2" text={beat.text} p={p} start={beat.start} end={beat.end} reduced={reduced}/>}
+      {/* Nas composições aprovadas a frase já está impressa na arte: repeti-la embaixo
+          seria duplicar o texto na tela, então a legenda fica só para leitores de tela. */}
+      {beat.text && (beat.composed
+        ? <h2 className="sr-only">{plain(beat.text)}</h2>
+        : <RevealText as="h2" text={beat.text} p={p} start={beat.start} end={beat.end} reduced={reduced}/>)}
+      {beat.credit && <motion.p className="frame-credit" style={{opacity:noteOpacity}}>{beat.credit}</motion.p>}
       {t==='cast' && <p className="cast-credit">{project.actorLine}</p>}
     </div>}
     {/* No quadro final o convite (final-actions, em Cinema.tsx) já assume o rodapé da

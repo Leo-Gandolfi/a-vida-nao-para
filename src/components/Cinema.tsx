@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
-import { acts, beats, beatAt } from '../timeline';
+import { acts, beats, beatAt, plain } from '../timeline';
 import { useAudioController } from '../hooks/useAudioController';
 import FilmFrame from './FilmFrame';
 import FloatingElements from './FloatingElements';
@@ -44,7 +44,7 @@ export default function Cinema() {
   const reduced=Boolean(useReducedMotion());
   const audio=useAudioController(p);
   const [act,setAct]=useState(0);
-  const [movement,setMovement]=useState(1);
+  const [frame,setFrame]=useState(1);
   const [final,setFinal]=useState(false);
   const [quiet,setQuiet]=useState(false);
   const [dialog,setDialog]=useState(false);
@@ -52,7 +52,9 @@ export default function Cinema() {
   const [shareFallback,setShareFallback]=useState(false);
   const [reading,setReading]=useState(false);
   const chromeOpacity=useTransform(p,[0,.33,.34,.445,.45,1],[1,1,0,0,1,1]);
-  const finalOpacity=useTransform(p,[.975,.986,1],[0,1,1]);
+  const finalOpacity=useTransform(p,[.979,.987,1],[0,1,1]);
+  // Na cartela final o rodapé sai de cena: nada disputa atenção com o convite.
+  const footerOpacity=useTransform(p,[0,.33,.34,.445,.45,.975,.984,1],[1,1,0,0,1,1,0,0]);
 
   const mids=useMemo(()=>beats.map(b=>(b.start+b.end)/2),[]);
   const trackX=useTransform(
@@ -76,12 +78,22 @@ export default function Cinema() {
   // só é desmontado depois de o fade terminar (0,008), para não sumir de repente.
   const gateOpacity=useTransform(p,[0,.006],[1,0]);
   const [started,setStarted]=useState(p.get()>.008);
+  // Rolar a roda do mouse sozinha não é um "gesto do usuário" reconhecido pelo navegador
+  // para liberar áudio — só clique, toque e tecla contam (ver o efeito de som mais
+  // abaixo). Por isso a cortina de abertura é ela mesma um botão: tocar/clicar nela liga
+  // o som direto (gesto garantido) e dá um empurrãozinho na fita, como apertar "play".
+  function activateIntro() {
+    if(audio.available && !audio.enabled)void audio.toggle();
+    setStarted(true); // some já, não depende de cruzar o limiar de scroll do fade
+    const el=container.current;if(!el)return;
+    if(el.scrollLeft<24)el.scrollTo({left:24,behavior:'smooth'});
+  }
 
   useMotionValueEvent(p,'change',v=>{
     const next=acts.reduce((index,a,i)=>v>=a.at?i:index,0);
     setAct(old=>old===next?old:next);
-    const m=beatAt(v)?.movement??5;setMovement(old=>old===m?old:m);
-    const f=v>=.983;setFinal(old=>old===f?old:f);
+    const b=beatAt(v);if(b){const n=beats.indexOf(b)+1;setFrame(old=>old===n?old:n);}
+    const f=v>=.984;setFinal(old=>old===f?old:f);
     const q=v>=.34&&v<.45;setQuiet(old=>old===q?old:q);
     const s=v>.008;setStarted(old=>old||s);
   });
@@ -182,12 +194,12 @@ export default function Cinema() {
       setShareFallback(true);setShareMessage('Copie o endereço abaixo para compartilhar.');
     }
   }
-  const controls=<><button className="button button--primary" onClick={()=>setDialog(true)}>Quero conhecer o projeto <span aria-hidden="true">↗</span></button><button className="button button--ghost" onClick={share}>Compartilhar esta história</button></>;
+  const controls=<><button className="button button--primary" onClick={()=>setDialog(true)}>Quero conhecer o projeto <span className="button-arrow" aria-hidden="true">→</span></button><button className="button button--ghost" onClick={share}>Compartilhar esta história</button></>;
   return <>
     <a className="skip-link" href="#convite" onClick={e=>{e.preventDefault();jump(1);requestAnimationFrame(()=>document.querySelector<HTMLButtonElement>('#convite button')?.focus());}}>Ir para o convite</a>
-    {!started && <motion.div className="intro-gate" aria-hidden="true" style={{opacity:gateOpacity}}>
-      <p className="intro-gate__prompt"><span>Role a tela</span><span className="intro-gate__arrow" aria-hidden="true">→</span></p>
-    </motion.div>}
+    {!started && <motion.button type="button" className="intro-gate" style={{opacity:gateOpacity}} onClick={activateIntro}>
+      <span className="intro-gate__prompt"><span>Role ou toque para começar</span><span className="intro-gate__arrow" aria-hidden="true">→</span></span>
+    </motion.button>}
     <main ref={container} tabIndex={0} aria-label="A Vida Não Para — narrativa cinematográfica, em formato de rolo de filme. Arraste ou role para o lado." className={`scroll-viewport ${reading?'is-reading':''}`}>
       <div className="scroll-track">
       <div className="stage">
@@ -212,16 +224,16 @@ export default function Cinema() {
           <div className="header-actions"><button className="text-button" onClick={()=>setReading(true)}>Ler a história</button><button className="sound-button" aria-pressed={audio.enabled} disabled={!audio.available} onClick={audio.toggle} title={audio.available?'Ativar ou silenciar trilha':'As trilhas ainda não foram adicionadas'}><span aria-hidden="true">{audio.enabled?'◖))':'◖'}</span>{audio.enabled?'Som ligado':'Sem som'}</button></div>
         </motion.header>
         <motion.div className="final-actions" id="convite" style={{opacity:finalOpacity}} inert={!final}><p className="final-lede">O próximo capítulo pode começar com uma conversa.</p>{controls}<p role="status">{shareMessage}</p>{shareFallback&&<input aria-label="Endereço para compartilhar" readOnly value={window.location.href} onFocus={e=>e.target.select()}/>}</motion.div>
-        <motion.footer className="stage-footer" style={{opacity:chromeOpacity,pointerEvents:quiet?'none':'auto'}} inert={quiet}>
+        <motion.footer className="stage-footer" style={{opacity:footerOpacity,pointerEvents:quiet||final?'none':'auto'}} inert={quiet||final}>
           <div className="reel-label"><span>{acts[act].roman}</span><p>{acts[act].label}</p></div>
-          <span className="frame-counter">{final?'Uma história que continua':`Quadro ${String(movement).padStart(2,'0')} / 14`}</span>
+          <span className="frame-counter">{`Quadro ${String(frame).padStart(2,'0')} / ${beats.length}`}</span>
         </motion.footer>
         <motion.div className="progress-track" style={{opacity:chromeOpacity}}><motion.div style={{scaleX:p}}/></motion.div>
         <p className="sr-only" role="status">{audio.error}</p>
       </div>
       </div>
     </main>
-    {reading&&<div className="reading-view"><button className="text-button" onClick={()=>setReading(false)}>Voltar à experiência ↗</button><p className="eyebrow">A vida não para · O filme</p>{beats.filter(b=>b.text).map(b=><section key={b.id}><p>{b.eyebrow}</p><h2>{b.text}</h2></section>)}<div className="reading-actions">{controls}</div><p role="status">{shareMessage}</p>{shareFallback&&<input aria-label="Endereço para compartilhar" readOnly value={window.location.href} onFocus={e=>e.target.select()}/>}</div>}
-    <ProjectDialog open={dialog} onClose={()=>setDialog(false)}/>
+    {reading&&<div className="reading-view"><button className="text-button" onClick={()=>setReading(false)}>Voltar à experiência ↗</button><p className="eyebrow">A vida não para · O filme</p>{beats.filter(b=>b.text).map(b=><section key={b.id}><p>{b.eyebrow}</p><h2>{plain(b.text)}</h2>{b.note&&<p>{plain(b.note)}</p>}</section>)}<div className="reading-actions">{controls}</div><p role="status">{shareMessage}</p>{shareFallback&&<input aria-label="Endereço para compartilhar" readOnly value={window.location.href} onFocus={e=>e.target.select()}/>}</div>}
+    <ProjectDialog open={dialog} onClose={()=>setDialog(false)} onShare={share} shareMessage={shareMessage}/>
   </>;
 }

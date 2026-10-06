@@ -33,12 +33,13 @@ function Stars({p,window}:{p:MotionValue<number>;window:Window}) {
 }
 
 export default function StageSky({p,reduced}:{p:MotionValue<number>;reduced:boolean}) {
-  // Dourado quente na promessa → azul gélido na ruptura → breu no silêncio → calor de
-  // volta com Mallu → entardecer sóbrio no convite final.
+  // Dourado quente na promessa → azul gélido na ruptura → breu no silêncio → um "tchan"
+  // vívido e alegre quando o sol volta com Mallu (nada de tom empoeirado de deserto) →
+  // acomoda num dia quente e rico → entardecer sóbrio no convite final.
   const wash = useTransform(
     p,
-    [0,        .10,       .20,       .26,       .34,       .45,       .50,       .52,       .70,       .90,       1],
-    ['#241b11','#3a2a16','#241b11','#101b26','#050a10','#050a10','#16202c','#241b11','#2a2014','#241a12','#17130f'],
+    [0,        .10,       .20,       .26,       .34,       .45,       .48,       .51,       .58,       .70,       .90,       1],
+    ['#241b11','#3a2a16','#241b11','#101b26','#050a10','#050a10','#5c2418','#c85a24','#8a4318','#6b3618','#4a2814','#241a12'],
   );
   return <>
     <motion.div className="stage-wash" aria-hidden="true" style={{backgroundColor:wash}}/>

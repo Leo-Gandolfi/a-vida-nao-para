@@ -53,29 +53,35 @@ Ligar áudio exige um gesto reconhecido pelo navegador — rolar a *roda* do mou
 - `src/components/StageSky.tsx`: sol, lua, estrelas e a cor de fundo que muda com a história.
 - `src/components/FilmFrame.tsx`: cada quadro do rolo — foco/desfoque por proximidade do centro, revelação de texto palavra por palavra, tremor na ruptura, mídia por ato e a metamorfose Gledson → Sidney.
 - `src/components/FloatingElements.tsx`: os objetos simbólicos, suas profundidades e janelas de scroll.
-- `src/timeline.ts`: os 14 movimentos e seus submomentos, a mixagem (`audioMix`) e o timbre (`audioTone`), todos com intervalos de 0 a 1.
+- `src/timeline.ts`: as 28 telas do roteiro da página de captação (texto, foto, proporção da janela, destaques em laranja com `*palavra*`), a mixagem (`audioMix`) e o timbre (`audioTone`), todos com intervalos de 0 a 1.
 - `src/hooks/useAudioController.ts`: controlador funcional via Web Audio (ganho por faixa + um passa-baixa compartilhado), não apenas pseudocódigo.
 - `src/config.ts`: único lugar para injetar fotos, vídeos, música e canal de contato.
 - `src/styles.css`: direção de arte e adaptações de tela.
 
-`SLOT_VW` (em `Cinema.tsx`) precisa ficar sincronizado com a largura de `.frame-slot` somada ao `gap` de `.filmstrip-track` em `styles.css` — os dois números descrevem a mesma distância (um em JavaScript, o outro em CSS) e precisam concordar para o deslocamento horizontal corresponder exatamente ao que é desenhado. O mesmo vale para a largura de `.scroll-track` (`1800svw`) em relação ao número de quadros.
+`SLOT_VW` (em `Cinema.tsx`) precisa ficar sincronizado com a largura de `.frame-slot` somada ao `gap` de `.filmstrip-track` em `styles.css` — os dois números descrevem a mesma distância (um em JavaScript, o outro em CSS) e precisam concordar para o deslocamento horizontal corresponder exatamente ao que é desenhado. O mesmo vale para a largura de `.scroll-track` (`2200svw`) em relação ao número de quadros (≈ 76svw por quadro).
 
-`.stage` precisa manter `width:100vw` explícito em `styles.css` — sem isso, ao herdar a largura da fita larga (`1800svw`) que o envolve, o cabeçalho/rodapé "fixos" passam a rolar junto com o conteúdo em vez de ficar pinados na tela.
+`.stage` precisa manter `width:100vw` explícito em `styles.css` — sem isso, ao herdar a largura da fita larga (`2200svw`) que o envolve, o cabeçalho/rodapé "fixos" passam a rolar junto com o conteúdo em vez de ficar pinados na tela.
 
 React JSX usa `{/* INSERIR ... AQUI */}`; os demais marcadores usam comentários TypeScript.
 
 ## Atos
 
-| Progresso | Movimentos | Linguagem |
+| Progresso | Telas | Linguagem |
 |---|---|---|
-| 0–20% | 1–3 | Preto, memória quente, chegada dos gêmeos |
-| 20–45% | 4–5 | Frio, ausência, silêncio e Mallu |
-| 45–70% | 6–8 | Cuidado, repercussão nacional, canção |
-| 70–100% | 9–14 | Filme, elenco, impacto social e convite |
+| 0–20% | 1–6 | Prólogo sem fotos (VIDA e Marília em laranja), o casal, a chegada, Gledson com os gêmeos |
+| 20–45% | 7–11 | Frio, Samuel, silêncio e "Mallu ficou." |
+| 45–70,5% | 12–19 | Mallu na UTI, continuar, Fantástico 2015, a passagem do tempo, a canção, o encontro com Gustavo Mioto |
+| 70,5–100% | 20–28 | Sala de cinema, título, elenco, propósito, Amor de Criança, convite, Marília e cartela final |
+
+A ordem e os textos seguem o documento "PÁGINA_CAPTÇÃO" (numeração das telas). As composições aprovadas do Fantástico 2015 e da canção de 2026 já trazem a frase impressa na arte; nelas a legenda fica só para leitores de tela.
 
 O intervalo 39,5–41,5% é vazio intencional. O ato final permanece visível a 100%. Não há mais navegação por marcadores de ato no rodapé (removida a pedido — o nome do ato em texto continua lá, só os pontinhos clicáveis saíram); o link "Ir para o convite" (accessible skip-link) e `jump()` seguem disponíveis para navegação direta. Toque, teclado e scroll nativo funcionam sem interceptação.
 
 ## Assets reais já incluídos
+
+As fotos da página de captação estão em `public/media/` com nomes descritivos (`gledson-gemeos.jpg`, `samuel-sorriso.jpg`, `mallu-uti.jpg`, `continuar.jpg`, `fantastico-2015.jpg`, `dias-meses.jpg`, `meses-anos.jpg`, `piscina.jpg`, `cancao-2026.jpg`, `encontro-mioto.jpg`, `sala-cinema.jpg`, `silhueta-pai-filha.jpg`, `tela-cinema.jpg`, `amor-de-crianca.jpg`, `marilia.jpg`). Ainda pendentes: a foto dos sapatinhos rosa e azul (Tela 05 — hoje segue a foto das plaquinhas `a-espera.jpg`), o retrato de Sidney Sampaio e o canal de contato (`project.contactUrl`; enquanto for `null`, o botão "Quero conversar sobre o projeto" fica inativo com aviso).
+
+### Histórico
 
 Extraídos exclusivamente da apresentação enviada: foto de Gledson e Keila, preparativos dos gêmeos e registro dos irmãos. A fotografia dos irmãos está disponível no pacote, mas não foi usada como se fosse da UTI. O pôster da apresentação não foi usado como fotografia documental do elenco.
 
@@ -89,7 +95,7 @@ Use imagens WebP/AVIF em torno de 1600–2000 px para produção. Vídeos MP4 H.
 
 ## Dramaturgia sonora
 
-1. `openingTrack` e `finalTrack` apontam para `/media/tema-1.wav` ("A Vida Não Para — Tema 1"), fornecido junto ao projeto; "Impressionando os Anjos" ainda não foi recebida/autorizada, então o tema principal também cobre o clímax (64–100%) para a história não ficar em silêncio.
+1. `openingTrack` e `finalTrack` apontam para `/media/tema-1.wav` ("A Vida Não Para — Tema 1"), fornecido junto ao projeto; "Impressionando os Anjos" ainda não foi recebida/autorizada, então o tema principal também cobre o clímax (a partir do encontro com Gustavo Mioto, `MUSIC_IN` = 67,2%) para a história não ficar em silêncio.
 2. Caminhos de mídia ainda não fornecidos permanecem `null`, sem requisições inválidas.
 3. O usuário precisa ativar o som por clique; a narrativa funciona integralmente sem ele.
 4. Instrumental em 0–20%, saída em 20–30%, silêncio absoluto em 30–45%.

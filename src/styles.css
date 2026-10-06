@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
-:root{font-family:Inter,Arial,sans-serif;color:#f5eee2;background:#020202;font-synthesis:none;font-size:16px;--gold:#c8a775;--dim:#aaa59d;--mono:'JetBrains Mono',ui-monospace,monospace}
+:root{font-family:Inter,Arial,sans-serif;color:#f5eee2;background:#020202;font-synthesis:none;font-size:16px;--gold:#c8a775;--dim:#aaa59d;--mono:'JetBrains Mono',ui-monospace,monospace;
+  /* Laranja queimado da identidade: reservado para VIDA e Marília, as duas âncoras do roteiro. */
+  --ember:#de7a3c}
 *{box-sizing:border-box}
 body{margin:0}
 button,a,input{-webkit-tap-highlight-color:transparent}
@@ -18,7 +20,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .scroll-viewport{width:100vw;height:100vh;height:100dvh;overflow-x:auto;overflow-y:hidden;
   position:relative;scrollbar-width:none;-ms-overflow-style:none;overscroll-behavior-x:contain}
 .scroll-viewport::-webkit-scrollbar{display:none}
-.scroll-track{width:1800svw;height:100%;position:relative}
+.scroll-track{width:2200svw;height:100%;position:relative}
 .stage{width:100vw;height:100%;position:sticky;left:0;top:0;overflow:hidden;isolation:isolate;
   display:flex;align-items:center;
   /* Reserva a faixa do cabeçalho/rodapé fixos para que o quadro centralizado e sua
@@ -66,10 +68,12 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .reel-ribbon--top{top:0}
 .reel-ribbon--bottom{bottom:0}
 
-/* ===== Cortina de abertura: nada além do convite a rolar ===== */
-.intro-gate{position:fixed;inset:0;z-index:30;background:#000;pointer-events:none;
-  display:grid;place-items:center}
-.intro-gate__prompt{margin:0;display:flex;align-items:center;gap:16px;
+/* ===== Cortina de abertura: nada além do convite a rolar ou tocar =====
+   É o próprio botão — tocar/clicar em qualquer lugar da tela preta já liga o som
+   (gesto garantido, ao contrário da roda do mouse sozinha) e dá o primeiro empurrão. */
+.intro-gate{position:fixed;inset:0;z-index:30;background:#000;border:0;width:100%;
+  display:grid;place-items:center;cursor:pointer}
+.intro-gate__prompt{display:flex;align-items:center;gap:16px;
   font:500 .8rem/1 var(--mono);letter-spacing:.35em;text-transform:uppercase;color:#e9d9b8}
 .intro-gate__arrow{display:inline-block;color:var(--gold);animation:gate-nudge 1.6s ease-in-out infinite}
 @keyframes gate-nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(10px)}}
@@ -82,21 +86,25 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .floater-mote--warm{background:radial-gradient(circle,#f6e2b8 0%,#e9c98e55 38%,transparent 70%)}
 .floater-mote--cold{background:radial-gradient(circle,#c8d8e6 0%,#8fa6b855 38%,transparent 70%)}
 
-/* A luz quente que invade a tela quando "a vida não parou" */
-.light-sweep{position:absolute;top:0;bottom:0;left:0;width:60vw;z-index:3;pointer-events:none;
+/* A luz quente que invade a tela quando "a vida não parou" — o "tchan" da retomada,
+   mais vívida e alegre do que o resto da direção de arte (mais escura/contida), de
+   propósito: é o único instante da história que deve soar como um alívio explosivo. */
+.light-sweep{position:absolute;top:0;bottom:0;left:0;width:64vw;z-index:3;pointer-events:none;
   mix-blend-mode:screen;
-  background:linear-gradient(90deg,transparent,#c8a7751f 22%,#f0d6a355 50%,#c8a7751f 78%,transparent)}
+  background:linear-gradient(90deg,transparent,#f0a05a3d 20%,#ffcf8ac2 50%,#f0a05a3d 80%,transparent)}
 
 .filmstrip-track{display:flex;align-items:center;gap:4vw;padding-left:14vw;will-change:transform;position:relative;z-index:1}
 .frame-slot{flex:0 0 72vw;width:72vw;display:flex;flex-direction:column;align-items:center;gap:20px}
 
 
 .frame-card{position:relative;display:flex;flex-direction:column;gap:0;will-change:transform,opacity,filter;
-  width:min(72vw,calc(50dvh * 4 / 3))}
+  width:min(72vw,calc(50dvh * var(--ar,1.3333)))}
 .frame-card--title,.frame-card--final{width:min(72vw,calc(40dvh * 8 / 5))}
-.frame-window{position:relative;width:100%;aspect-ratio:4/3;background:#050403;overflow:hidden;
+.frame-window{position:relative;width:100%;aspect-ratio:var(--ar,1.3333);background:#050403;overflow:hidden;
   border-inline:10px solid #050403;box-shadow:0 40px 90px #000c,0 0 0 1px #c8a77530 inset}
 .frame-window>img,.frame-window>video{width:100%;height:100%;object-fit:cover;display:block}
+.photo-frame{width:100%;height:100%;will-change:transform}
+.photo-frame>img{width:100%;height:100%;object-fit:cover;display:block}
 .frame-tag{position:absolute;top:16px;right:0;z-index:2;display:flex;gap:10px;align-items:center;
   font:500 .68rem/1 var(--mono);letter-spacing:.1em;color:#f0e2c4;background:#000a;padding:6px 10px;
   border:1px solid #c8a77540}
@@ -105,14 +113,18 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
   background-image:repeating-linear-gradient(90deg,#050403 0 9px,transparent 9px 24px)}
 
 /* Legenda abaixo do quadro, para tratamentos com foto real */
-.frame-caption{width:min(72vw,calc(50dvh * 4 / 3));text-align:left;padding:0 1%}
+/* Mesma largura do quadro acima, para a legenda alinhar com a borda da foto. */
+.frame-caption{width:min(72vw,calc(50dvh * var(--ar,1.3333)));min-width:min(72vw,300px);text-align:left;padding:0 1%}
 .frame-caption .eyebrow{margin:0 0 10px}
 .frame-caption h2{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;font-size:clamp(1.5rem,2.5vw,2.5rem);
   line-height:1.18;letter-spacing:-.02em;white-space:pre-line;margin:0}
+.frame-caption--long h2{font-size:clamp(1.15rem,1.75vw,1.75rem);line-height:1.3}
 .frame-caption--leader{text-align:center;padding-top:4px}
+.frame-credit{margin:12px 0 0;font:.68rem/1.6 var(--mono);letter-spacing:.06em;color:var(--dim)}
 .cast-credit{margin-top:16px;color:var(--gold);font-size:.9rem;line-height:1.5}
 
 .eyebrow{font-size:.72rem;line-height:1.8;text-transform:uppercase;letter-spacing:.2em;color:var(--gold);margin:0}
+.accent{color:var(--ember)}
 
 /* Revelação de texto palavra por palavra */
 .reveal-line{display:block}
@@ -125,6 +137,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .leader-ring::before{content:'';position:absolute;inset:20%;border:1px solid #c8a77530;border-radius:50%}
 .leader-title{position:relative;z-index:1;font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;
   font-size:clamp(1.4rem,2.6vw,2.3rem);line-height:1.28;white-space:pre-line;margin:0}
+.leader-copy{position:relative;z-index:1;display:grid;justify-items:center;gap:clamp(12px,2.2vh,22px)}
+.leader-note{margin:0;font-size:clamp(.78rem,1.1vw,.95rem);line-height:1.75;letter-spacing:.04em;color:#cfc8bd}
+.leader-note>span{display:block;white-space:nowrap}
 .leader-title--small{font-family:Inter,Arial,sans-serif;font-size:clamp(.85rem,1.35vw,1.05rem);line-height:1.7;letter-spacing:0}
 .film-title{position:relative;z-index:1;font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;
   font-size:clamp(2.6rem,6.4vw,5.4rem);line-height:.9;letter-spacing:-.04em;white-space:pre-line;margin:0;
@@ -132,15 +147,27 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .frame-card--final .frame-window,.frame-card--title .frame-window{aspect-ratio:16/10}
 
 /* ===== Tratamentos específicos por ato ===== */
-.frame-card--couple .frame-window img{object-position:50% 32%;filter:sepia(.12) brightness(.86)}
+/* Fotografias reais: tratamento sutil, só para integrar à película — sem escurecer nem
+   dramatizar. O casal é a tela mais feliz da história; a piscina, a mais luminosa. */
+.frame-card--couple .frame-window img{object-position:50% 32%;filter:sepia(.08) brightness(.97)}
+.frame-card--photo .frame-window img,.frame-card--music .frame-window img{filter:sepia(.08) saturate(.95) contrast(1.03)}
+.frame-card--samuel .frame-window img{object-position:50% 34%}
+/* O zoom lento parte do rosto de Gledson, à direita, para nunca empurrá-lo para fora. */
+.frame-card--samuel .photo-frame{transform-origin:88% 40%}
+.frame-card--days .frame-window img{object-position:50% 30%}
+.frame-card--continues .frame-window img{object-position:50% 40%}
+.frame-card--relearn .frame-window img{filter:sepia(.04) brightness(1.06) saturate(1.02)}
+.frame-card--encounter .frame-window img{object-position:50% 22%}
+.frame-card--press .frame-window{background:#050403}
+.frame-card--press .frame-window img{object-fit:contain}
 .frame-card--cold .frame-window img{filter:saturate(.12) brightness(.42)}
 .frame-card--cold .frame-window{background:#04070a}
 .frame-card--void .frame-window{background:#020202}
 .memory-frame{width:100%;height:100%;display:grid;place-items:center;background:#000}
 .memory-frame>*{width:100%;height:100%;object-fit:contain;filter:brightness(.72)}
-.frame-card--warm .frame-window{background:#170d07}
-.frame-card--warm .frame-window img,.frame-card--warm .frame-window video{object-fit:contain;filter:sepia(.12)}
-.frame-card--social .frame-window img{filter:saturate(.6) brightness(.5)}
+.frame-card--why .frame-window img{filter:brightness(.86)}
+.frame-card--purpose .frame-window img{filter:saturate(.7) brightness(.6)}
+.frame-card--impact .frame-window img{object-position:50% 42%;filter:sepia(.06) contrast(1.02)}
 .frame-card--music .frame-window{background:radial-gradient(ellipse at 50% 45%,#3a2717,transparent 70%),#0a0705}
 .equalizer{display:flex;gap:7px;align-items:flex-end;height:34%}
 .equalizer span{width:9px;background:var(--gold);height:22%;border-radius:2px;animation:eq 1.15s ease-in-out infinite}
@@ -152,13 +179,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .cast-frame{position:relative;width:100%;height:100%}
 .cast-frame img,.cast-overlay{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 26%}
 
-.press-mini{display:flex;gap:4%;width:100%;height:100%;padding:7%;align-items:center;background:#0a0b0c}
-.press-card{flex:1;height:84%;padding:16px 18px;background:#171717;border-top:1px solid #75664e;
-  display:flex;flex-direction:column;justify-content:center;gap:10px;box-shadow:0 14px 40px #0008}
-.press-card span{font-family:Georgia,serif;font-size:clamp(1.5rem,2.6vw,2.3rem);color:var(--gold)}
-.press-card p{font-family:Georgia,serif;font-size:.82rem;line-height:1.42;margin:0}
-.press-card small{font-size:.62rem;text-transform:uppercase;letter-spacing:.16em;color:var(--dim)}
-.press-card img{width:100%;flex:1;object-fit:contain}
 
 /* ===== Poeira ambiente, grão de filme e vinheta ===== */
 .dust{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden}
@@ -191,7 +211,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .progress-track>div{height:100%;background:var(--gold);transform-origin:left}
 
 .final-actions{position:absolute;z-index:12;left:5vw;right:5vw;bottom:11vh;display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
-.button{text-decoration:none;display:inline-flex;justify-content:center;align-items:center;gap:32px;border-radius:2px;min-height:52px;padding:17px 24px;font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;transition:background .3s,box-shadow .3s;line-height:1.5}
+.button{text-decoration:none;display:inline-flex;justify-content:center;align-items:center;gap:18px;border-radius:2px;min-height:52px;padding:17px 24px;font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;transition:background .3s,box-shadow .3s;line-height:1.5}
 .button--primary{background:#d6b888;color:#17110a;border:1px solid #ead0a5;box-shadow:0 0 35px #d4b17c1c,inset 0 1px 0 #fff6;
   animation:cta-glow 3.6s ease-in-out infinite}
 .button--primary:hover{background:#efcf9f;box-shadow:0 0 45px #d4b17c35;animation:none}
@@ -199,22 +219,27 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
   0%,100%{box-shadow:0 0 28px #d4b17c1c,inset 0 1px 0 #fff6}
   50%{box-shadow:0 0 52px #f0cf9a4d,inset 0 1px 0 #fff8}
 }
-.button--ghost{background:#0003;border:1px solid #726a5d;color:#e1dace}
+.button-arrow{font-size:1.05rem;line-height:1;font-variant-emoji:text}
+/* Secundário: transparente, contorno fino, menos peso que o convite principal. */
+.button--ghost{background:transparent;border:1px solid #ffffff38;color:#d9d1c4;font-weight:400;min-height:44px;padding:12px 22px;font-size:.68rem}
 .button--ghost:hover{background:#ffffff0d}
 .final-actions>p{width:100%;margin:0;text-align:center;color:var(--dim);font-size:.8rem}
 .final-lede{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(1.1rem,2vw,1.5rem);color:#e7dcc8!important;margin:0 0 6px!important}
 .final-actions input,.reading-view input{max-width:100%;width:400px;padding:12px}
 
-.project-dialog{color:#eee6d8;background:#11100e;border:1px solid #544838;padding:48px;width:min(600px,92vw);max-height:85dvh;overflow:auto}
+.project-dialog{color:#eee6d8;background:#0d0b09;border:1px solid #c8a77566;padding:52px 48px 44px;width:min(600px,92vw);max-height:85dvh;overflow:auto}
 .project-dialog::backdrop{background:#000c;backdrop-filter:blur(8px)}
-.project-dialog h2{font:400 clamp(2rem,4vw,3rem)/1.1 'Cormorant Garamond',Georgia,serif}
-.project-dialog>p{line-height:1.7;font-size:1rem;color:#b9b2a8}
+.project-dialog h2{font:400 clamp(2rem,4vw,3rem)/1.1 'Cormorant Garamond',Georgia,serif;margin:18px 0 26px}
+.project-dialog>p{line-height:1.7;font-size:1rem;color:#e6dccb;margin:0 0 14px}
 .project-dialog>.eyebrow{font-size:.75rem;color:var(--gold)}
-.dialog-close{position:absolute;right:18px;top:12px;border:0;font-size:2rem}
-.project-fact{border-block:1px solid #544838;display:flex;align-items:center;gap:25px;padding:10px 0;margin:25px 0}
-.project-fact strong{font:4rem Georgia;color:var(--gold)}
-.project-fact p{font-size:.9rem;line-height:1.6}
-.project-dialog .contact-pending{font-size:.85rem;color:var(--gold)}
+.dialog-close{position:absolute;right:14px;top:10px;border:0;font-size:2rem;line-height:1;padding:6px 10px;color:#e6dccb}
+.project-purpose{margin:34px 0;padding-left:20px;border-left:1px solid #c8a77566}
+.project-purpose p{margin:0 0 12px;font:400 clamp(1.15rem,2vw,1.35rem)/1.45 'Cormorant Garamond',Georgia,serif;color:#f1e7d6}
+.project-purpose p:last-child{margin:0;font:400 .95rem/1.7 Inter,Arial,sans-serif;color:var(--gold)}
+.project-dialog>.project-credits{font-size:.85rem;color:#b9b2a8;margin-bottom:30px}
+.dialog-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.dialog-actions .button--primary:disabled{opacity:1;cursor:default;animation:none}
+.project-dialog .contact-pending{font-size:.8rem;color:var(--dim);margin:14px 0 0}
 
 .skip-link{position:fixed;top:10px;left:10px;transform:translateY(-200%);z-index:50;background:#fff;color:#000;padding:15px}
 .skip-link:focus{transform:translateY(0)}
@@ -239,6 +264,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
   .frame-counter{min-width:0;font-size:.65rem;width:150px;line-height:1.6}
   .final-actions{bottom:9vh;gap:10px}
   .final-actions .button{width:100%;max-width:330px;min-height:48px;padding:13px 16px;font-size:.7rem}
+  .final-actions .button--ghost{min-height:42px;font-size:.64rem}
+  .dialog-actions .button{width:100%}
   .project-dialog{padding:35px 25px}
   .eyebrow{font-size:.68rem;letter-spacing:.13em}
   .frame-tag{font-size:.6rem;padding:5px 8px}

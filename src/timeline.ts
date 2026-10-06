@@ -1,41 +1,80 @@
-export type Treatment = 'intro' | 'couple' | 'arrival' | 'cold' | 'void' | 'warm' | 'press' | 'music' | 'title' | 'cast' | 'social' | 'invite' | 'final';
-export type Beat = { id: string; movement: number; start: number; end: number; text: string; eyebrow?: string; treatment: Treatment; small?: boolean; };
+import type { media } from './config';
+
+export type Treatment = 'intro' | 'couple' | 'arrival' | 'photo' | 'cold' | 'void' | 'press' | 'music' | 'title' | 'cast' | 'social' | 'invite' | 'final';
+export type Beat = {
+  id: string; start: number; end: number;
+  /** Texto principal. Palavras entre *asteriscos* ganham o laranja da identidade (VIDA, Marília). */
+  text: string;
+  eyebrow?: string;
+  /** Linhas menores abaixo do texto principal, dentro do quadro (cada linha nunca quebra). */
+  note?: string;
+  treatment: Treatment;
+  small?: boolean;
+  /** Fotografia do quadro (chave de `media` em config.ts). */
+  photo?: keyof typeof media;
+  /** Proporção da janela do quadro (largura/altura). Padrão 4/3. */
+  ar?: number;
+  /** A arte já traz o texto impresso: a legenda fica só para leitores de tela. */
+  composed?: boolean;
+  /** Identificação discreta, quase documental, abaixo da legenda. */
+  credit?: string;
+};
+
+// Proporções iguais às das fotos enviadas: nada de rosto cortado nas bordas.
+const SQUARE = 1;
+
 export const beats: Beat[] = [
-  {id:'opening',movement:1,start:0,end:.036,text:'Algumas histórias são escritas.',eyebrow:'Uma história real · Marília, São Paulo',treatment:'intro'},
-  {id:'life',movement:1,start:.036,end:.070,text:'Outras, a vida escreve primeiro.',treatment:'intro'},
-  {id:'real',movement:1,start:.070,end:.090,text:'Esta aconteceu de verdade.',treatment:'intro',small:true},
-  {id:'couple',movement:2,start:.090,end:.145,text:'Uma vida comum.\nUm casal.\nO desejo de formar uma família.',eyebrow:'Gledson & Keila',treatment:'couple'},
-  {id:'arrival',movement:3,start:.145,end:.200,text:'E a vida respondeu em dobro.',eyebrow:'Samuel e Mallu estavam chegando.',treatment:'arrival'},
-  {id:'birth',movement:4,start:.200,end:.242,text:'O nascimento.',eyebrow:'27 de junho de 2015',treatment:'cold'},
-  {id:'hours',movement:4,start:.242,end:.280,text:'E seis horas depois…',treatment:'cold'},
-  {id:'keila',movement:4,start:.280,end:.340,text:'A despedida de Keila.',treatment:'cold'},
-  {id:'samuel',movement:5,start:.340,end:.395,text:'Onze meses depois,\nSamuel também partiu.',treatment:'void',small:true},
+  // Ato I — o amor e a promessa
+  {id:'opening',start:0,end:.030,text:'Algumas histórias são escritas.',treatment:'intro'},
+  {id:'life',start:.030,end:.062,text:'Outras, a\n*VIDA* escreve\nprimeiro.',treatment:'intro'},
+  {id:'real',start:.062,end:.090,text:'Esta aconteceu de verdade.',note:'Uma história real.\n*Marília, São Paulo.*',treatment:'intro'},
+  {id:'couple',start:.090,end:.130,text:'Uma vida comum.\nUm casal.\nO sonho de formar uma família.',eyebrow:'Gledson & Keila',treatment:'couple'},
+  {id:'arrival',start:.130,end:.165,text:'E a vida respondeu em dobro.',eyebrow:'Samuel e Mallu estavam chegando.',treatment:'arrival'},
+  {id:'twins',start:.165,end:.200,text:'',treatment:'photo',photo:'twins2',ar:SQUARE},
+  // Ato II — a ruptura e o silêncio
+  {id:'birth',start:.200,end:.240,text:'O nascimento.',eyebrow:'27 de junho de 2015',treatment:'cold'},
+  {id:'hours',start:.240,end:.275,text:'E seis horas depois…',treatment:'cold'},
+  {id:'keila',start:.275,end:.330,text:'A despedida de Keila.',treatment:'cold'},
+  {id:'samuel',start:.330,end:.395,text:'Samuel também partiu.',eyebrow:'Onze meses depois.',treatment:'photo',photo:'samuel',ar:622/805},
   // .395–.415: intervalo intencional. Nenhuma imagem, palavra ou som.
-  {id:'mallu',movement:5,start:.415,end:.450,text:'Mallu ficou.',treatment:'void'},
-  {id:'continues',movement:6,start:.450,end:.515,text:'A vida não parou.',treatment:'warm'},
-  {id:'care',movement:6,start:.515,end:.560,text:'',treatment:'warm'},
-  {id:'news2015',movement:7,start:.560,end:.600,text:'Em 2015, o Brasil conheceu uma história.',treatment:'press'},
-  {id:'news2026',movement:7,start:.600,end:.640,text:'Onze anos depois, descobriu que ela não havia terminado.',treatment:'press'},
-  {id:'song',movement:8,start:.640,end:.700,text:'Impressionando os Anjos',eyebrow:'Gustavo Mioto · Uma história que também se tornou canção',treatment:'music'},
-  {id:'turn',movement:9,start:.700,end:.735,text:'Mas essa história ainda não terminou.',treatment:'intro'},
-  {id:'film',movement:9,start:.735,end:.780,text:'A VIDA\nNÃO PARA',eyebrow:'O filme',treatment:'title'},
-  {id:'cast',movement:10,start:.780,end:.840,text:'Uma história vivida agora começa a ganhar vida no cinema.',treatment:'cast'},
-  {id:'why',movement:11,start:.840,end:.870,text:'Por que esse filme precisa existir?',treatment:'social'},
-  {id:'purpose',movement:12,start:.870,end:.910,text:'Não queremos apenas transformar uma história em filme.',treatment:'social'},
-  {id:'impact',movement:12,start:.910,end:.945,text:'Queremos transformar um filme em histórias que continuam.',eyebrow:'20 ações gratuitas de exibição e diálogo previstas no projeto',treatment:'social'},
-  {id:'invitation',movement:13,start:.945,end:.975,text:'Nenhuma história como esta chega longe sozinha.',eyebrow:'Talvez você possa fazer parte do próximo capítulo.',treatment:'invite'},
-  {id:'final',movement:14,start:.975,end:1,text:'A VIDA\nNÃO PARA',eyebrow:'O filme · Inspirado em uma história real',treatment:'final'},
+  {id:'mallu',start:.415,end:.450,text:'Mallu ficou.',treatment:'void'},
+  // Ato III — a luz e o recomeço
+  {id:'malluUti',start:.450,end:.485,text:'',treatment:'photo',photo:'malluUti',ar:SQUARE},
+  {id:'continues',start:.485,end:.520,text:'E eu precisava continuar.',treatment:'photo',photo:'continues',ar:SQUARE},
+  {id:'news2015',start:.520,end:.552,text:'Em 2015, o Brasil conheceu essa história.',treatment:'press',photo:'news2015',ar:910/703,composed:true},
+  {id:'days',start:.552,end:.582,text:'Os dias viraram meses.',treatment:'photo',photo:'days',ar:372/493},
+  {id:'years',start:.582,end:.612,text:'Os meses, anos.',treatment:'photo',photo:'years',ar:SQUARE},
+  {id:'relearn',start:.612,end:.640,text:'E nós fomos aprendendo a viver de novo.',treatment:'photo',photo:'relearn',ar:SQUARE},
+  {id:'song',start:.640,end:.672,text:'Onze anos depois, o Brasil descobriu que essa história também havia se tornado canção.',treatment:'press',photo:'song2026',ar:SQUARE,composed:true},
+  {id:'encounter',start:.672,end:.705,text:'Até que a vida me levou ao encontro de quem transformou essa história em canção.',treatment:'music',photo:'mioto',ar:411/505,credit:'Gledson Fonseca + Gustavo Mioto · FACILPA, Marília'},
+  // Ato IV — o propósito e o convite
+  {id:'destiny',start:.705,end:.740,text:'E talvez essa história ainda tivesse mais um destino.',treatment:'photo',photo:'cinemaRoom',ar:SQUARE},
+  {id:'film',start:.740,end:.775,text:'A VIDA\nNÃO PARA',eyebrow:'O filme',treatment:'title'},
+  {id:'cast',start:.775,end:.830,text:'Uma história vivida agora começa a ganhar vida no cinema.',treatment:'cast'},
+  {id:'why',start:.830,end:.860,text:'Por que esse filme precisa existir?',treatment:'social',photo:'social'},
+  {id:'purpose',start:.860,end:.890,text:'Não queremos apenas transformar uma história em filme.',treatment:'social',photo:'screen'},
+  {id:'impact',start:.890,end:.920,text:'Parte da renda do filme poderá apoiar projetos como o Amor de Criança.',treatment:'social',photo:'impact',ar:721/844},
+  {id:'invitation',start:.920,end:.948,text:'Nenhuma história como esta chega longe sozinha.',eyebrow:'Talvez você possa fazer parte do próximo capítulo.',treatment:'invite'},
+  {id:'marilia',start:.948,end:.978,text:'Foi em *Marília* que esta história começou.\nFoi daqui que ela alcançou o Brasil.\nE é daqui que queremos levar o próximo capítulo ainda mais longe.',treatment:'photo',photo:'marilia'},
+  {id:'final',start:.978,end:1,text:'A VIDA\nNÃO PARA',eyebrow:'O filme · Inspirado em uma história real',treatment:'final'},
 ];
 export const acts = [
   {at:0,label:'O amor e a promessa',roman:'I'},
   {at:.2,label:'A ruptura e o silêncio',roman:'II'},
   {at:.45,label:'A luz e o recomeço',roman:'III'},
-  {at:.7,label:'O propósito e o convite',roman:'IV'},
+  {at:.705,label:'O propósito e o convite',roman:'IV'},
 ];
+/** Remove a marcação de destaque (*palavra*) — para leitura corrida e textos alternativos. */
+export const plain = (text:string) => text.replace(/\*/g,'');
 export const clamp = (n:number) => Math.max(0,Math.min(1,n));
+
+/** A canção entra no encontro com Gustavo Mioto ("Até que a vida me levou…"): o tema de
+ * abertura se despede durante a tela de 2026 e a trilha final assume a partir daqui. */
+export const MUSIC_IN = .672;
 export function audioMix(p:number) {
-  const opening = p < .20 ? .30 : p < .30 ? .30 * (1-(p-.2)/.10) : p >= .45 && p < .64 ? .24 * clamp((p-.45)/.025) * clamp((.64-p)/.025) : 0;
-  const finale = p >= .64 ? .46 * clamp((p-.64)/.025) * (p >= .70 ? .56 : 1) : 0;
+  const opening = p < .20 ? .30 : p < .30 ? .30 * (1-(p-.2)/.10) : p >= .45 && p < MUSIC_IN ? .24 * clamp((p-.45)/.025) * clamp((MUSIC_IN-p)/.025) : 0;
+  // Depois do encontro, a trilha baixa um pouco (sem degrau) para deixar o propósito respirar.
+  const finale = p >= MUSIC_IN ? .46 * clamp((p-MUSIC_IN)/.02) * (1 - .44*clamp((p-.705)/.03)) : 0;
   return { opening, finale, silence: p >= .30 && p < .45 };
 }
 

@@ -24,45 +24,40 @@ type Spec = {
 };
 
 const FLOATERS: Spec[] = [
-  // Ato I — a promessa: luz, pétalas, calor.
+  // Ato I — a promessa: só luz quente. Nenhum ícone disputa com as primeiras fotografias
+  // reais (o casal, a chegada, os gêmeos): elas são o principal elemento visual.
   {id:'i-mote-a',  kind:'mote',   tone:'warm', from:0,   to:.16, depth:.18, top:22, size:120, spin:0},
-  {id:'i-petal-a', kind:'petal',  tone:'warm', from:.02, to:.19, depth:.72, top:66, size:58,  spin:150},
   {id:'i-mote-b',  kind:'mote',   tone:'warm', from:.06, to:.22, depth:.42, top:38, size:80,  spin:0},
-  {id:'i-petal-b', kind:'petal',  tone:'warm', from:.10, to:.26, depth:.30, top:14, size:44,  spin:-120},
 
   // Ato II — a ruptura: a pulseirinha de maternidade atravessa devagar, quase nítida.
-  {id:'ii-mote',   kind:'mote',   tone:'cold', from:.21, to:.36, depth:.22, top:26, size:96,  spin:0},
-  {id:'ii-band',   kind:'bracelet',tone:'cold',from:.24, to:.385,depth:.55, top:58, size:120, spin:24},
-  {id:'ii-petal',  kind:'petal',  tone:'cold', from:.26, to:.39, depth:.78, top:80, size:66,  spin:200},
+  // Tudo sai de cena antes da foto de Samuel (33%).
+  {id:'ii-mote',   kind:'mote',   tone:'cold', from:.21, to:.33, depth:.22, top:26, size:96,  spin:0},
+  {id:'ii-band',   kind:'bracelet',tone:'cold',from:.215,to:.33, depth:.55, top:58, size:120, spin:24},
+  {id:'ii-petal',  kind:'petal',  tone:'cold', from:.23, to:.33, depth:.78, top:80, size:66,  spin:200},
 
   // 39,5%–45%: vazio absoluto. Nenhum objeto agendado — de propósito.
 
-  // Ato III — a continuidade: papéis ao vento, o livro, folhas.
+  // Ato III — a travessia em fotos documentais: apenas luz ao fundo, sem efeito.
   {id:'iii-mote',  kind:'mote',   tone:'warm', from:.46, to:.60, depth:.20, top:34, size:110, spin:0},
-  {id:'iii-paper-a',kind:'paper', tone:'warm', from:.47, to:.62, depth:.62, top:18, size:70,  spin:-90},
-  {id:'iii-paper-b',kind:'paper', tone:'warm', from:.50, to:.66, depth:.36, top:46, size:52,  spin:130},
-  {id:'iii-book',  kind:'book',   tone:'warm', from:.52, to:.68, depth:.80, top:64, size:104, spin:-18},
-  {id:'iii-leaf',  kind:'leaf',   tone:'warm', from:.56, to:.72, depth:.46, top:82, size:48,  spin:170},
 
-  // "Impressionando os Anjos": a canção ganha uma nota musical, leve, quase no colo do rolo.
-  {id:'song-note-a',kind:'note',  tone:'warm', from:.635,to:.700, depth:.58, top:20, size:56,  spin:40},
-  {id:'song-note-b',kind:'note',  tone:'warm', from:.655,to:.715, depth:.30, top:78, size:40,  spin:-30},
+  // A história que virou canção / o encontro com Gustavo Mioto: notas musicais, por trás do rolo.
+  {id:'song-note-a',kind:'note',  tone:'warm', from:.642,to:.700, depth:.58, top:20, size:56,  spin:40},
+  {id:'song-note-b',kind:'note',  tone:'warm', from:.660,to:.708, depth:.30, top:78, size:40,  spin:-30},
 
-  // "Mas essa história ainda não terminou" / "A VIDA NÃO PARA" / elenco: a câmera do
-  // set voa pela tela — é o momento em que a história vira filme de verdade.
-  {id:'cast-clapper',kind:'clapper',tone:'warm',from:.700,to:.760, depth:.66, top:24, size:92, spin:-22},
+  // A sala de cinema / "A VIDA NÃO PARA" / elenco: a claquete e a câmera do set voam pela
+  // tela — é o momento em que a história vira filme de verdade.
+  {id:'cast-clapper',kind:'clapper',tone:'warm',from:.705,to:.765, depth:.60, top:24, size:92, spin:-22},
   {id:'cast-camera', kind:'camera', tone:'warm',from:.760,to:.830, depth:.58, top:70, size:104,spin:14},
 
-  // "Por que esse filme precisa existir" / "20 ações gratuitas": o cuidado ganha forma.
-  {id:'impact-heart-a',kind:'heart',tone:'warm',from:.840,to:.900, depth:.34, top:26, size:60, spin:0},
-  {id:'impact-heart-b',kind:'heart',tone:'warm',from:.905,to:.945, depth:.70, top:74, size:48, spin:0},
+  // Por que existir / propósito / Amor de Criança: o cuidado ganha forma, sem cobrir a foto.
+  {id:'impact-heart-a',kind:'heart',tone:'warm',from:.830,to:.890, depth:.34, top:26, size:60, spin:0},
+  {id:'impact-heart-b',kind:'heart',tone:'warm',from:.880,to:.925, depth:.40, top:76, size:48, spin:0},
 
   // "Talvez você possa fazer parte do próximo capítulo": o convite chega como carta.
-  {id:'invite-envelope',kind:'envelope',tone:'warm',from:.945,to:1, depth:.50, top:66, size:78, spin:-8},
+  {id:'invite-envelope',kind:'envelope',tone:'warm',from:.912,to:.962, depth:.50, top:66, size:78, spin:-8},
 
-  // Ato IV — o propósito: luz calma, sem ruído visual.
+  // Ato IV — luz calma, sem ruído visual.
   {id:'iv-mote-a', kind:'mote',   tone:'warm', from:.72, to:.88, depth:.28, top:30, size:100, spin:0},
-  {id:'iv-petal',  kind:'petal',  tone:'warm', from:.78, to:.94, depth:.68, top:72, size:54,  spin:140},
   {id:'iv-mote-b', kind:'mote',   tone:'warm', from:.86, to:1,   depth:.44, top:48, size:86,  spin:0},
 ];
 

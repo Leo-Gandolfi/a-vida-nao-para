@@ -3,26 +3,34 @@
  */
 export const media = {
   couple: '/media/gledson-keila.png',
+  // INSERIR A FOTO DOS SAPATINHOS (rosa e azul, Keila e Gledson desfocados ao fundo) AQUI
+  // quando for enviada — o brief da página de captação pede essa imagem para a Tela 05.
   arrival: '/media/a-espera.jpg',
-  // Ilustração fictícia (não é uma fotografia real de Gledson e Mallu). INSERIR FOTO REAL EQUIVALENTE QUANDO DISPONÍVEL.
-  family: '/media/family-illustration.svg',
-  // Segunda ilustração fictícia, usada apenas no submomento "care" para não repetir a imagem de "family".
-  familyCare: '/media/care-illustration.svg',
-  twins: '/media/samuel-mallu.jpg',
+  twins2: '/media/gledson-gemeos.jpg',          // Gledson de camiseta amarela com Samuel e Mallu
+  samuel: '/media/samuel-sorriso.jpg',
+  malluUti: '/media/mallu-uti.jpg',
+  continues: '/media/continuar.jpg',
+  news2015: '/media/fantastico-2015.jpg',       // composição aprovada (texto já impresso na arte)
+  days: '/media/dias-meses.jpg',
+  years: '/media/meses-anos.jpg',
+  relearn: '/media/piscina.jpg',
+  song2026: '/media/cancao-2026.jpg',           // composição aprovada (texto já impresso na arte)
+  mioto: '/media/encontro-mioto.jpg',           // Gledson e Gustavo Mioto na FACILPA
+  cinemaRoom: '/media/sala-cinema.jpg',
+  social: '/media/silhueta-pai-filha.jpg',
+  screen: '/media/tela-cinema.jpg',
+  impact: '/media/amor-de-crianca.jpg',
+  marilia: '/media/marilia.jpg',
   ultrasound: null as string | null, // INSERIR VÍDEO DO ULTRASSOM AQUI
   neonatal: null as string | null, // INSERIR FOTO DA UTI NEONATAL AQUI
-  care: null as string | null, // INSERIR VÍDEO GLEDSON FAZENDO MASSAGEM EM MALLU AQUI
-  school: null as string | null, // INSERIR VÍDEO MALLU NA ESCOLA AQUI
-  news2015: null as string | null, // INSERIR RECORTE REAL FANTÁSTICO 2015 AQUI
-  news2026: null as string | null, // INSERIR RECORTE REAL FANTÁSTICO 2026 AQUI
-  mioto: null as string | null, // INSERIR FOTO DO ENCONTRO REAL COM GUSTAVO MIOTO AQUI
   gledsonPortrait: null as string | null, // INSERIR FOTO GLEDSON AQUI, mesmo enquadramento de Sidney
   sidneyPortrait: null as string | null, // INSERIR FOTO SIDNEY AQUI, alinhar olhos antes do crossfade
-  social: null as string | null, // INSERIR FOTO DE CRIANÇAS E FAMÍLIAS AQUI
+  // Usada no elenco enquanto os retratos de Gledson/Sidney não chegam.
+  family: '/media/family-illustration.svg',
   // Tema instrumental do projeto, fornecido localmente ("A Vida Não Para - Tema 1").
   openingTrack: '/media/tema-1.wav',
   // "Impressionando os Anjos" ainda não foi fornecida/autorizada; o tema principal
-  // também cobre o clímax (64–100%) para não deixar a história em silêncio.
+  // cobre o clímax (a partir do encontro com Gustavo Mioto) para não deixar silêncio.
   finalTrack: '/media/tema-1.wav',
 };
 export const project = {

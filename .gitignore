@@ -9,3 +9,6 @@ dist/
 
 # Rascunho local de estilos, não importado por nenhum componente.
 src/styles copy.css
+
+# Briefs e documentos de trabalho não são publicados
+*.docx
