@@ -95,7 +95,7 @@ O intervalo 39,5–41,5% é vazio intencional. O ato final permanece visível a 
 
 ## Assets reais já incluídos
 
-As fotos da página de captação estão em `public/media/` com nomes descritivos (`gledson-gemeos.jpg`, `samuel-sorriso.jpg`, `mallu-uti.jpg`, `continuar.jpg`, `fantastico-2015.jpg`, `dias-meses.jpg`, `meses-anos.jpg`, `piscina.jpg`, `cancao-2026.jpg`, `encontro-mioto.jpg`, `sala-cinema.jpg`, `silhueta-pai-filha.jpg`, `tela-cinema.jpg`, `amor-de-crianca.jpg`, `marilia.jpg`). Ainda pendentes: a foto dos sapatinhos rosa e azul (Tela 05 — hoje segue a foto das plaquinhas `a-espera.jpg`), o retrato de Sidney Sampaio e o canal de contato (`project.contactUrl`; enquanto for `null`, o botão "Quero conversar sobre o projeto" fica inativo com aviso).
+As fotos da página de captação estão em `public/media/` com nomes descritivos (`gledson-gemeos.jpg`, `samuel-sorriso.jpg`, `mallu-uti.jpg`, `continuar.jpg`, `fantastico-2015.jpg`, `dias-meses.jpg`, `meses-anos.jpg`, `piscina.jpg`, `cancao-2026.jpg`, `encontro-mioto.jpg`, `sala-cinema.jpg`, `silhueta-pai-filha.jpg`, `tela-cinema.jpg`, `amor-de-crianca.jpg`, `marilia.jpg`). Ainda pendentes: a foto dos sapatinhos rosa e azul (Tela 05 — hoje segue a foto das plaquinhas `a-espera.jpg`), o retrato de Sidney Sampaio O botão "Quero conversar sobre o projeto" abre o WhatsApp de Gledson (`project.contactUrl`).
 
 ### Histórico
 

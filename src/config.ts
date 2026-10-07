@@ -35,7 +35,8 @@ export const media = {
   finalTrack: '/media/tema-1.wav',
 };
 export const project = {
-  contactUrl: null as string | null, // INSERIR URL REAL: https://wa.me/55... ou mailto:...
+  // WhatsApp de Gledson (14 99733-7955), com uma mensagem inicial já escrita.
+  contactUrl: 'https://wa.me/5514997337955?text=Ol%C3%A1%2C%20Gledson%21%20Vim%20pela%20p%C3%A1gina%20A%20Vida%20N%C3%A3o%20Para%20e%20quero%20conversar%20sobre%20o%20projeto%20do%20filme.' as string | null,
   actorLine: 'Sidney Sampaio será Gledson.', // Roteiro do solicitante; ofícios dizem “convidamos”. Validar antes de publicar.
   title: 'A VIDA NÃO PARA',
 };

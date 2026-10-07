@@ -16,7 +16,7 @@ export default function ProjectDialog({open,onClose,onShare,shareMessage}:{open:
     <p className="project-credits">Um projeto de Instituto VOLTE, Estúdio Mágico Filmes e Sapiência Filmes.</p>
     <div className="dialog-actions">
       {project.contactUrl
-        ? <a className="button button--primary" href={project.contactUrl}>Quero conversar sobre o projeto <span className="button-arrow" aria-hidden="true">→</span></a>
+        ? <a className="button button--primary" href={project.contactUrl} target="_blank" rel="noopener">Quero conversar sobre o projeto <span className="button-arrow" aria-hidden="true">→</span></a>
         : <button className="button button--primary" disabled aria-describedby="contact-pending">Quero conversar sobre o projeto <span className="button-arrow" aria-hidden="true">→</span></button>}
       <button className="button button--ghost" onClick={onShare}>Compartilhar esta história</button>
     </div>
