@@ -1,4 +1,5 @@
 import { motion, useTransform, type MotionValue } from 'framer-motion';
+import { isTouch, useInWindow } from '../hooks/useInWindow';
 
 /** Objetos simbólicos que atravessam a tela fora do rolo de filme, cada um numa
  * "profundidade" diferente.
@@ -49,8 +50,8 @@ const FLOATERS: Spec[] = [
   {id:'rebirth-fly-b',kind:'butterfly',tone:'warm',from:.490,to:.560,depth:.42,top:26,size:40, spin:25},
   {id:'iii-mote-b',kind:'mote',   tone:'warm', from:.52, to:.66, depth:.38, top:60, size:90,  spin:0},
   // "E nós fomos aprendendo a viver de novo.": borboletas em volta da foto da piscina.
-  {id:'relearn-fly-a',kind:'butterfly',tone:'warm',from:.592,to:.652,depth:.50,top:74,size:50, spin:15},
-  {id:'relearn-fly-b',kind:'butterfly',tone:'warm',from:.605,to:.660,depth:.32,top:22,size:38, spin:-25},
+  {id:'relearn-fly-a',kind:'butterfly',tone:'warm',from:.580,to:.625,depth:.50,top:74,size:50, spin:15},
+  {id:'relearn-fly-b',kind:'butterfly',tone:'warm',from:.590,to:.632,depth:.32,top:22,size:38, spin:-25},
 
   // A história que virou canção / o encontro com Gustavo Mioto: notas musicais, por trás do rolo.
   {id:'song-note-a',kind:'note',  tone:'warm', from:.642,to:.700, depth:.58, top:20, size:56,  spin:40},
@@ -59,7 +60,7 @@ const FLOATERS: Spec[] = [
 
   // A sala de cinema / "A VIDA NÃO PARA" / elenco: a claquete e a câmera do set voam pela
   // tela — é o momento em que a história vira filme de verdade.
-  {id:'cast-clapper',kind:'clapper',tone:'warm',from:.705,to:.765, depth:.60, top:24, size:92, spin:-22},
+  {id:'cast-clapper',kind:'clapper',tone:'warm',from:.712,to:.768, depth:.60, top:24, size:92, spin:-22},
   {id:'cast-camera', kind:'camera', tone:'warm',from:.760,to:.830, depth:.58, top:70, size:104,spin:14},
 
   // Por que existir / propósito / Amor de Criança: o cuidado ganha forma, sem cobrir a foto.
@@ -154,6 +155,7 @@ function Shape({kind,tone}:{kind:Kind;tone:Tone}) {
 
 function Floater({spec,p,index}:{spec:Spec;p:MotionValue<number>;index:number}) {
   const {from,to,depth,top,size,spin} = spec;
+  const on = useInWindow(p,from,to);
   // Paralaxe: quanto mais perto da lente, maior a distância percorrida na mesma janela
   // de scroll — e portanto maior a velocidade aparente.
   const travel = 58 + depth*95;
@@ -163,7 +165,8 @@ function Floater({spec,p,index}:{spec:Spec;p:MotionValue<number>;index:number}) 
   const span = to-from;
   const opacity = useTransform(p,[from,from+span*.18,to-span*.22,to],[0,1,1,0]);
   // Distância ao plano focal (o rolo, em depth .5) define o desfoque, como numa lente.
-  const blur = Math.abs(depth-.5)*13;
+  const blur = isTouch ? 0 : Math.abs(depth-.5)*13;
+  if(!on) return null;
   return <motion.span
     className="floater"
     aria-hidden="true"
@@ -171,7 +174,7 @@ function Floater({spec,p,index}:{spec:Spec;p:MotionValue<number>;index:number}) 
       x, y:drift, rotate, opacity,
       top:`${top}%`,
       width:size, height:size,
-      filter:`blur(${blur.toFixed(2)}px)`,
+      filter:blur?`blur(${blur.toFixed(2)}px)`:undefined,
       zIndex: depth>.65 ? 4 : 0,
     }}
   >

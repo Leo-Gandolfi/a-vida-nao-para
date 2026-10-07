@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { motion, useMotionValueEvent, useTransform, type MotionValue } from 'framer-motion';
 import { acts, plain, type Beat } from '../timeline';
 import { media, project } from '../config';
+import { isTouch } from '../hooks/useInWindow';
 
 function Video({src,poster,active}:{src:string|null;poster?:string;active:boolean}) {
   const ref=useRef<HTMLVideoElement>(null);
@@ -38,8 +39,9 @@ function Word({children,index,total,p,start,end,reduced,soft,accent}:{children:s
   const even=index%2===0;
   const opacityW=useTransform(p,[inStart,inEnd,outStart,outEnd],[0,1,1,0]);
   const yW=useTransform(p,[inStart,inEnd],reduced||soft?[0,0]:[even?20:-16,0]);
-  const blurPx=useTransform(p,[inStart,inEnd],reduced?[0,0]:[soft?3:7,0]);
-  const blurW=useTransform(blurPx,v=>`blur(${v}px)`);
+  const blurPx=useTransform(p,[inStart,inEnd],reduced||isTouch?[0,0]:[soft?3:7,0]);
+  // Sem desfoque (já assentada, ou em tela de toque): 'none', para não manter uma camada de filtro viva.
+  const blurW=useTransform(blurPx,v=>v>.05?`blur(${v}px)`:'none');
   return <motion.span className={`word ${accent?'accent':''}`} style={{opacity:opacityW,y:yW,filter:blurW}}>{children}</motion.span>;
 }
 
@@ -77,7 +79,16 @@ export default function FilmFrame({beat,index,total,p,mid,prevMid,nextMid,reduce
   beat:Beat;index:number;total:number;p:MotionValue<number>;mid:number;prevMid:number;nextMid:number;reduced:boolean;
 }) {
   const [active,setActive]=useState(p.get()>=beat.start && p.get()<=beat.end);
-  useMotionValueEvent(p,'change',v=>{const a=v>=beat.start && v<=beat.end;setActive(old=>old===a?old:a);});
+  // Só os quadros a até ~dois passos da janela de projeção têm conteúdo montado (fotos,
+  // palavras animadas, filtros). Os distantes viram uma vaga vazia da mesma largura —
+  // é isso que mantém a memória baixa no celular do começo ao fim do rolo.
+  const nearFrom=prevMid-(mid-prevMid), nearTo=nextMid+(nextMid-mid);
+  const isNear=(v:number)=>v>=nearFrom && v<=nearTo;
+  const [near,setNear]=useState(()=>isNear(p.get()));
+  useMotionValueEvent(p,'change',v=>{
+    const a=v>=beat.start && v<=beat.end;setActive(old=>old===a?old:a);
+    const n=isNear(v);setNear(old=>old===n?old:n);
+  });
 
   // O foco é um platô (nítido durante toda a duração natural do quadro), não um pico
   // instantâneo — em toque/rolagem rápida (celular), um pico seria quase sempre
@@ -89,7 +100,7 @@ export default function FilmFrame({beat,index,total,p,mid,prevMid,nextMid,reduce
   const focus=useTransform(p,focusPoints,focusOutputs);
   const opacity=useTransform(focus,v=>.26+.74*v);
   const scale=useTransform(focus,v=>reduced?1:.9+.1*v);
-  const filter=useTransform(focus,v=>reduced?'none':`blur(${(1-v)*5}px) saturate(${.55+.45*v})`);
+  const filter=useTransform(focus,v=>reduced||v>.995?'none':isTouch?`saturate(${.55+.45*v})`:`blur(${(1-v)*5}px) saturate(${.55+.45*v})`);
 
   // Na ruptura o quadro perde firmeza: um tremor mínimo, preso ao scroll (não ao relógio),
   // para que a imagem pareça vacilar na mão de quem a segura, sem virar efeito decorativo.
@@ -106,7 +117,7 @@ export default function FilmFrame({beat,index,total,p,mid,prevMid,nextMid,reduce
   // fora de foco e maiores, para o corte ler como transformação e não como dissolução.
   const cross=useTransform(p,[beat.start+span*.24,beat.end-span*.24],[0,1]);
   const morphK=useTransform(cross,v=>reduced?0:1-Math.abs(v*2-1));
-  const morphFilter=useTransform(morphK,k=>`blur(${(k*3.2).toFixed(2)}px)`);
+  const morphFilter=useTransform(morphK,k=>k>.01?`blur(${(k*3.2).toFixed(2)}px)`:'none');
   const morphScale=useTransform(morphK,k=>1+k*.035);
   const eyebrowPoints=[beat.start,beat.start+span*.10,beat.end-span*.30,beat.end];
   const eyebrowOpacity=useTransform(p,eyebrowPoints,[0,1,1,0]);
@@ -126,6 +137,7 @@ export default function FilmFrame({beat,index,total,p,mid,prevMid,nextMid,reduce
   // na arte não reservam esse espaço, para a imagem continuar centrada.
   const sideCaption=!isLeader && Boolean((beat.text && !beat.composed) || beat.eyebrow || beat.credit || t==='cast');
   const belowCaption=isLeader && Boolean(beat.eyebrow) && t!=='final';
+  if(!near) return <div className="frame-slot frame-slot--far" aria-hidden="true"/>;
   return <motion.div className={`frame-slot ${sideCaption?'frame-slot--side':''} ${belowCaption?'frame-slot--below':''}`} inert={!active} style={{'--ar':ar} as CSSProperties}>
     <motion.article className={`frame-card frame-card--${t} frame-card--${beat.id} ${isLeader?'frame-card--leader':''}`} style={{opacity,scale,filter,x:tremorX,y:tremorY}} aria-hidden={!active}>
       <div className="sprocket sprocket--top" aria-hidden="true"/>

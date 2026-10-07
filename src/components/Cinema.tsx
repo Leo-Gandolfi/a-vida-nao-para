@@ -4,6 +4,7 @@ import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform 
 import { acts, beats, beatAt, plain } from '../timeline';
 import { useAudioController } from '../hooks/useAudioController';
 import FilmFrame from './FilmFrame';
+import { isTouch, useInWindow } from '../hooks/useInWindow';
 import FloatingElements from './FloatingElements';
 import StageSky from './StageSky';
 import ProjectDialog from './ProjectDialog';
@@ -68,6 +69,7 @@ export default function Cinema() {
   // Em "A vida não parou", uma luz quente atravessa a tela da esquerda para a direita.
   const sweepX=useTransform(p,[.450,.515],['-120%','120%']);
   const sweepOpacity=useTransform(p,[.450,.470,.500,.515],[0,.85,.85,0]);
+  const sweepOn=useInWindow(p,.448,.517);
 
   // A fita de sprockets que corre pelo alto e pela base da tela inteira, sempre —
   // não só ao redor de cada quadro — para que a experiência inteira pareça acontecer
@@ -230,7 +232,7 @@ export default function Cinema() {
         <StageSky p={p} reduced={reduced}/>
         <div className="stage-rail" aria-hidden="true"/>
         <FloatingElements p={p} reduced={reduced}/>
-        {!reduced && <motion.div className="light-sweep" aria-hidden="true" style={{x:sweepX,opacity:sweepOpacity}}/>}
+        {!reduced && sweepOn && <motion.div className="light-sweep" aria-hidden="true" style={{x:sweepX,opacity:sweepOpacity}}/>}
         <motion.div className="reel-ribbon reel-ribbon--top" aria-hidden="true" style={{backgroundPositionX:ribbonX}}/>
         <motion.div className="reel-ribbon reel-ribbon--bottom" aria-hidden="true" style={{backgroundPositionX:ribbonX}}/>
         <motion.div className="filmstrip-track" style={{x:trackXvw}}>
@@ -241,7 +243,7 @@ export default function Cinema() {
           })}
         </motion.div>
         {!reduced && <div className="dust" aria-hidden="true">{Array.from({length:8}).map((_,i)=><span key={i}/>)}</div>}
-        {!reduced && <div className="film-grain" aria-hidden="true"/>}
+        {!reduced && !isTouch && <div className="film-grain" aria-hidden="true"/>}
         <div className="vignette" aria-hidden="true"/>
         <motion.header className="stage-header" style={{opacity:chromeOpacity,pointerEvents:quiet?'none':'auto'}} inert={quiet}>
           <a href="#" className="wordmark" onClick={e=>{e.preventDefault();jump(0);}}>A VIDA NÃO PARA<span>O FILME</span></a>

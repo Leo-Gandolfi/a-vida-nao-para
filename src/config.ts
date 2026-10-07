@@ -14,6 +14,7 @@ export const media = {
   days: '/media/dias-meses.jpg',
   years: '/media/meses-anos.jpg',
   relearn: '/media/piscina.jpg',
+  book: '/media/livro-camisetas.jpg',           // Gledson e Mallu com as camisetas da capa do livro
   song2026: '/media/cancao-2026.jpg',           // composição aprovada (texto já impresso na arte)
   mioto: '/media/encontro-mioto.jpg',           // Gledson e Gustavo Mioto na FACILPA
   cinemaRoom: '/media/sala-cinema.jpg',

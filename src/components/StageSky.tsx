@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { motion, useMotionValueEvent, useTransform, type MotionValue } from 'framer-motion';
+import { motion, useTransform, type MotionValue } from 'framer-motion';
+import { useInWindow } from '../hooks/useInWindow';
 
 /** O céu inteiro por trás do rolo vive a história como um dia de verdade:
  *
@@ -30,6 +30,8 @@ const SUN_ALT = [-.4,-.35, 0,    .45, .78, .55, .02, -.35,-.4, -.3,   0,   .48, 
 const clamp = (n:number) => Math.max(0,Math.min(1,n));
 
 function Sun({p}:{p:MotionValue<number>}) {
+  // Noite (sol abaixo do horizonte): desmontado, sem custo.
+  const night = useInWindow(p,.275,.448);
   const alt = useTransform(p,SUN_P,SUN_ALT);
   const left = useTransform(p,[0,.27,.45,1],['16%','84%','14%','86%']);
   const top = useTransform(alt,a=>`${HORIZON - a*60}%`);
@@ -39,6 +41,7 @@ function Sun({p}:{p:MotionValue<number>}) {
   const scale = useTransform(low,l=>1+l*.45);
   const glowOpacity = useTransform(low,l=>.25+l*.75);
   const raysOpacity = useTransform(low,l=>.15+l*.85);
+  if(night) return null;
   return <motion.div className="sky-sun" style={{left,top,opacity,scale}}>
     <motion.span className="sky-sun__glow" style={{opacity:glowOpacity}}/>
     <motion.span className="sky-sun__rays" style={{opacity:raysOpacity}}/>
@@ -47,15 +50,20 @@ function Sun({p}:{p:MotionValue<number>}) {
 }
 
 function Moon({p}:{p:MotionValue<number>}) {
+  const up = useInWindow(p,.235,.47);
   const alt = useTransform(p,[.24,.29,.36,.43,.46],[-.3,.25,.62,.3,-.3]);
   const left = useTransform(p,[.24,.46],['80%','24%']);
   const top = useTransform(alt,a=>`${HORIZON - a*60}%`);
   const opacity = useTransform(alt,a=>clamp((a+.2)/.2));
+  if(!up) return null;
   return <motion.div className="sky-moon" style={{left,top,opacity}}/>;
 }
 
 function Stars({p}:{p:MotionValue<number>}) {
   const opacity = useTransform(p,[0,.045,.075,.235,.285,.44,.475,.955,.985,1],[.95,.7,0,0,.9,.9,0,0,.55,.7]);
+  // Só montadas nas três noites (abertura, luto, crepúsculo final).
+  const dawn = useInWindow(p,0,.078), night = useInWindow(p,.232,.478), dusk = useInWindow(p,.952,1);
+  if(!dawn && !night && !dusk) return null;
   return <motion.div className="sky-stars" aria-hidden="true" style={{opacity}}>
     {Array.from({length:40}).map((_,i)=><span key={i} style={{
       top:`${(i*37)%72}%`, left:`${(i*53+7)%100}%`,
@@ -93,14 +101,6 @@ function Clouds({p}:{p:MotionValue<number>}) {
     <CloudLayer p={p} color={color} opacity={far} clouds={FAR_CLOUDS} travel="-40vw" layer="far"/>
     <CloudLayer p={p} color={color} opacity={near} clouds={NEAR_CLOUDS} travel="-170vw" layer="near"/>
   </>;
-}
-
-/** Monta um elemento só enquanto o progresso está numa janela — para que animações
- * contínuas (CSS) não rodem invisíveis o tempo todo. */
-function useInWindow(p:MotionValue<number>,from:number,to:number) {
-  const [inside,setInside]=useState(()=>{const v=p.get();return v>=from&&v<=to;});
-  useMotionValueEvent(p,'change',v=>{const i=v>=from&&v<=to;setInside(old=>old===i?old:i);});
-  return inside;
 }
 
 /** "Mallu ficou.": no meio da noite, estrelas cadentes riscam o céu — a esperança que

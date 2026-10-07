@@ -54,7 +54,7 @@ Ligar áudio exige um gesto reconhecido pelo navegador — rolar a *roda* do mou
 - Pássaros (amanheceres e Marília) e borboletas (volta da luz e piscina) ficam em `FloatingElements.tsx`; todos os objetos oscilam continuamente, mesmo com a fita parada.
 - `src/components/FilmFrame.tsx`: cada quadro do rolo — foco/desfoque por proximidade do centro, revelação de texto palavra por palavra, tremor na ruptura, mídia por ato e a metamorfose Gledson → Sidney.
 - `src/components/FloatingElements.tsx`: os objetos simbólicos, suas profundidades e janelas de scroll.
-- `src/timeline.ts`: as 28 telas do roteiro da página de captação (texto, foto, proporção da janela, destaques em laranja com `*palavra*`), a mixagem (`audioMix`) e o timbre (`audioTone`), todos com intervalos de 0 a 1.
+- `src/timeline.ts`: as 29 telas do roteiro da página de captação (texto, foto, proporção da janela, destaques em laranja com `*palavra*`), a mixagem (`audioMix`) e o timbre (`audioTone`), todos com intervalos de 0 a 1.
 - `src/hooks/useAudioController.ts`: controlador funcional via Web Audio (ganho por faixa + um passa-baixa compartilhado), não apenas pseudocódigo.
 - `src/config.ts`: único lugar para injetar fotos, vídeos, música e canal de contato.
 - `src/styles.css`: direção de arte e adaptações de tela.
@@ -69,14 +69,25 @@ Rolagem: a roda do mouse e o teclado alimentam um alvo que a fita persegue com i
 
 React JSX usa `{/* INSERIR ... AQUI */}`; os demais marcadores usam comentários TypeScript.
 
+## Desempenho no celular (importante)
+
+O Safari do iPhone encerra a página ("Um problema ocorreu repetidamente") quando a memória de vídeo passa do limite. Por isso:
+
+- Só os quadros a até ~2 passos da janela de projeção têm conteúdo montado (`FilmFrame`, estado `near`); os demais são vagas vazias da mesma largura.
+- Objetos voadores, sol, lua, estrelas, vaga-lumes, estrelas cadentes, lanternas e a luz que invade só existem dentro da própria janela de scroll (`src/hooks/useInWindow.ts`).
+- Nada de `will-change` permanente: cada elemento com ele vira uma camada de GPU sempre viva (as palavras animadas sozinhas chegavam a ~400 camadas).
+- Em telas de toque (`isTouch`) não há desfoque animado (quadros, palavras, objetos) nem grão de filme em tela cheia.
+
+Resultado medido (iPhone 13 emulado): de ~420 para ~100 camadas, e percurso completo sem travar no WebKit.
+
 ## Atos
 
 | Progresso | Telas | Linguagem |
 |---|---|---|
 | 0–20% | 1–6 | Prólogo sem fotos (VIDA e Marília em laranja), o casal, a chegada, Gledson com os gêmeos |
 | 20–45% | 7–11 | Frio, Samuel, silêncio e "Mallu ficou." |
-| 45–70,5% | 12–19 | Mallu na UTI, continuar, Fantástico 2015, a passagem do tempo, a canção, o encontro com Gustavo Mioto |
-| 70,5–100% | 20–28 | Sala de cinema, título, elenco, propósito, Amor de Criança, convite, Marília e cartela final |
+| 45–71,5% | 12–20 | Mallu na UTI, continuar, Fantástico 2015, a passagem do tempo, o livro, a canção, o encontro com Gustavo Mioto |
+| 71,5–100% | 21–29 | Sala de cinema, título, elenco, propósito, Amor de Criança, convite, Marília e cartela final |
 
 A ordem e os textos seguem o documento "PÁGINA_CAPTÇÃO" (numeração das telas). As composições aprovadas do Fantástico 2015 e da canção de 2026 já trazem a frase impressa na arte; nelas a legenda fica só para leitores de tela.
 

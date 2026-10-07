@@ -39,18 +39,20 @@ export const beats: Beat[] = [
   // .395–.415: intervalo intencional. Nenhuma imagem, palavra ou som.
   {id:'mallu',start:.415,end:.450,text:'Mallu ficou.',treatment:'void'},
   // Ato III — a luz e o recomeço
-  {id:'malluUti',start:.450,end:.485,text:'',treatment:'photo',photo:'malluUti',ar:SQUARE},
-  {id:'continues',start:.485,end:.520,text:'E eu precisava continuar.',treatment:'photo',photo:'continues',ar:SQUARE},
-  {id:'news2015',start:.520,end:.552,text:'Em 2015, o Brasil conheceu essa história.',treatment:'press',photo:'news2015',ar:910/703,composed:true},
-  {id:'days',start:.552,end:.582,text:'Os dias viraram meses.',treatment:'photo',photo:'days',ar:372/493},
-  {id:'years',start:.582,end:.612,text:'Os meses, anos.',treatment:'photo',photo:'years',ar:SQUARE},
-  {id:'relearn',start:.612,end:.640,text:'E nós fomos aprendendo a viver de novo.',treatment:'photo',photo:'relearn',ar:SQUARE},
-  {id:'song',start:.640,end:.672,text:'Onze anos depois, o Brasil descobriu que essa história também havia se tornado canção.',treatment:'press',photo:'song2026',ar:SQUARE,composed:true},
-  {id:'encounter',start:.672,end:.705,text:'Até que a vida me levou ao encontro de quem transformou essa história em canção.',treatment:'music',photo:'mioto',ar:411/505,credit:'Gledson Fonseca + Gustavo Mioto · FACILPA, Marília'},
+  {id:'malluUti',start:.450,end:.478,text:'',treatment:'photo',photo:'malluUti',ar:SQUARE},
+  {id:'continues',start:.478,end:.506,text:'E eu precisava continuar.',treatment:'photo',photo:'continues',ar:SQUARE},
+  {id:'news2015',start:.506,end:.533,text:'Em 2015, o Brasil conheceu essa história.',treatment:'press',photo:'news2015',ar:910/703,composed:true},
+  {id:'days',start:.533,end:.560,text:'Os dias viraram meses.',treatment:'photo',photo:'days',ar:372/493},
+  {id:'years',start:.560,end:.587,text:'Os meses, anos.',treatment:'photo',photo:'years',ar:SQUARE},
+  {id:'relearn',start:.587,end:.614,text:'E nós fomos aprendendo a viver de novo.',treatment:'photo',photo:'relearn',ar:SQUARE},
+  // Tela 16 — O Livro (acrescentada na segunda versão da página de captação).
+  {id:'book',start:.614,end:.641,text:'Dessa travessia nasceu um livro.',treatment:'photo',photo:'book',ar:414/523},
+  {id:'song',start:.641,end:.672,text:'Onze anos depois, o Brasil descobriu que essa história também havia se tornado canção.',treatment:'press',photo:'song2026',ar:SQUARE,composed:true},
+  {id:'encounter',start:.672,end:.715,text:'Até que a vida me levou ao encontro de quem transformou essa história em canção.',treatment:'music',photo:'mioto',ar:411/505,credit:'Gledson Fonseca + Gustavo Mioto · FACILPA, Marília'},
   // Ato IV — o propósito e o convite
-  {id:'destiny',start:.705,end:.740,text:'E talvez essa história ainda tivesse mais um destino.',treatment:'photo',photo:'cinemaRoom',ar:SQUARE},
-  {id:'film',start:.740,end:.775,text:'A VIDA\nNÃO PARA',eyebrow:'O filme',treatment:'title'},
-  {id:'cast',start:.775,end:.830,text:'Uma história vivida agora começa a ganhar vida no cinema.',treatment:'cast'},
+  {id:'destiny',start:.715,end:.745,text:'E talvez essa história ainda tivesse mais um destino.',treatment:'photo',photo:'cinemaRoom',ar:SQUARE},
+  {id:'film',start:.745,end:.778,text:'A VIDA\nNÃO PARA',eyebrow:'O filme',treatment:'title'},
+  {id:'cast',start:.778,end:.830,text:'Uma história vivida agora começa a ganhar vida no cinema.',treatment:'cast'},
   {id:'why',start:.830,end:.860,text:'Por que esse filme precisa existir?',treatment:'social',photo:'social'},
   {id:'purpose',start:.860,end:.890,text:'Não queremos apenas transformar uma história em filme.',treatment:'social',photo:'screen'},
   {id:'impact',start:.890,end:.920,text:'Parte da renda do filme poderá apoiar projetos como o Amor de Criança.',treatment:'social',photo:'impact',ar:721/844},
@@ -62,7 +64,7 @@ export const acts = [
   {at:0,label:'O amor e a promessa',roman:'I'},
   {at:.2,label:'A ruptura e o silêncio',roman:'II'},
   {at:.45,label:'A luz e o recomeço',roman:'III'},
-  {at:.705,label:'O propósito e o convite',roman:'IV'},
+  {at:.715,label:'O propósito e o convite',roman:'IV'},
 ];
 /** Remove a marcação de destaque (*palavra*) — para leitura corrida e textos alternativos. */
 export const plain = (text:string) => text.replace(/\*/g,'');
@@ -74,7 +76,7 @@ export const MUSIC_IN = .672;
 export function audioMix(p:number) {
   const opening = p < .20 ? .30 : p < .30 ? .30 * (1-(p-.2)/.10) : p >= .45 && p < MUSIC_IN ? .24 * clamp((p-.45)/.025) * clamp((MUSIC_IN-p)/.025) : 0;
   // Depois do encontro, a trilha baixa um pouco (sem degrau) para deixar o propósito respirar.
-  const finale = p >= MUSIC_IN ? .46 * clamp((p-MUSIC_IN)/.02) * (1 - .44*clamp((p-.705)/.03)) : 0;
+  const finale = p >= MUSIC_IN ? .46 * clamp((p-MUSIC_IN)/.02) * (1 - .44*clamp((p-.715)/.03)) : 0;
   return { opening, finale, silence: p >= .30 && p < .45 };
 }
 
