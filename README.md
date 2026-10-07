@@ -50,7 +50,7 @@ Ligar áudio exige um gesto reconhecido pelo navegador — rolar a *roda* do mou
 ## Onde editar
 
 - `src/components/Cinema.tsx`: componente principal, progresso horizontal global (via `scrollXProgress`), conversão de wheel/teclado, cortina de abertura, luz que invade, fita de sprockets ambiente, som automático, compartilhamento e CTA.
-- `src/components/StageSky.tsx`: o céu como um dia de verdade — noite → amanhecer no prólogo, pôr do sol vermelho no nascimento, lua/estrelas e estrelas cadentes em "Mallu ficou.", segundo amanhecer na volta da luz, pôr do sol em Marília e lanternas subindo no crepúsculo final. Cores (zênite/horizonte) e altura do sol são tabelas de keyframes por progresso; morros em silhueta escondem o sol abaixo do horizonte.
+- `src/components/StageSky.tsx`: o céu como um dia de verdade — noite → amanhecer no prólogo, pôr do sol vermelho no nascimento, lua/estrelas e estrelas cadentes em "Mallu ficou.", segundo amanhecer na volta da luz, pôr do sol em Marília e lanternas subindo no crepúsculo final. Vaga-lumes acendem na noite do luto (some antes do vazio de 39,5%), a silhueta de prédios de Marília aparece só na tela da cidade, e as nuvens correm em duas camadas de profundidade. Cores (zênite/horizonte) e altura do sol são tabelas de keyframes por progresso; morros em silhueta escondem o sol abaixo do horizonte.
 - Pássaros (amanheceres e Marília) e borboletas (volta da luz e piscina) ficam em `FloatingElements.tsx`; todos os objetos oscilam continuamente, mesmo com a fita parada.
 - `src/components/FilmFrame.tsx`: cada quadro do rolo — foco/desfoque por proximidade do centro, revelação de texto palavra por palavra, tremor na ruptura, mídia por ato e a metamorfose Gledson → Sidney.
 - `src/components/FloatingElements.tsx`: os objetos simbólicos, suas profundidades e janelas de scroll.
@@ -59,7 +59,11 @@ Ligar áudio exige um gesto reconhecido pelo navegador — rolar a *roda* do mou
 - `src/config.ts`: único lugar para injetar fotos, vídeos, música e canal de contato.
 - `src/styles.css`: direção de arte e adaptações de tela.
 
-`SLOT_VW` (em `Cinema.tsx`) precisa ficar sincronizado com a largura de `.frame-slot` somada ao `gap` de `.filmstrip-track` em `styles.css` — os dois números descrevem a mesma distância (um em JavaScript, o outro em CSS) e precisam concordar para o deslocamento horizontal corresponder exatamente ao que é desenhado. O mesmo vale para a largura de `.scroll-track` (`2200svw`) em relação ao número de quadros (≈ 76svw por quadro).
+`SLOT_VW` (em `Cinema.tsx`) precisa ficar sincronizado com a largura de `.frame-slot` somada ao `gap` de `.filmstrip-track` em `styles.css` — os dois números descrevem a mesma distância (um em JavaScript, o outro em CSS) e precisam concordar para o deslocamento horizontal corresponder exatamente ao que é desenhado. O mesmo vale para a largura de `.scroll-track` (`2200svw`) em relação ao número de quadros.
+
+Layout dos quadros: cada vaga tem 86vw (+4vw = `SLOT_VW` 90). Em tela larga (computador, celular deitado) a legenda fica ao lado da foto; em tela em pé ela fica embaixo, com o quadro usando quase toda a largura. A altura disponível para a foto é a variável CSS `--h`, e a proporção de cada foto vem de `ar` em `timeline.ts`.
+
+Rolagem: a roda do mouse e o teclado alimentam um alvo que a fita persegue com inércia (deslize suave, em vez de saltos); qualquer outro movimento da fita (toque, encaixe, link para o convite) interrompe o deslize. Ao parar, a fita encaixa no centro do quadro mais próximo.
 
 `.stage` precisa manter `width:100vw` explícito em `styles.css` — sem isso, ao herdar a largura da fita larga (`2200svw`) que o envolve, o cabeçalho/rodapé "fixos" passam a rolar junto com o conteúdo em vez de ficar pinados na tela.
 

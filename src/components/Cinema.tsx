@@ -10,9 +10,9 @@ import ProjectDialog from './ProjectDialog';
 
 /** Distância (em vw) entre o início de um quadro e o início do próximo.
  * Mantida em sincronia com a largura de ".frame-slot" + o "gap" de ".filmstrip-track"
- * em styles.css (72vw + 4vw = 76vw), para que a rolagem horizontal calculada aqui
+ * em styles.css (86vw + 4vw = 90vw), para que a rolagem horizontal calculada aqui
  * corresponda exatamente ao que é desenhado em CSS. */
-const SLOT_VW = 76;
+const SLOT_VW = 90;
 
 /** Rola suavemente até `left` num ritmo lento e previsível (o "smooth" nativo do
  * navegador é rápido e não permite controlar a duração). Retorna uma função para
@@ -40,8 +40,9 @@ function slowScrollTo(el:HTMLElement,left:number,duration:number,onDone:()=>void
  */
 export default function Cinema() {
   const container=useRef<HTMLElement>(null);
-  const {scrollXProgress:p}=useScroll({container});
+  const {scrollXProgress:raw}=useScroll({container});
   const reduced=Boolean(useReducedMotion());
+  const p=raw;
   const audio=useAudioController(p);
   const [act,setAct]=useState(0);
   const [frame,setFrame]=useState(1);
@@ -109,22 +110,45 @@ export default function Cinema() {
   // aqui em deslocamento lateral, para que "rolar" continue funcionando sem exigir shift
   // ou um trackpad. Setas para cima/baixo e Page Up/Down também avançam de lado, para
   // quem está acostumado com a convenção vertical.
+  // Em vez de saltar a cada "clique" da roda, a fita persegue um alvo com inércia
+  // (cada quadro de animação percorre uma fração do que falta), como um rolo pesado.
   useEffect(()=>{
     const el=container.current;if(!el||reading)return;
+    let target=el.scrollLeft,raf=0,last=-1;
+    function glide() {
+      const cur=el!.scrollLeft;
+      // Algo além do deslize moveu a fita (toque, link "Ir para o convite", encaixe):
+      // ele cede o controle em vez de puxar de volta para um alvo velho.
+      if(last>=0 && Math.abs(cur-last)>2){raf=0;last=-1;return;}
+      const d=target-cur;
+      if(Math.abs(d)<1){el!.scrollLeft=target;raf=0;last=-1;return;}
+      el!.scrollLeft=cur+Math.sign(d)*Math.max(Math.abs(d)*(reduced?1:.14),1);
+      last=el!.scrollLeft;
+      raf=requestAnimationFrame(glide);
+    }
+    function push(delta:number) {
+      if(!delta)return;
+      if(!raf)target=el!.scrollLeft;
+      target=Math.max(0,Math.min(el!.scrollWidth-el!.clientWidth,target+delta));
+      if(!raf)raf=requestAnimationFrame(glide);
+    }
+    function stop() {if(raf){cancelAnimationFrame(raf);raf=0;last=-1;}}
     function onWheel(e:WheelEvent) {
-      const delta=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
-      el!.scrollLeft+=delta;
+      const unit=e.deltaMode===1?16:e.deltaMode===2?el!.clientWidth:1;
+      const delta=(Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY)*unit;
+      push(delta);
       e.preventDefault();
     }
     function onKeydown(e:KeyboardEvent) {
       const step=el!.clientWidth*.9;
-      if(e.key==='ArrowUp'||e.key==='PageUp'){el!.scrollLeft-=step;e.preventDefault();}
-      else if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){el!.scrollLeft+=step;e.preventDefault();}
+      if(e.key==='ArrowUp'||e.key==='PageUp'||e.key==='ArrowLeft'){push(-step);e.preventDefault();}
+      else if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '||e.key==='ArrowRight'){push(step);e.preventDefault();}
     }
     el.addEventListener('wheel',onWheel,{passive:false});
     el.addEventListener('keydown',onKeydown);
-    return ()=>{el.removeEventListener('wheel',onWheel);el.removeEventListener('keydown',onKeydown);};
-  },[reading]);
+    el.addEventListener('touchstart',stop,{passive:true});
+    return ()=>{stop();el.removeEventListener('wheel',onWheel);el.removeEventListener('keydown',onKeydown);el.removeEventListener('touchstart',stop);};
+  },[reading,reduced]);
   // Ao parar de arrastar/rolar (mouse, toque ou teclado), a fita desliza — devagar, num
   // gesto lento e deliberado — até o ponto onde o texto do quadro mais próximo fica
   // totalmente legível, em vez de poder parar em qualquer posição intermediária borrada.
@@ -136,7 +160,7 @@ export default function Cinema() {
       if(cancelAnim)return; // é o próprio deslize automático rolando a fita; ignorar
       window.clearTimeout(timer);
       timer=window.setTimeout(()=>{
-        const current=p.get();
+        const current=raw.get();
         if(current<=.001||current>=.999)return;
         // O centro geométrico de cada quadro (mesmo ponto usado para deslocar a fita
         // horizontalmente) — a legenda já está inteira antes disso, então parar aqui
@@ -160,7 +184,7 @@ export default function Cinema() {
       el.removeEventListener('keydown',onUserIntent);
       window.clearTimeout(timer);cancelAnim?.();
     };
-  },[reading,reduced,p,mids]);
+  },[reading,reduced,raw,mids]);
   // O áudio exige um gesto do usuário reconhecido pelo navegador para começar (rolar a
   // roda do mouse NÃO conta como gesto válido para essa política — só clique, toque e
   // tecla contam). Por isso a primeira dessas interações em qualquer lugar da página já

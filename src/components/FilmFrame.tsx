@@ -122,7 +122,11 @@ export default function FilmFrame({beat,index,total,p,mid,prevMid,nextMid,reduce
   const ar=beat.ar??4/3;
   const alt=beat.composed?plain(beat.text):'';
 
-  return <motion.div className="frame-slot" inert={!active} style={{'--ar':ar} as CSSProperties}>
+  // Legenda visível ao lado da foto (em tela larga). Composições com o texto já impresso
+  // na arte não reservam esse espaço, para a imagem continuar centrada.
+  const sideCaption=!isLeader && Boolean((beat.text && !beat.composed) || beat.eyebrow || beat.credit || t==='cast');
+  const belowCaption=isLeader && Boolean(beat.eyebrow) && t!=='final';
+  return <motion.div className={`frame-slot ${sideCaption?'frame-slot--side':''} ${belowCaption?'frame-slot--below':''}`} inert={!active} style={{'--ar':ar} as CSSProperties}>
     <motion.article className={`frame-card frame-card--${t} frame-card--${beat.id} ${isLeader?'frame-card--leader':''}`} style={{opacity,scale,filter,x:tremorX,y:tremorY}} aria-hidden={!active}>
       <div className="sprocket sprocket--top" aria-hidden="true"/>
       <div className="frame-window">
@@ -153,7 +157,7 @@ export default function FilmFrame({beat,index,total,p,mid,prevMid,nextMid,reduce
       {showTag && <div className="frame-tag"><span>{roman}</span><span>{String(index+1).padStart(2,'0')}/{total}</span></div>}
     </motion.article>
 
-    {!isLeader && (beat.text || beat.eyebrow) && <div className={`frame-caption ${beat.text.length>60?'frame-caption--long':''}`}>
+    {!isLeader && (beat.text || beat.eyebrow) && <div className={`frame-caption ${beat.text.length>60?'frame-caption--long':''} ${sideCaption?'':'frame-caption--sr'}`}>
       {beat.eyebrow && <motion.p className="eyebrow" style={{opacity:eyebrowOpacity}}>{beat.eyebrow}</motion.p>}
       {/* Nas composições aprovadas a frase já está impressa na arte: repeti-la embaixo
           seria duplicar o texto na tela, então a legenda fica só para leitores de tela. */}

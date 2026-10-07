@@ -67,15 +67,32 @@ function Stars({p}:{p:MotionValue<number>}) {
 
 /** Nuvens que derivam sozinhas e pegam a cor do céu: rosadas no amanhecer, brancas de
  * dia, em brasa no pôr do sol, quase invisíveis à noite. */
+// Duas camadas de nuvens em profundidades diferentes: as distantes, pequenas e lentas;
+// as próximas, maiores e mais rápidas — a paralaxe dá volume ao céu enquanto a fita anda.
+// [left vw, top %, largura vw, altura vh, duração da deriva s]
+const FAR_CLOUDS = [[4,14,30,8,60],[44,26,22,6,48],[80,8,34,9,72],[118,20,26,7,56],[150,12,30,8,66]];
+const NEAR_CLOUDS = [[10,32,46,13,52],[70,6,52,15,64],[135,38,40,12,46],[190,16,56,16,70],[250,30,44,13,58]];
+
+function CloudLayer({p,color,opacity,clouds,travel,layer}:{p:MotionValue<number>;color:MotionValue<string>;opacity:MotionValue<number>;clouds:number[][];travel:string;layer:string}) {
+  const x = useTransform(p,[0,1],['0vw',travel]);
+  return <motion.div className={`sky-clouds sky-clouds--${layer}`} style={{opacity,x}}>
+    {clouds.map(([l,t,w,h,d],i)=><motion.span key={i} className="sky-cloud" style={{
+      backgroundColor:color, left:`${l}vw`, top:`${t}%`, width:`${w}vw`, height:`${h}vh`,
+      animationDuration:`${d}s`, animationDelay:`${-i*13}s`,
+    }}/>)}
+  </motion.div>;
+}
+
 function Clouds({p}:{p:MotionValue<number>}) {
   const color = useTransform(p,
     [0,        .06,      .10,      .19,      .235,     .28,      .44,      .48,      .52,      .88,      .94,      .97,      1],
     ['#1a1c2c','#c47a7a','#f5ddc8','#f2c49a','#e8806a','#24233a','#161a28','#ff9e7a','#f6e6d4','#f2c49a','#ee8a66','#6a3a52','#2a2238']);
-  const opacity = useTransform(p,[0,.06,.10,.25,.29,.44,.48,.95,1],[.12,.4,.5,.45,.14,.14,.5,.5,.25]);
-  const drift = useTransform(p,[0,1],['0vw','-60vw']);
-  return <motion.div className="sky-clouds" style={{opacity,x:drift}}>
-    {[0,1,2,3,4].map(i=><motion.span key={i} className={`sky-cloud sky-cloud--${i}`} style={{backgroundColor:color}}/>)}
-  </motion.div>;
+  const far = useTransform(p,[0,.06,.10,.25,.29,.44,.48,.95,1],[.10,.32,.4,.36,.1,.1,.4,.4,.2]);
+  const near = useTransform(p,[0,.06,.10,.25,.29,.44,.48,.95,1],[.12,.42,.52,.48,.12,.12,.52,.52,.25]);
+  return <>
+    <CloudLayer p={p} color={color} opacity={far} clouds={FAR_CLOUDS} travel="-40vw" layer="far"/>
+    <CloudLayer p={p} color={color} opacity={near} clouds={NEAR_CLOUDS} travel="-170vw" layer="near"/>
+  </>;
 }
 
 /** Monta um elemento só enquanto o progresso está numa janela — para que animações
@@ -92,6 +109,29 @@ function ShootingStars({p}:{p:MotionValue<number>}) {
   const on = useInWindow(p,.418,.452);
   if(!on) return null;
   return <div className="shooting-stars" aria-hidden="true"><span/><span/><span/></div>;
+}
+
+/** Na noite do luto, poucos vaga-lumes acendem e apagam perto dos morros: alguma vida
+ * miúda continua, mesmo ali. Some antes do vazio absoluto (39,5%). */
+function Fireflies({p}:{p:MotionValue<number>}) {
+  const on = useInWindow(p,.282,.394);
+  const opacity = useTransform(p,[.282,.30,.375,.394],[0,1,1,0]);
+  if(!on) return null;
+  return <motion.div className="fireflies" aria-hidden="true" style={{opacity}}>
+    {Array.from({length:12}).map((_,i)=><span key={i} style={{
+      left:`${4+((i*37)%92)}%`, top:`${56+((i*23)%28)}%`,
+      animationDelay:`${-i*1.1}s, ${-i*.7}s`, animationDuration:`${9+(i%4)*3}s, ${2.2+(i%3)*.9}s`,
+    }}/>)}
+  </motion.div>;
+}
+
+/** Marília no horizonte: só na tela da cidade, os prédios se erguem entre os morros e o
+ * sol se põe atrás deles. Sai de cena antes da cartela final. */
+function Skyline({p}:{p:MotionValue<number>}) {
+  const opacity = useTransform(p,[.930,.948,.970,.979],[0,1,1,0]);
+  const y = useTransform(p,[.930,.952],['18%','0%']);
+  const x = useTransform(p,[.930,.979],['5vw','-5vw']);
+  return <motion.div className="sky-skyline" style={{opacity,y,x}}/>;
 }
 
 /** Cartela final, no crepúsculo: lanternas de papel sobem devagar, sem parar — o
@@ -125,7 +165,9 @@ export default function StageSky({p,reduced}:{p:MotionValue<number>;reduced:bool
       <ShootingStars p={p}/>
     </>}
     <motion.div className="sky-hills sky-hills--far" style={{backgroundPositionX:hillsFar}}/>
+    <Skyline p={p}/>
     <motion.div className="sky-hills sky-hills--near" style={{backgroundPositionX:hillsNear}}/>
+    {!reduced && <Fireflies p={p}/>}
     {!reduced && <Lanterns p={p}/>}
   </div>;
 }

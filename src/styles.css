@@ -58,17 +58,20 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
   animation:twinkle 3s ease-in-out infinite}
 @keyframes twinkle{0%,100%{opacity:1}50%{opacity:.25}}
 
-.sky-clouds{position:absolute;left:0;top:0;width:200vw;height:70%}
+.sky-clouds{position:absolute;left:0;top:0;width:300vw;height:70%}
 .sky-cloud{position:absolute;border-radius:50%;
   -webkit-mask-image:radial-gradient(closest-side,#000 30%,transparent);mask-image:radial-gradient(closest-side,#000 30%,transparent);
   animation:cloud-drift 60s ease-in-out infinite alternate}
-.sky-cloud--0{left:4vw;top:14%;width:34vw;height:9vh}
-.sky-cloud--1{left:46vw;top:28%;width:26vw;height:7vh;animation-duration:48s;animation-delay:-12s}
-.sky-cloud--2{left:82vw;top:9%;width:40vw;height:11vh;animation-duration:72s;animation-delay:-30s}
-.sky-cloud--3{left:120vw;top:36%;width:22vw;height:6vh;animation-duration:54s;animation-delay:-20s}
-.sky-cloud--4{left:150vw;top:18%;width:30vw;height:8vh;animation-duration:66s;animation-delay:-41s}
 @keyframes cloud-drift{from{transform:translateX(-6vw)}to{transform:translateX(8vw)}}
 
+.sky-skyline{position:absolute;left:0;right:0;bottom:13%;height:21%;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1400 200' preserveAspectRatio='xMidYMax meet'><path d='M40 200V175h28V200ZM53 175v-14h2v7ZM67 200V173h36V200ZM84 173v-12h2v12ZM98 200V173h25V200ZM118 200V169h25V200ZM129 169v-12h2v6ZM140 200V176h19V200ZM161 200V167h21V200ZM177 200V172h36V200ZM194 172v-7h2v6ZM216 200V164h24V200ZM241 200V161h36V200ZM258 161v-8h2v9ZM272 200V161h36V200ZM309 200V160h27V200ZM332 200V146h42V200ZM369 200V140h42V200ZM410 200V143h40V200ZM445 200V122h20V200ZM459 200V123h41V200ZM501 200V108h27V200ZM529 200V136h29V200ZM542 136v-10h2v8ZM555 200V109h30V200ZM569 109v-13h2v12ZM587 200V80h26V200ZM611 200V105h40V200ZM648 200V119h22V200ZM664 200V70h33V200ZM693 200V72h31V200ZM720 200V50h40V200ZM754 200V62h32V200ZM788 200V105h30V200ZM818 200V110h19V200ZM832 200V111h28V200ZM862 200V95h21V200ZM871 95v-9h2v12ZM879 200V130h38V200ZM912 200V105h21V200ZM934 200V149h27V200ZM959 200V132h33V200ZM974 132v-14h2v11ZM988 200V147h40V200ZM1023 200V138h40V200ZM1062 200V154h42V200ZM1101 200V143h37V200ZM1135 200V162h30V200ZM1164 200V174h41V200ZM1203 200V156h24V200ZM1226 200V176h29V200ZM1254 200V161h24V200ZM1272 200V172h33V200ZM1300 200V167h30V200ZM1326 200V175h31V200ZM1357 200V165h32V200Z' fill='%230c080b'/></svg>") center bottom/auto 100% no-repeat}
+/* Vaga-lumes: deriva lenta + piscar, duas animações independentes. */
+.fireflies{position:absolute;inset:0}
+.fireflies span{position:absolute;width:4px;height:4px;border-radius:50%;background:#f4f7b0;
+  box-shadow:0 0 8px 3px #e6f08a88,0 0 22px 6px #d8e86a33;
+  animation:firefly-drift 10s ease-in-out infinite alternate,firefly-blink 2.6s ease-in-out infinite}
+@keyframes firefly-drift{0%{transform:translate(0,0)}33%{transform:translate(22px,-30px)}66%{transform:translate(-16px,-12px)}100%{transform:translate(10px,-46px)}}
+@keyframes firefly-blink{0%,100%{opacity:.08}45%,60%{opacity:1}}
 .sky-hills{position:absolute;left:0;right:0;bottom:0;background-repeat:repeat-x}
 .sky-hills--far{height:26%;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'><path d='M0 120 C80 90 150 70 240 88 S400 130 480 104 S640 52 760 74 S930 128 1020 98 S1140 70 1200 120 V200 H0Z' fill='%23140f1a'/></svg>");background-size:1200px 100%;opacity:.95}
 .sky-hills--near{height:20%;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1400 200' preserveAspectRatio='none'><path d='M0 150 C120 120 210 128 300 140 S470 104 560 118 L590 92 L600 118 C680 130 760 150 860 132 S1040 100 1120 124 L1150 96 L1162 124 C1240 140 1320 128 1400 150 V200 H0Z' fill='%23070506'/></svg>");background-size:1400px 100%}
@@ -138,12 +141,22 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
   mix-blend-mode:screen;
   background:linear-gradient(90deg,transparent,#f0a05a3d 20%,#ffcf8ac2 50%,#f0a05a3d 80%,transparent)}
 
-.filmstrip-track{display:flex;align-items:center;gap:4vw;padding-left:14vw;will-change:transform;position:relative;z-index:1}
-.frame-slot{flex:0 0 72vw;width:72vw;display:flex;flex-direction:column;align-items:center;gap:20px}
+/* Cada vaga do rolo ocupa 86vw (+4vw de intervalo = SLOT_VW 90 em Cinema.tsx), centrada
+   com 7vw de cada lado. --h é a altura disponível para a foto: o quadro cresce até ela,
+   respeitando a proporção da imagem (--ar). */
+.stage{--h:min(68dvh,calc(100dvh - 240px))}
+.filmstrip-track{display:flex;align-items:center;gap:4vw;padding-left:7vw;will-change:transform;position:relative;z-index:1}
+.frame-slot{flex:0 0 86vw;width:86vw;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+/* Tela larga: a legenda fica AO LADO da foto, para a imagem usar toda a altura. */
+.frame-slot--side{flex-direction:row;gap:clamp(24px,3vw,56px)}
 
 
-.frame-card{position:relative;display:flex;flex-direction:column;gap:0;will-change:transform,opacity,filter;
-  width:min(72vw,calc(50dvh * var(--ar,1.3333)))}
+.frame-card{position:relative;display:flex;flex-direction:column;gap:0;will-change:transform,opacity,filter;flex:0 0 auto;
+  width:min(58vw,calc((var(--h) - var(--cap,0px)) * var(--ar,1.3333)))}
+/* Quadro-leitor com texto de apoio embaixo (o convite): o quadro cede essa altura. */
+.frame-slot--below{--cap:48px}
+/* Legenda só para leitores de tela (arte com o texto impresso): fora do fluxo. */
+.frame-caption--sr{position:absolute;width:1px;min-width:0;height:1px;overflow:hidden}
 .frame-card--title,.frame-card--final{width:min(72vw,calc(40dvh * 8 / 5))}
 .frame-window{position:relative;width:100%;aspect-ratio:var(--ar,1.3333);background:#050403;overflow:hidden;
   border-inline:10px solid #050403;box-shadow:0 40px 90px #000c,0 0 0 1px #c8a77530 inset}
@@ -160,16 +173,17 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 /* Legenda abaixo do quadro, para tratamentos com foto real */
 /* Mesma largura do quadro acima, para a legenda alinhar com a borda da foto. */
 .frame-caption{width:min(72vw,calc(50dvh * var(--ar,1.3333)));min-width:min(72vw,300px);text-align:left;padding:0 1%}
+.frame-slot--side .frame-caption{width:clamp(220px,24vw,380px);min-width:0;flex:0 1 auto;padding:0}
 .frame-caption .eyebrow{margin:0 0 10px}
-.frame-caption h2{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;font-size:clamp(1.5rem,2.5vw,2.5rem);
+.frame-caption h2{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;font-size:clamp(1.5rem,2.4vw,2.7rem);
   line-height:1.18;letter-spacing:-.02em;white-space:pre-line;margin:0}
-.frame-caption--long h2{font-size:clamp(1.15rem,1.75vw,1.75rem);line-height:1.3}
+.frame-caption--long h2{font-size:clamp(1.15rem,1.8vw,1.9rem);line-height:1.3}
 .frame-caption--leader{text-align:center;padding-top:4px}
 /* O céu agora clareia de verdade (amanhecer, dia, pôr do sol): a legenda ganha uma
    sombra larga e macia para continuar legível sobre o horizonte claro e o próprio sol. */
 .frame-caption,.final-lede{text-shadow:0 0 18px #000,0 0 6px #000d,0 1px 2px #000}
 .frame-caption .eyebrow{text-shadow:0 0 12px #000,0 1px 2px #000}
-.frame-credit{margin:12px 0 0;font:.68rem/1.6 var(--mono);letter-spacing:.06em;color:var(--dim)}
+.frame-credit{margin:12px 0 0;font:.68rem/1.6 var(--mono);letter-spacing:.06em;color:#d4cabb}
 .cast-credit{margin-top:16px;color:var(--gold);font-size:.9rem;line-height:1.5}
 
 .eyebrow{font-size:.72rem;line-height:1.8;text-transform:uppercase;letter-spacing:.2em;color:var(--gold);margin:0}
@@ -305,6 +319,38 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .is-reading{display:none}
 .reading-actions{display:flex;gap:15px;flex-wrap:wrap;justify-content:center}
 
+/* Celular em pé (e qualquer tela mais alta que larga): a legenda volta para baixo da
+   foto — lado a lado, em 390px, a foto encolheria demais. Em troca, o quadro usa quase
+   toda a largura (86vw) e o cabeçalho/rodapé reservam menos espaço. */
+@media(orientation:portrait),(max-width:680px){
+  .stage{--h:max(200px,calc(100dvh - 330px));
+    padding:max(80px,calc(env(safe-area-inset-top) + 72px)) 0 max(84px,calc(env(safe-area-inset-bottom) + 68px))}
+  .frame-card:not(.frame-card--title):not(.frame-card--final){width:min(86vw,calc((var(--h) - var(--cap,0px)) * var(--ar,1.3333)))}
+  .frame-slot,.frame-slot--side{flex-direction:column;gap:16px}
+  .frame-slot--side .frame-caption{width:min(86vw,max(calc(var(--h) * var(--ar,1.3333)),300px));padding:0 1%}
+  .frame-caption h2{font-size:clamp(1.35rem,5.6vw,1.75rem)}
+  .frame-caption--long h2{font-size:clamp(1.05rem,4.3vw,1.3rem)}
+  .stage-footer{bottom:max(16px,env(safe-area-inset-bottom))}
+  /* Prédios mais baixos: no celular a legenda fica embaixo e não pode ter a cidade atrás. */
+  .sky-skyline{bottom:12%;height:9%}
+}
+/* Celular deitado: pouca altura — tudo se compacta e a legenda fica ao lado. */
+@media(orientation:landscape) and (max-height:520px){
+  .stage{--h:calc(100dvh - 134px);padding:56px 0 50px}
+  .frame-slot--below{--cap:72px}
+  .stage-header{top:10px}
+  .stage-footer{bottom:8px}
+  .frame-slot--side .frame-caption{width:clamp(200px,30vw,340px)}
+  .frame-caption h2{font-size:clamp(1.1rem,3.4vw,1.6rem)}
+  .frame-caption--long h2{font-size:clamp(.95rem,2.4vw,1.2rem)}
+  .frame-caption .eyebrow{font-size:.6rem}
+  /* Cartela final deitada: título numa linha só por verso, acima dos botões, que ficam lado a lado. */
+  .frame-card--final{width:min(50vw,calc(34dvh * 2));translate:0 -6vh}
+  .frame-card--final .film-title{font-size:9.5vh}
+  .stage .final-actions{bottom:4vh;gap:10px}
+  .final-actions .button{min-height:40px;padding:10px 18px}
+  .final-lede{margin:0!important}
+}
 @media(max-width:680px){
   .stage-header,.stage-footer{left:6vw;right:6vw}
   .stage-header{top:22px}
