@@ -136,11 +136,11 @@ export default function FilmFrame({beat,index,total,p,mid,prevMid,nextMid,reduce
     <motion.article className={`frame-card frame-card--${t} frame-card--${beat.id} ${isLeader?'frame-card--leader':''}`} style={{opacity,scale,filter,x:tremorX,y:tremorY}} aria-hidden={!active}>
       <div className="sprocket sprocket--top" aria-hidden="true"/>
       <div className="frame-window">
-        {photo && <motion.div className="photo-frame" style={{scale:beat.composed?1:zoom}}><Photograph src={photo} alt={alt}/></motion.div>}
+        {photo && <motion.div className="photo-frame" style={{scale:beat.composed?1:zoom}}>
+          {beat.video && media[beat.video] ? <Video src={media[beat.video]} poster={photo} active={active && !reduced}/> : <Photograph src={photo} alt={alt}/>}
+        </motion.div>}
         {beat.inset && media[beat.inset] && <img className="photo-inset" src={media[beat.inset]!} alt="" loading="eager" decoding="async"/>}
         {t==='couple' && <motion.div className="photo-frame" style={{scale:zoom}}><Photograph src={media.couple}/></motion.div>}
-        {/* INSERIR VÍDEO DO ULTRASSOM AQUI: definir media.ultrasound em config.ts */}
-        {t==='arrival' && <div className="memory-frame"><Video src={media.ultrasound} poster={media.arrival} active={active && !reduced}/></div>}
         {t==='cold' && <Photograph src={media.neonatal}/>}
         {t==='music' && !photo && <EqualizerBars/>}
         {/* INSERIR FOTO GLEDSON/SIDNEY AQUI: crossfade com caixas e object-position idênticos. */}

@@ -33,7 +33,9 @@ function Sun({p}:{p:MotionValue<number>}) {
   // Noite (sol abaixo do horizonte): desmontado, sem custo.
   const night = useInWindow(p,.275,.448);
   const alt = useTransform(p,SUN_P,SUN_ALT);
-  const left = useTransform(p,[0,.27,.45,1],['16%','84%','14%','86%']);
+  // No primeiro dia o sol anda devagar pela esquerda (atrás das fotos), para não passar por trás
+  // das legendas, que ficam à direita; só no pôr do sol do nascimento ele corre para o poente.
+  const left = useTransform(p,[0,.17,.27,.45,1],['14%','30%','84%','14%','86%']);
   const top = useTransform(alt,a=>`${HORIZON - a*60}%`);
   const opacity = useTransform(alt,a=>clamp((a+.22)/.18));
   // Perto do horizonte o sol cresce, avermelha e ganha raios: é o nascer/pôr.

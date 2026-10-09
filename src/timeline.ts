@@ -18,6 +18,8 @@ export type Beat = {
   composed?: boolean;
   /** Identificação discreta, quase documental, abaixo da legenda. */
   credit?: string;
+  /** Vídeo curto, mudo e em loop no lugar da foto (a foto vira o pôster). */
+  video?: keyof typeof media;
   /** Imagem pequena sobreposta no canto da foto (ex.: a capa do livro). */
   inset?: keyof typeof media;
 };
@@ -27,16 +29,19 @@ const SQUARE = 1;
 
 export const beats: Beat[] = [
   // Ato I — o amor e a promessa
-  {id:'opening',start:0,end:.034,text:'Algumas histórias são escritas.',treatment:'intro'},
-  {id:'life',start:.034,end:.070,text:'Outras, a\n*VIDA* escreve\nprimeiro.',treatment:'intro'},
-  {id:'real',start:.070,end:.105,text:'Esta aconteceu de verdade.',note:'Uma história real.\n*Marília, São Paulo.*',treatment:'intro'},
-  {id:'couple',start:.105,end:.152,text:'Uma vida comum.\nUm casal.\nO sonho de formar uma família.',eyebrow:'Gledson & Keila',treatment:'couple'},
-  {id:'arrival',start:.152,end:.200,text:'E a vida respondeu em dobro.',eyebrow:'Samuel e Mallu estavam chegando.',treatment:'arrival'},
+  {id:'opening',start:0,end:.030,text:'Algumas histórias são escritas.',treatment:'intro'},
+  {id:'life',start:.030,end:.062,text:'Outras, a\n*VIDA* escreve\nprimeiro.',treatment:'intro'},
+  {id:'real',start:.062,end:.094,text:'Esta aconteceu de verdade.',note:'Uma história real.\n*Marília, São Paulo.*',treatment:'intro'},
+  {id:'couple',start:.094,end:.132,text:'Uma vida comum.\nUm casal.\nO sonho de formar uma família.',eyebrow:'Gledson & Keila',treatment:'couple'},
+  {id:'ultrasound',start:.132,end:.166,text:'',treatment:'photo',video:'ultrasoundClip',photo:'ultrasoundPoster',ar:520/390},
+  {id:'arrival',start:.166,end:.200,text:'E a vida respondeu em dobro.',eyebrow:'Samuel e Mallu estavam chegando.',treatment:'arrival',photo:'arrival',ar:854/1280},
   // Ato II — a ruptura e o silêncio
-  {id:'birth',start:.200,end:.240,text:'O nascimento.',eyebrow:'27 de junho de 2015',treatment:'cold',photo:'twins2',ar:976/952},
-  {id:'hours',start:.240,end:.275,text:'E seis horas depois…',treatment:'cold'},
-  {id:'keila',start:.275,end:.330,text:'A despedida de Keila.',treatment:'cold'},
-  {id:'samuel',start:.330,end:.395,text:'Samuel também partiu.',eyebrow:'Onze meses depois.',treatment:'photo',photo:'samuel',ar:622/805},
+  {id:'birth',start:.200,end:.236,text:'O nascimento.',eyebrow:'27 de junho de 2015',treatment:'cold',photo:'birthCrib',ar:1280/720},
+  {id:'hours',start:.236,end:.268,text:'E seis horas depois…',treatment:'cold'},
+  {id:'keila',start:.268,end:.305,text:'A despedida de Keila.',treatment:'cold'},
+  // Gledson com Samuel e Mallu, sem texto: os dois juntos, antes de "Onze meses depois".
+  {id:'twins',start:.305,end:.345,text:'',treatment:'photo',photo:'twins2',ar:976/952},
+  {id:'samuel',start:.345,end:.395,text:'Samuel também partiu.',eyebrow:'Onze meses depois.',treatment:'photo',photo:'samuel',ar:622/805},
   // .395–.415: intervalo intencional. Nenhuma imagem, palavra ou som.
   {id:'mallu',start:.415,end:.450,text:'Mallu ficou.',treatment:'void'},
   // Ato III — a luz e o recomeço

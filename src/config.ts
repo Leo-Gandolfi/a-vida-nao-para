@@ -3,10 +3,13 @@
  */
 export const media = {
   couple: '/media/gledson-keila.png',
-  // INSERIR A FOTO DOS SAPATINHOS (rosa e azul, Keila e Gledson desfocados ao fundo) AQUI
-  // quando for enviada — o brief da página de captação pede essa imagem para a Tela 05.
-  arrival: '/media/a-espera.jpg',
-  twins2: '/media/gledson-gemeos.jpg',          // Gledson de camiseta amarela com Samuel e Mallu (quadro do nascimento)
+  arrival: '/media/sapatinhos.jpg',             // sapatinhos rosa e azul, Keila e Gledson desfocados ao fundo
+  birthCrib: '/media/nascimento-gemeos.jpg',    // Samuel e Mallu lado a lado no berço (quadro do nascimento)
+  // Trecho de 7 s do vídeo do ultrassom, recortado só na imagem (sem o cabeçalho com dados
+  // da paciente), sem áudio, em loop.
+  ultrasoundClip: '/media/ultrassom.mp4',
+  ultrasoundPoster: '/media/ultrassom-poster.jpg',
+  twins2: '/media/gledson-gemeos.jpg',          // Gledson de camiseta amarela com Samuel e Mallu (antes de Samuel)
   samuel: '/media/samuel-sorriso.jpg',
   malluUti: '/media/mallu-uti.jpg',
   continues: '/media/continuar.jpg',
@@ -24,7 +27,6 @@ export const media = {
   impact: '/media/amor-de-crianca.jpg',
   marilia: '/media/marilia.jpg',
   castPhoto: '/media/gledson-sidney.jpg',      // Gledson e Sidney Sampaio juntos (tela do elenco)
-  ultrasound: null as string | null, // INSERIR VÍDEO DO ULTRASSOM AQUI
   neonatal: null as string | null, // INSERIR FOTO DA UTI NEONATAL AQUI
   gledsonPortrait: null as string | null, // INSERIR FOTO GLEDSON AQUI, mesmo enquadramento de Sidney
   sidneyPortrait: null as string | null, // INSERIR FOTO SIDNEY AQUI, alinhar olhos antes do crossfade

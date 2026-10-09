@@ -20,7 +20,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .scroll-viewport{width:100vw;height:100vh;height:100dvh;overflow-x:auto;overflow-y:hidden;
   position:relative;scrollbar-width:none;-ms-overflow-style:none;overscroll-behavior-x:contain}
 .scroll-viewport::-webkit-scrollbar{display:none}
-.scroll-track{width:2200svw;height:100%;position:relative}
+.scroll-track{width:2350svw;height:100%;position:relative}
 .stage{width:100vw;height:100%;position:sticky;left:0;top:0;overflow:hidden;isolation:isolate;
   display:flex;align-items:center;
   /* Reserva a faixa do cabeçalho/rodapé fixos para que o quadro centralizado e sua
@@ -161,7 +161,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
   border-inline:10px solid #050403;box-shadow:0 40px 90px #000c,0 0 0 1px #c8a77530 inset}
 .frame-window>img,.frame-window>video{width:100%;height:100%;object-fit:cover;display:block}
 .photo-frame{width:100%;height:100%}
-.photo-frame>img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-frame>img,.photo-frame>video{width:100%;height:100%;object-fit:cover;display:block}
 .frame-tag{position:absolute;top:16px;right:0;z-index:2;display:flex;gap:10px;align-items:center;
   font:500 .68rem/1 var(--mono);letter-spacing:.1em;color:#f0e2c4;background:#000a;padding:6px 10px;
   border:1px solid #c8a77540}
