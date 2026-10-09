@@ -12,3 +12,5 @@ src/styles copy.css
 
 # Briefs e documentos de trabalho não são publicados
 *.docx
+# Cópia original da música (o site usa impressionando-os-anjos.mp3)
+public/media/Impressionando os Anjos*.mp3
