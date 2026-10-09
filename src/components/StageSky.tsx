@@ -131,7 +131,8 @@ function Storm({p}:{p:MotionValue<number>}) {
 function Rain({p}:{p:MotionValue<number>}) {
   const on = useInWindow(p,.262,.393);
   const opacity = useTransform(p,[.262,.285,.378,.392],[0,1,1,0]);
-  const heavy = useTransform(p,[.33,.355,.378,.392],[0,1,1,0]);
+  // No Samuel a chuva só engrossa um pouco — nada de aguaceiro.
+  const heavy = useTransform(p,[.33,.355,.378,.392],[0,.45,.45,0]);
   if(!on) return null;
   return <motion.div className="rain" aria-hidden="true" style={{opacity}}>
     <span className="rain-layer rain-layer--far"/>
