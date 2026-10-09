@@ -85,10 +85,29 @@ export default function Cinema() {
   // para liberar áudio — só clique, toque e tecla contam (ver o efeito de som mais
   // abaixo). Por isso a cortina de abertura é ela mesma um botão: tocar/clicar nela liga
   // o som direto (gesto garantido) e dá um empurrãozinho na fita, como apertar "play".
-  function activateIntro() {
+  // A cortina fica POR CIMA da fita, então rolar sobre ela não chegaria até a fita.
+  // Roda do mouse/trackpad: repassada para a fita (mesmo deslize com inércia de sempre).
+  // Deslize de dedo: conta como "começar" — e o fim do deslize (touchend) é um gesto
+  // aceito pelo navegador, então também liga o som, como o toque.
+  const gateTouch=useRef<{x:number;y:number}|null>(null);
+  function onGateWheel(e:React.WheelEvent) {
+    container.current?.dispatchEvent(new WheelEvent('wheel',{deltaX:e.deltaX,deltaY:e.deltaY,deltaMode:e.deltaMode,bubbles:true,cancelable:true}));
+  }
+  function onGateTouchStart(e:React.TouchEvent) {const t=e.touches[0];gateTouch.current={x:t.clientX,y:t.clientY};}
+  function onGateTouchEnd(e:React.TouchEvent) {
+    const start=gateTouch.current,t=e.changedTouches[0];gateTouch.current=null;
+    if(!start||!t)return;
+    const dx=t.clientX-start.x,dy=t.clientY-start.y;
+    if(Math.hypot(dx,dy)<18)return; // toque simples: o onClick cuida
+    activateIntro(Math.abs(dx)>Math.abs(dy)?-dx:-dy);
+  }
+  function activateIntro(swipe=0) {
     void audio.enable();
     setStarted(true); // some já, não depende de cruzar o limiar de scroll do fade
     const el=container.current;if(!el)return;
+    // Deslize para a frente leva direto ao segundo quadro; toque ou deslize curto dá só
+    // o empurrãozinho inicial (o encaixe centraliza o primeiro quadro).
+    if(swipe>60){el.dispatchEvent(new WheelEvent('wheel',{deltaY:el.clientWidth*.9,bubbles:true,cancelable:true}));return;}
     if(el.scrollLeft<24)el.scrollTo({left:24,behavior:'smooth'});
   }
 
@@ -217,8 +236,8 @@ export default function Cinema() {
   const controls=<><button className="button button--primary" onClick={()=>setDialog(true)}>Quero conhecer o projeto <span className="button-arrow" aria-hidden="true">→</span></button><button className="button button--ghost" onClick={share}>Compartilhar esta história</button></>;
   return <>
     <a className="skip-link" href="#convite" onClick={e=>{e.preventDefault();jump(1);requestAnimationFrame(()=>document.querySelector<HTMLButtonElement>('#convite button')?.focus());}}>Ir para o convite</a>
-    {!started && <motion.button type="button" className="intro-gate" style={{opacity:gateOpacity}} onClick={activateIntro}>
-      <span className="intro-gate__prompt"><span>Role ou toque para começar</span><span className="intro-gate__arrow" aria-hidden="true">→</span></span>
+    {!started && <motion.button type="button" className="intro-gate" style={{opacity:gateOpacity}} onClick={()=>activateIntro()} onWheel={onGateWheel} onTouchStart={onGateTouchStart} onTouchEnd={onGateTouchEnd}>
+      <span className="intro-gate__prompt"><span>{isTouch?'Deslize ou toque para começar':'Role ou clique para começar'}</span><span className="intro-gate__arrow" aria-hidden="true">→</span></span>
     </motion.button>}
     <main ref={container} tabIndex={0} aria-label="A Vida Não Para — narrativa cinematográfica, em formato de rolo de filme. Arraste ou role para o lado." className={`scroll-viewport ${reading?'is-reading':''}`}>
       <div className="scroll-track">
