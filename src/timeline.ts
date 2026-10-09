@@ -18,6 +18,8 @@ export type Beat = {
   composed?: boolean;
   /** Identificação discreta, quase documental, abaixo da legenda. */
   credit?: string;
+  /** Imagem pequena sobreposta no canto da foto (ex.: a capa do livro). */
+  inset?: keyof typeof media;
 };
 
 // Proporções iguais às das fotos enviadas: nada de rosto cortado nas bordas.
@@ -25,14 +27,13 @@ const SQUARE = 1;
 
 export const beats: Beat[] = [
   // Ato I — o amor e a promessa
-  {id:'opening',start:0,end:.030,text:'Algumas histórias são escritas.',treatment:'intro'},
-  {id:'life',start:.030,end:.062,text:'Outras, a\n*VIDA* escreve\nprimeiro.',treatment:'intro'},
-  {id:'real',start:.062,end:.090,text:'Esta aconteceu de verdade.',note:'Uma história real.\n*Marília, São Paulo.*',treatment:'intro'},
-  {id:'couple',start:.090,end:.130,text:'Uma vida comum.\nUm casal.\nO sonho de formar uma família.',eyebrow:'Gledson & Keila',treatment:'couple'},
-  {id:'arrival',start:.130,end:.165,text:'E a vida respondeu em dobro.',eyebrow:'Samuel e Mallu estavam chegando.',treatment:'arrival'},
-  {id:'twins',start:.165,end:.200,text:'',treatment:'photo',photo:'twins2',ar:SQUARE},
+  {id:'opening',start:0,end:.034,text:'Algumas histórias são escritas.',treatment:'intro'},
+  {id:'life',start:.034,end:.070,text:'Outras, a\n*VIDA* escreve\nprimeiro.',treatment:'intro'},
+  {id:'real',start:.070,end:.105,text:'Esta aconteceu de verdade.',note:'Uma história real.\n*Marília, São Paulo.*',treatment:'intro'},
+  {id:'couple',start:.105,end:.152,text:'Uma vida comum.\nUm casal.\nO sonho de formar uma família.',eyebrow:'Gledson & Keila',treatment:'couple'},
+  {id:'arrival',start:.152,end:.200,text:'E a vida respondeu em dobro.',eyebrow:'Samuel e Mallu estavam chegando.',treatment:'arrival'},
   // Ato II — a ruptura e o silêncio
-  {id:'birth',start:.200,end:.240,text:'O nascimento.',eyebrow:'27 de junho de 2015',treatment:'cold'},
+  {id:'birth',start:.200,end:.240,text:'O nascimento.',eyebrow:'27 de junho de 2015',treatment:'cold',photo:'twins2',ar:976/952},
   {id:'hours',start:.240,end:.275,text:'E seis horas depois…',treatment:'cold'},
   {id:'keila',start:.275,end:.330,text:'A despedida de Keila.',treatment:'cold'},
   {id:'samuel',start:.330,end:.395,text:'Samuel também partiu.',eyebrow:'Onze meses depois.',treatment:'photo',photo:'samuel',ar:622/805},
@@ -46,9 +47,9 @@ export const beats: Beat[] = [
   {id:'years',start:.560,end:.587,text:'Os meses, anos.',treatment:'photo',photo:'years',ar:SQUARE},
   {id:'relearn',start:.587,end:.614,text:'E nós fomos aprendendo a viver de novo.',treatment:'photo',photo:'relearn',ar:SQUARE},
   // Tela 16 — O Livro (acrescentada na segunda versão da página de captação).
-  {id:'book',start:.614,end:.641,text:'Dessa travessia nasceu um livro.',treatment:'photo',photo:'book',ar:414/523},
+  {id:'book',start:.614,end:.641,text:'Dessa travessia nasceu um livro.',treatment:'photo',photo:'book',inset:'bookCover',ar:414/523},
   {id:'song',start:.641,end:.672,text:'Onze anos depois, o Brasil descobriu que essa história também havia se tornado canção.',treatment:'press',photo:'song2026',ar:1108/820},
-  {id:'encounter',start:.672,end:.715,text:'Até que a vida me levou ao encontro de quem transformou essa história em canção.',treatment:'music',photo:'mioto',ar:411/505,credit:'Gledson Fonseca + Gustavo Mioto · FACILPA, Marília'},
+  {id:'encounter',start:.672,end:.715,text:'Até que a vida me levou ao encontro de quem transformou essa história em canção.',treatment:'music',photo:'mioto',ar:411/505,credit:'Gledson Fonseca + Gustavo Mioto · FACILPA, Lençóis Paulista'},
   // Ato IV — o propósito e o convite
   {id:'destiny',start:.715,end:.745,text:'E talvez essa história ainda tivesse mais um destino.',treatment:'photo',photo:'cinemaRoom',ar:SQUARE},
   {id:'film',start:.745,end:.778,text:'A VIDA\nNÃO PARA',eyebrow:'O filme',treatment:'title'},

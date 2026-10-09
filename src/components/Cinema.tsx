@@ -86,7 +86,7 @@ export default function Cinema() {
   // abaixo). Por isso a cortina de abertura é ela mesma um botão: tocar/clicar nela liga
   // o som direto (gesto garantido) e dá um empurrãozinho na fita, como apertar "play".
   function activateIntro() {
-    if(audio.available && !audio.enabled)void audio.toggle();
+    void audio.enable();
     setStarted(true); // some já, não depende de cruzar o limiar de scroll do fade
     const el=container.current;if(!el)return;
     if(el.scrollLeft<24)el.scrollTo({left:24,behavior:'smooth'});
@@ -187,29 +187,23 @@ export default function Cinema() {
       window.clearTimeout(timer);cancelAnim?.();
     };
   },[reading,reduced,raw,mids]);
-  // O áudio exige um gesto do usuário reconhecido pelo navegador para começar (rolar a
-  // roda do mouse NÃO conta como gesto válido para essa política — só clique, toque e
-  // tecla contam). Por isso a primeira dessas interações em qualquer lugar da página já
-  // liga o som sozinha, deixando a experiência "com som desde o início". O próprio botão
-  // de som fica de fora dessa escuta para não ligar e desligar em seguida quando a pessoa
-  // clicar nele diretamente.
+  // O áudio exige um gesto que o navegador aceite como "ativação do usuário": clique
+  // (inclui o toque simples), toque concluído (touchend/pointerup) e tecla. Início de
+  // toque (touchstart/pointerdown no celular) e rolagem NÃO contam — no Android, ouvir
+  // esses eventos fazia a primeira tentativa falhar e disputar com o toque na cortina,
+  // e alguns aparelhos ficavam sem som. A escuta continua até o som ligar de fato
+  // (falhou? o próximo toque tenta de novo) e para de vez se a pessoa desligar o som
+  // pelo botão. O próprio botão de som fica de fora para não ligar e desligar seguido.
   useEffect(()=>{
     if(!audio.available||audio.enabled)return;
-    function onFirstGesture(e:Event) {
+    const events=['click','touchend','pointerup','keydown'] as const;
+    function onGesture(e:Event) {
       if(e.target instanceof Element && e.target.closest('.sound-button'))return;
-      if(!audio.enabled)void audio.toggle();
-      window.removeEventListener('pointerdown',onFirstGesture);
-      window.removeEventListener('keydown',onFirstGesture);
+      void audio.enable(true);
     }
-    window.addEventListener('pointerdown',onFirstGesture,{once:true});
-    window.addEventListener('keydown',onFirstGesture,{once:true});
-    window.addEventListener('touchstart',onFirstGesture,{once:true,passive:true});
-    return ()=>{
-      window.removeEventListener('pointerdown',onFirstGesture);
-      window.removeEventListener('keydown',onFirstGesture);
-      window.removeEventListener('touchstart',onFirstGesture);
-    };
-  },[audio.available,audio.enabled,audio.toggle]);
+    events.forEach(n=>window.addEventListener(n,onGesture,{capture:true,passive:true}));
+    return ()=>events.forEach(n=>window.removeEventListener(n,onGesture,{capture:true}));
+  },[audio.available,audio.enabled,audio.enable]);
   async function share() {
     const url=window.location.href.split('#')[0];
     try {

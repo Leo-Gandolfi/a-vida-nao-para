@@ -54,7 +54,7 @@ Ligar áudio exige um gesto reconhecido pelo navegador — rolar a *roda* do mou
 - Pássaros (amanheceres e Marília) e borboletas (volta da luz e piscina) ficam em `FloatingElements.tsx`; todos os objetos oscilam continuamente, mesmo com a fita parada.
 - `src/components/FilmFrame.tsx`: cada quadro do rolo — foco/desfoque por proximidade do centro, revelação de texto palavra por palavra, tremor na ruptura, mídia por ato e a metamorfose Gledson → Sidney.
 - `src/components/FloatingElements.tsx`: os objetos simbólicos, suas profundidades e janelas de scroll.
-- `src/timeline.ts`: as 29 telas do roteiro da página de captação (texto, foto, proporção da janela, destaques em laranja com `*palavra*`), a mixagem (`audioMix`) e o timbre (`audioTone`), todos com intervalos de 0 a 1.
+- `src/timeline.ts`: as 28 telas do roteiro da página de captação (texto, foto, proporção da janela, destaques em laranja com `*palavra*`), a mixagem (`audioMix`) e o timbre (`audioTone`), todos com intervalos de 0 a 1.
 - `src/hooks/useAudioController.ts`: controlador funcional via Web Audio (ganho por faixa + um passa-baixa compartilhado), não apenas pseudocódigo.
 - `src/config.ts`: único lugar para injetar fotos, vídeos, música e canal de contato.
 - `src/styles.css`: direção de arte e adaptações de tela.
@@ -84,10 +84,10 @@ Resultado medido (iPhone 13 emulado): de ~420 para ~100 camadas, e percurso comp
 
 | Progresso | Telas | Linguagem |
 |---|---|---|
-| 0–20% | 1–6 | Prólogo sem fotos (VIDA e Marília em laranja), o casal, a chegada, Gledson com os gêmeos |
-| 20–45% | 7–11 | Frio, Samuel, silêncio e "Mallu ficou." |
-| 45–71,5% | 12–20 | Mallu na UTI, continuar, Fantástico 2015, a passagem do tempo, o livro, a canção, o encontro com Gustavo Mioto |
-| 71,5–100% | 21–29 | Sala de cinema, título, elenco, propósito, Amor de Criança, convite, Marília e cartela final |
+| 0–20% | 1–5 | Prólogo sem fotos (VIDA e Marília em laranja), o casal, a chegada |
+| 20–45% | 6–10 | O nascimento (foto de Gledson com os gêmeos, a pedido dele), frio, Samuel, silêncio e "Mallu ficou." |
+| 45–71,5% | 11–19 | Mallu na UTI, continuar, Fantástico 2015, a passagem do tempo, o livro, a canção, o encontro com Gustavo Mioto |
+| 71,5–100% | 20–28 | Sala de cinema, título, elenco, propósito, Amor de Criança, convite, Marília e cartela final |
 
 A ordem e os textos seguem o documento "PÁGINA_CAPTÇÃO" (numeração das telas). As artes do Fantástico 2015 e da canção de 2026 (terceira versão da página de captação) não trazem texto impresso: a frase vai na legenda ao lado. A tela do elenco usa a foto de Gledson com Sidney Sampaio (`gledson-sidney.jpg`); o crossfade entre retratos só é usado se não houver essa foto.
 
@@ -108,6 +108,10 @@ Ainda faltam: ultrassom; UTI; vídeos de cuidado/escola; recortes das reportagen
 Enquanto faltam, a base usa as fotos fornecidas onde cabem, preto na UTI e tipografia editorial na repercussão. Não simula vídeo médico, recorte jornalístico ou retrato do ator. Crossfade já implementado, mas só poderá ser avaliado com os dois retratos reais. Ajuste `object-position` para alinhar os olhos. As legendas das reportagens são texto editorial baseado no roteiro, não manchetes citadas.
 
 Use imagens WebP/AVIF em torno de 1600–2000 px para produção. Vídeos MP4 H.264 curtos e sem áudio, com `poster`, `muted`, `playsInline`, `loop`. As cenas só montam perto de sua janela; vídeos pausam quando saem ou quando a aba fica oculta. Falha de autoplay mantém o poster.
+
+## Ativação do som
+
+Navegadores só deixam tocar áudio depois de um gesto aceito como "ativação do usuário": clique (inclui o toque simples), toque concluído e tecla. Início de toque e rolagem não contam. A cortina de abertura liga o som no toque; além dela, uma escuta global (`click`, `touchend`, `pointerup`, `keydown`) tenta de novo a cada gesto até o som ligar de fato. `enable()` em `useAudioController` é idempotente, para que duas tentativas no mesmo toque não se anulem, e respeita quem desligou o som pelo botão. Os quadros não exibem mais marcador de página (pedido do Gledson); o rodapé mantém "Quadro NN / 28".
 
 ## Dramaturgia sonora
 

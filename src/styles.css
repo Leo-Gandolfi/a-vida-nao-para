@@ -20,7 +20,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .scroll-viewport{width:100vw;height:100vh;height:100dvh;overflow-x:auto;overflow-y:hidden;
   position:relative;scrollbar-width:none;-ms-overflow-style:none;overscroll-behavior-x:contain}
 .scroll-viewport::-webkit-scrollbar{display:none}
-.scroll-track{width:2280svw;height:100%;position:relative}
+.scroll-track{width:2200svw;height:100%;position:relative}
 .stage{width:100vw;height:100%;position:sticky;left:0;top:0;overflow:hidden;isolation:isolate;
   display:flex;align-items:center;
   /* Reserva a faixa do cabeçalho/rodapé fixos para que o quadro centralizado e sua
@@ -220,6 +220,11 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .frame-card--samuel .photo-frame{transform-origin:88% 40%}
 .frame-card--days .frame-window img{object-position:50% 30%}
 .frame-card--continues .frame-window img{object-position:50% 40%}
+/* Nascimento: os gêmeos com Gledson, quase naturais — só um leve esfriar da ruptura. */
+.frame-card--cold.frame-card--birth .frame-window img{filter:saturate(.78) brightness(.92) contrast(1.03)}
+/* Capa do livro, pequena, no canto da foto (tela do livro). */
+.frame-window>.photo-inset{position:absolute;top:4%;right:4%;width:30%;height:auto;object-fit:contain;z-index:2;
+  border:1px solid #ffffff40;box-shadow:0 12px 30px #000b}
 .frame-card--relearn .frame-window img{filter:sepia(.04) brightness(1.06) saturate(1.02)}
 .frame-card--encounter .frame-window img{object-position:50% 22%}
 .frame-card--press .frame-window{background:#050403}

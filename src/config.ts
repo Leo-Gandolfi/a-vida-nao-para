@@ -6,7 +6,7 @@ export const media = {
   // INSERIR A FOTO DOS SAPATINHOS (rosa e azul, Keila e Gledson desfocados ao fundo) AQUI
   // quando for enviada — o brief da página de captação pede essa imagem para a Tela 05.
   arrival: '/media/a-espera.jpg',
-  twins2: '/media/gledson-gemeos.jpg',          // Gledson de camiseta amarela com Samuel e Mallu
+  twins2: '/media/gledson-gemeos.jpg',          // Gledson de camiseta amarela com Samuel e Mallu (quadro do nascimento)
   samuel: '/media/samuel-sorriso.jpg',
   malluUti: '/media/mallu-uti.jpg',
   continues: '/media/continuar.jpg',
@@ -15,6 +15,7 @@ export const media = {
   years: '/media/meses-anos.jpg',
   relearn: '/media/piscina.jpg',
   book: '/media/livro-camisetas.jpg',           // Gledson e Mallu com as camisetas da capa do livro
+  bookCover: '/media/livro-capa.jpg',           // capa do livro, sobreposta no canto da foto acima
   song2026: '/media/cancao-2026-v2.jpg',        // arte da canção, Fantástico/g1 2026 (sem texto impresso)
   mioto: '/media/encontro-mioto.jpg',           // Gledson e Gustavo Mioto na FACILPA
   cinemaRoom: '/media/sala-cinema.jpg',

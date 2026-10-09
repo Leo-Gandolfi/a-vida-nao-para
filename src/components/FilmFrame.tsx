@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { motion, useMotionValueEvent, useTransform, type MotionValue } from 'framer-motion';
-import { acts, plain, type Beat } from '../timeline';
+import { plain, type Beat } from '../timeline';
 import { media, project } from '../config';
 import { isTouch } from '../hooks/useInWindow';
 
@@ -68,10 +68,6 @@ function EqualizerBars() {
   return <div className="equalizer" aria-hidden="true">{Array.from({length:7}).map((_,i)=><span key={i} style={{animationDelay:`${i*.12}s`}}/>)}</div>;
 }
 
-function actRoman(startP:number) {
-  const idx=acts.reduce((best,a,i)=>startP>=a.at?i:best,0);
-  return acts[idx].roman;
-}
 
 /** Um quadro do rolo de filme: entra pela lateral, e só fica nítido quando
  * centralizado — como um filme físico passando pela janela de projeção. */
@@ -128,8 +124,6 @@ export default function FilmFrame({beat,index,total,p,mid,prevMid,nextMid,reduce
   const photo=beat.photo?media[beat.photo]:null;
   const hasMedia=Boolean(photo)||t==='couple'||t==='arrival'||t==='cold'||t==='cast'||t==='music';
   const isLeader=!hasMedia;
-  const showTag=t!=='title' && t!=='final';
-  const roman=actRoman(beat.start);
   const ar=beat.ar??4/3;
   const alt=beat.composed?plain(beat.text):'';
 
@@ -143,6 +137,7 @@ export default function FilmFrame({beat,index,total,p,mid,prevMid,nextMid,reduce
       <div className="sprocket sprocket--top" aria-hidden="true"/>
       <div className="frame-window">
         {photo && <motion.div className="photo-frame" style={{scale:beat.composed?1:zoom}}><Photograph src={photo} alt={alt}/></motion.div>}
+        {beat.inset && media[beat.inset] && <img className="photo-inset" src={media[beat.inset]!} alt="" loading="eager" decoding="async"/>}
         {t==='couple' && <motion.div className="photo-frame" style={{scale:zoom}}><Photograph src={media.couple}/></motion.div>}
         {/* INSERIR VÍDEO DO ULTRASSOM AQUI: definir media.ultrasound em config.ts */}
         {t==='arrival' && <div className="memory-frame"><Video src={media.ultrasound} poster={media.arrival} active={active && !reduced}/></div>}
@@ -166,7 +161,6 @@ export default function FilmFrame({beat,index,total,p,mid,prevMid,nextMid,reduce
         </div>}
       </div>
       <div className="sprocket sprocket--bottom" aria-hidden="true"/>
-      {showTag && <div className="frame-tag"><span>{roman}</span><span>{String(index+1).padStart(2,'0')}/{total}</span></div>}
     </motion.article>
 
     {!isLeader && (beat.text || beat.eyebrow) && <div className={`frame-caption ${beat.text.length>60?'frame-caption--long':''} ${sideCaption?'':'frame-caption--sr'}`}>

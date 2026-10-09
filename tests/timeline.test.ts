@@ -24,7 +24,7 @@ test('o som afunda antes do silêncio e reabre com a luz',()=>{
  for(let p=.45;p<.52;p+=.005)assert.ok(audioTone(p+.005)>=audioTone(p)-1e-6);
 });
 test('roteiro da página de captação, pausa vazia e convite persistente',()=>{
- assert.equal(beats.length,29);
+ assert.equal(beats.length,28);
  assert.equal(new Set(beats.map(b=>b.id)).size,beats.length);
  assert.equal(beats.at(-2)?.id,'marilia');
  assert.equal(beatAt(.405),undefined);

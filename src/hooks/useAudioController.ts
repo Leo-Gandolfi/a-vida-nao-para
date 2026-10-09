@@ -24,6 +24,11 @@ export function useAudioController(progress: MotionValue<number>) {
   const engine = useRef<Engine | null>(null);
   const [enabled, setEnabled] = useState(false);
   const [error, setError] = useState('');
+  // Uma ativação em andamento: chamadas simultâneas (toque na cortina + escuta global
+  // do primeiro gesto) reaproveitam a mesma, em vez de uma desligar o que a outra ligou.
+  const pending = useRef<Promise<void> | null>(null);
+  // A pessoa desligou o som pelo botão: nenhum gesto posterior religa sozinho.
+  const userMuted = useRef(false);
   const available = Boolean(media.openingTrack || media.finalTrack);
   const sync = useCallback((p:number) => {
     const e = engine.current;
@@ -55,9 +60,17 @@ export function useAudioController(progress: MotionValue<number>) {
     });
   },[]);
 
-  const toggle = useCallback(async () => {
-    if (!available) return;
+  /** Liga o som. Idempotente: se já está ligado ou ligando, não faz nada de novo.
+   * Precisa ser chamada de dentro de um gesto aceito pelo navegador (clique, toque
+   * concluído, tecla): o resume() e os play() abaixo rodam de forma síncrona, ainda
+   * dentro do gesto, antes do primeiro await. `auto` = chamada pela escuta automática
+   * do primeiro gesto, que respeita quem desligou o som de propósito. */
+  const enable = useCallback((auto=false):Promise<void> => {
+    if (!available || (auto && userMuted.current)) return Promise.resolve();
+    if (engine.current?.enabled && !pending.current) return Promise.resolve();
+    if (pending.current) return pending.current;
     setError('');
+    const run = (async () => {
     try {
       if (!engine.current) {
         const ctx = new AudioContext();
@@ -85,17 +98,42 @@ export function useAudioController(progress: MotionValue<number>) {
           throw err;
         }));
         await Promise.all([resume,...plays]);
-        e.enabled=false; // volta ao estado "ainda não ligado"; a linha abaixo é que liga de fato
+      } else {
+        const e = engine.current;
+        e.enabled = true;
+        const resume = e.ctx.resume();
+        sync(progress.get()); // play() das faixas audíveis, ainda dentro do gesto
+        await resume;
       }
       const e = engine.current!;
-      await e.ctx.resume(); e.enabled=!e.enabled; setEnabled(e.enabled);
+      if (e.ctx.state !== 'running') throw new Error('suspended');
+      e.enabled = true; userMuted.current = false; setEnabled(true);
       sync(progress.get());
     } catch {
       const e=engine.current;
       if (e) { e.enabled=false; sync(progress.get()); }
-      setEnabled(false); setError('O áudio não está disponível. A história continua sem som.');
+      // Sem mensagem de erro: o próximo toque tenta de novo (ver Cinema.tsx).
+      setEnabled(false);
+    } finally {
+      pending.current = null;
     }
+    })();
+    pending.current = run;
+    return run;
   },[available,progress,sync]);
+
+  /** Botão "Som ligado / Sem som". */
+  const toggle = useCallback(async () => {
+    const e = engine.current;
+    if (e?.enabled && !pending.current) {
+      userMuted.current = true;
+      e.enabled = false; setEnabled(false); sync(progress.get());
+      return;
+    }
+    userMuted.current = false;
+    await enable();
+    if (!engine.current?.enabled) setError('O áudio não está disponível. A história continua sem som.');
+  },[enable,progress,sync]);
 
   useEffect(() => {
     const unsub=progress.on('change',sync);
@@ -107,5 +145,5 @@ export function useAudioController(progress: MotionValue<number>) {
       if(e) { e.disposed=true; e.tracks.forEach(t=>{if(t){t.element.pause();t.element.removeAttribute('src');t.element.load();t.source.disconnect();t.gain.disconnect();}});e.tone.disconnect();void e.ctx.close();engine.current=null; }
     };
   },[progress,sync]);
-  return {enabled,available,toggle,error};
+  return {enabled,available,toggle,enable,error};
 }
