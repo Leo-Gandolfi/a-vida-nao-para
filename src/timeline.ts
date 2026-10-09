@@ -33,7 +33,7 @@ export const beats: Beat[] = [
   {id:'life',start:.030,end:.062,text:'Outras, a\n*VIDA* escreve\nprimeiro.',treatment:'intro'},
   {id:'real',start:.062,end:.094,text:'Esta aconteceu de verdade.',note:'Uma história real.\n*Marília, São Paulo.*',treatment:'intro'},
   {id:'couple',start:.094,end:.132,text:'Uma vida comum.\nUm casal.\nO sonho de formar uma família.',eyebrow:'Gledson & Keila',treatment:'couple'},
-  {id:'ultrasound',start:.132,end:.166,text:'',treatment:'photo',video:'ultrasoundClip',photo:'ultrasoundPoster',ar:520/390},
+  {id:'ultrasound',start:.132,end:.166,text:'',treatment:'photo',video:'ultrasoundClip',photo:'ultrasoundPoster',ar:16/9},
   {id:'arrival',start:.166,end:.200,text:'E a vida respondeu em dobro.',eyebrow:'Samuel e Mallu estavam chegando.',treatment:'arrival',photo:'arrival',ar:854/1280},
   // Ato II — a ruptura e o silêncio
   {id:'birth',start:.200,end:.236,text:'O nascimento.',eyebrow:'27 de junho de 2015',treatment:'cold',photo:'birthCrib',ar:1280/720},

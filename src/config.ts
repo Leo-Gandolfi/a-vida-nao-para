@@ -5,8 +5,7 @@ export const media = {
   couple: '/media/gledson-keila.png',
   arrival: '/media/sapatinhos.jpg',             // sapatinhos rosa e azul, Keila e Gledson desfocados ao fundo
   birthCrib: '/media/nascimento-gemeos.jpg',    // Samuel e Mallu lado a lado no berço (quadro do nascimento)
-  // Trecho de 7 s do vídeo do ultrassom, recortado só na imagem (sem o cabeçalho com dados
-  // da paciente), sem áudio, em loop.
+  // 30 s do vídeo do ultrassom (dos 3 aos 33 s do original), sem áudio, em loop — como um gif.
   ultrasoundClip: '/media/ultrassom.mp4',
   ultrasoundPoster: '/media/ultrassom-poster.jpg',
   twins2: '/media/gledson-gemeos.jpg',          // Gledson de camiseta amarela com Samuel e Mallu (antes de Samuel)

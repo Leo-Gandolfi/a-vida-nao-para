@@ -113,7 +113,7 @@ Use imagens WebP/AVIF em torno de 1600–2000 px para produção. Vídeos MP4 H.
 
 Navegadores só deixam tocar áudio depois de um gesto aceito como "ativação do usuário": clique (inclui o toque simples), toque concluído e tecla. Início de toque e rolagem não contam. A cortina de abertura liga o som no toque; além dela, uma escuta global (`click`, `touchend`, `pointerup`, `keydown`) tenta de novo a cada gesto até o som ligar de fato. `enable()` em `useAudioController` é idempotente, para que duas tentativas no mesmo toque não se anulem, e respeita quem desligou o som pelo botão. Os quadros não exibem mais marcador de página (pedido do Gledson); o rodapé mantém "Quadro NN / 30".
 
-O vídeo do ultrassom (`ultrassom.mp4`) é um trecho de 7 s do vídeo original, recortado só na imagem do exame (sem o cabeçalho do aparelho, que mostra dados da paciente), sem áudio, H.264, ~500 KB; toca em loop só enquanto o quadro está na tela. Campo `video` em `timeline.ts`.
+O vídeo do ultrassom (`ultrassom.mp4`) são 30 s do vídeo original (dos 3 aos 33 s), quadro inteiro em 768×432, sem áudio, H.264; toca em loop só enquanto o quadro está na tela. Campo `video` em `timeline.ts`.
 
 ## Dramaturgia sonora
 
