@@ -14,3 +14,6 @@ src/styles copy.css
 *.docx
 # Cópia original da música (o site usa impressionando-os-anjos.mp3)
 public/media/Impressionando os Anjos*.mp3
+# Arquivos originais enviados (o site usa versões tratadas)
+public/media/WhatsApp*
+*.mp4.orig
