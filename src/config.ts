@@ -10,18 +10,19 @@ export const media = {
   samuel: '/media/samuel-sorriso.jpg',
   malluUti: '/media/mallu-uti.jpg',
   continues: '/media/continuar.jpg',
-  news2015: '/media/fantastico-2015.jpg',       // composição aprovada (texto já impresso na arte)
+  news2015: '/media/fantastico-2015-v2.jpg',    // arte do Fantástico 2015 (sem texto impresso; a frase vai na legenda)
   days: '/media/dias-meses.jpg',
   years: '/media/meses-anos.jpg',
   relearn: '/media/piscina.jpg',
   book: '/media/livro-camisetas.jpg',           // Gledson e Mallu com as camisetas da capa do livro
-  song2026: '/media/cancao-2026.jpg',           // composição aprovada (texto já impresso na arte)
+  song2026: '/media/cancao-2026-v2.jpg',        // arte da canção, Fantástico/g1 2026 (sem texto impresso)
   mioto: '/media/encontro-mioto.jpg',           // Gledson e Gustavo Mioto na FACILPA
   cinemaRoom: '/media/sala-cinema.jpg',
   social: '/media/silhueta-pai-filha.jpg',
   screen: '/media/tela-cinema.jpg',
   impact: '/media/amor-de-crianca.jpg',
   marilia: '/media/marilia.jpg',
+  castPhoto: '/media/gledson-sidney.jpg',      // Gledson e Sidney Sampaio juntos (tela do elenco)
   ultrasound: null as string | null, // INSERIR VÍDEO DO ULTRASSOM AQUI
   neonatal: null as string | null, // INSERIR FOTO DA UTI NEONATAL AQUI
   gledsonPortrait: null as string | null, // INSERIR FOTO GLEDSON AQUI, mesmo enquadramento de Sidney
@@ -30,9 +31,9 @@ export const media = {
   family: '/media/family-illustration.svg',
   // Tema instrumental do projeto, fornecido localmente ("A Vida Não Para - Tema 1").
   openingTrack: '/media/tema-1.wav',
-  // "Impressionando os Anjos" ainda não foi fornecida/autorizada; o tema principal
-  // cobre o clímax (a partir do encontro com Gustavo Mioto) para não deixar silêncio.
-  finalTrack: '/media/tema-1.wav',
+  // "Impressionando os Anjos" (Gustavo Mioto), fornecida pelo projeto: entra no encontro
+  // com Gustavo Mioto e segue, mais baixa, até o fim.
+  finalTrack: '/media/impressionando-os-anjos.mp3',
 };
 export const project = {
   // WhatsApp de Gledson (14 99733-7955), com uma mensagem inicial já escrita.

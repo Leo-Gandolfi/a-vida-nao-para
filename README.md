@@ -89,13 +89,13 @@ Resultado medido (iPhone 13 emulado): de ~420 para ~100 camadas, e percurso comp
 | 45–71,5% | 12–20 | Mallu na UTI, continuar, Fantástico 2015, a passagem do tempo, o livro, a canção, o encontro com Gustavo Mioto |
 | 71,5–100% | 21–29 | Sala de cinema, título, elenco, propósito, Amor de Criança, convite, Marília e cartela final |
 
-A ordem e os textos seguem o documento "PÁGINA_CAPTÇÃO" (numeração das telas). As composições aprovadas do Fantástico 2015 e da canção de 2026 já trazem a frase impressa na arte; nelas a legenda fica só para leitores de tela.
+A ordem e os textos seguem o documento "PÁGINA_CAPTÇÃO" (numeração das telas). As artes do Fantástico 2015 e da canção de 2026 (terceira versão da página de captação) não trazem texto impresso: a frase vai na legenda ao lado. A tela do elenco usa a foto de Gledson com Sidney Sampaio (`gledson-sidney.jpg`); o crossfade entre retratos só é usado se não houver essa foto.
 
 O intervalo 39,5–41,5% é vazio intencional. O ato final permanece visível a 100%. Não há mais navegação por marcadores de ato no rodapé (removida a pedido — o nome do ato em texto continua lá, só os pontinhos clicáveis saíram); o link "Ir para o convite" (accessible skip-link) e `jump()` seguem disponíveis para navegação direta. Toque, teclado e scroll nativo funcionam sem interceptação.
 
 ## Assets reais já incluídos
 
-As fotos da página de captação estão em `public/media/` com nomes descritivos (`gledson-gemeos.jpg`, `samuel-sorriso.jpg`, `mallu-uti.jpg`, `continuar.jpg`, `fantastico-2015.jpg`, `dias-meses.jpg`, `meses-anos.jpg`, `piscina.jpg`, `cancao-2026.jpg`, `encontro-mioto.jpg`, `sala-cinema.jpg`, `silhueta-pai-filha.jpg`, `tela-cinema.jpg`, `amor-de-crianca.jpg`, `marilia.jpg`). Ainda pendentes: a foto dos sapatinhos rosa e azul (Tela 05 — hoje segue a foto das plaquinhas `a-espera.jpg`), o retrato de Sidney Sampaio O botão "Quero conversar sobre o projeto" abre o WhatsApp de Gledson (`project.contactUrl`).
+As fotos da página de captação estão em `public/media/` com nomes descritivos (`gledson-gemeos.jpg`, `samuel-sorriso.jpg`, `mallu-uti.jpg`, `continuar.jpg`, `fantastico-2015-v2.jpg`, `dias-meses.jpg`, `meses-anos.jpg`, `piscina.jpg`, `cancao-2026-v2.jpg`, `encontro-mioto.jpg`, `sala-cinema.jpg`, `silhueta-pai-filha.jpg`, `tela-cinema.jpg`, `amor-de-crianca.jpg`, `marilia.jpg`). Ainda pendentes: a foto dos sapatinhos rosa e azul (Tela 05 — hoje segue a foto das plaquinhas `a-espera.jpg`), o retrato de Sidney Sampaio O botão "Quero conversar sobre o projeto" abre o WhatsApp de Gledson (`project.contactUrl`).
 
 ### Histórico
 
@@ -111,7 +111,7 @@ Use imagens WebP/AVIF em torno de 1600–2000 px para produção. Vídeos MP4 H.
 
 ## Dramaturgia sonora
 
-1. `openingTrack` e `finalTrack` apontam para `/media/tema-1.wav` ("A Vida Não Para — Tema 1"), fornecido junto ao projeto; "Impressionando os Anjos" ainda não foi recebida/autorizada, então o tema principal também cobre o clímax (a partir do encontro com Gustavo Mioto, `MUSIC_IN` = 67,2%) para a história não ficar em silêncio.
+1. `openingTrack` e `finalTrack` apontam para `/media/tema-1.wav` ("A Vida Não Para — Tema 1"), fornecido junto ao projeto; "Impressionando os Anjos" ainda não foi recebida/autorizada, então o tema principal também não estava disponível; agora `finalTrack` é "Impressionando os Anjos" (`impressionando-os-anjos.mp3`), que entra no encontro com Gustavo Mioto (`MUSIC_IN` = 67,2%) e recomeça do início se o visitante voltar para antes dele para a história não ficar em silêncio.
 2. Caminhos de mídia ainda não fornecidos permanecem `null`, sem requisições inválidas.
 3. O usuário precisa ativar o som por clique; a narrativa funciona integralmente sem ele.
 4. Instrumental em 0–20%, saída em 20–30%, silêncio absoluto em 30–45%.

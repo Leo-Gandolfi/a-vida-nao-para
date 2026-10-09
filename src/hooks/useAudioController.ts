@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { type MotionValue } from 'framer-motion';
 import { media } from '../config';
-import { audioMix, audioTone } from '../timeline';
+import { audioMix, audioTone, MUSIC_IN } from '../timeline';
 
 type Track = { element: HTMLAudioElement; gain: GainNode; source: MediaElementAudioSourceNode };
 type Engine = { ctx: AudioContext; tracks: (Track | null)[]; tone: BiquadFilterNode; enabled: boolean; disposed: boolean };
@@ -39,6 +39,9 @@ export function useAudioController(progress: MotionValue<number>) {
       if (!target || mix.silence) {
         t.gain.gain.setValueAtTime(0,now);
         t.element.pause();
+        // A canção sempre começa do início ao chegar ao encontro com Gustavo Mioto:
+        // quem volta para antes dele e avança de novo ouve "Impressionando os Anjos" do começo.
+        if (i===1 && p < MUSIC_IN-.02 && t.element.currentTime>0) t.element.currentTime=0;
       } else {
         t.gain.gain.setTargetAtTime(target,now,.09);
         if (t.element.paused) void t.element.play().catch(err => {

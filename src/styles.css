@@ -183,7 +183,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .frame-caption,.final-lede{text-shadow:0 0 18px #000,0 0 6px #000d,0 1px 2px #000}
 .frame-caption .eyebrow{text-shadow:0 0 12px #000,0 1px 2px #000}
 .frame-credit{margin:12px 0 0;font:.68rem/1.6 var(--mono);letter-spacing:.06em;color:#d4cabb}
-.cast-credit{margin-top:16px;color:var(--gold);font-size:.9rem;line-height:1.5}
+.cast-credit{margin-top:16px;color:#e6c995;font-size:.9rem;line-height:1.5}
 
 .eyebrow{font-size:.72rem;line-height:1.8;text-transform:uppercase;letter-spacing:.2em;color:var(--gold);margin:0}
 .accent{color:var(--ember)}

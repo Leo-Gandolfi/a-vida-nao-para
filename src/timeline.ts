@@ -41,18 +41,18 @@ export const beats: Beat[] = [
   // Ato III — a luz e o recomeço
   {id:'malluUti',start:.450,end:.478,text:'',treatment:'photo',photo:'malluUti',ar:SQUARE},
   {id:'continues',start:.478,end:.506,text:'E eu precisava continuar.',treatment:'photo',photo:'continues',ar:SQUARE},
-  {id:'news2015',start:.506,end:.533,text:'Em 2015, o Brasil conheceu essa história.',treatment:'press',photo:'news2015',ar:910/703,composed:true},
+  {id:'news2015',start:.506,end:.533,text:'No meu primeiro Dia dos Pais, o Fantástico levou minha história ao Brasil.',treatment:'press',photo:'news2015',ar:1111/829},
   {id:'days',start:.533,end:.560,text:'Os dias viraram meses.',treatment:'photo',photo:'days',ar:372/493},
   {id:'years',start:.560,end:.587,text:'Os meses, anos.',treatment:'photo',photo:'years',ar:SQUARE},
   {id:'relearn',start:.587,end:.614,text:'E nós fomos aprendendo a viver de novo.',treatment:'photo',photo:'relearn',ar:SQUARE},
   // Tela 16 — O Livro (acrescentada na segunda versão da página de captação).
   {id:'book',start:.614,end:.641,text:'Dessa travessia nasceu um livro.',treatment:'photo',photo:'book',ar:414/523},
-  {id:'song',start:.641,end:.672,text:'Onze anos depois, o Brasil descobriu que essa história também havia se tornado canção.',treatment:'press',photo:'song2026',ar:SQUARE,composed:true},
+  {id:'song',start:.641,end:.672,text:'Onze anos depois, o Brasil descobriu que essa história também havia se tornado canção.',treatment:'press',photo:'song2026',ar:1108/820},
   {id:'encounter',start:.672,end:.715,text:'Até que a vida me levou ao encontro de quem transformou essa história em canção.',treatment:'music',photo:'mioto',ar:411/505,credit:'Gledson Fonseca + Gustavo Mioto · FACILPA, Marília'},
   // Ato IV — o propósito e o convite
   {id:'destiny',start:.715,end:.745,text:'E talvez essa história ainda tivesse mais um destino.',treatment:'photo',photo:'cinemaRoom',ar:SQUARE},
   {id:'film',start:.745,end:.778,text:'A VIDA\nNÃO PARA',eyebrow:'O filme',treatment:'title'},
-  {id:'cast',start:.778,end:.830,text:'Uma história vivida agora começa a ganhar vida no cinema.',treatment:'cast'},
+  {id:'cast',start:.778,end:.830,text:'Uma história vivida agora começa a ganhar vida no cinema.',treatment:'cast',photo:'castPhoto',ar:1035/907},
   {id:'why',start:.830,end:.860,text:'Por que esse filme precisa existir?',treatment:'social',photo:'social'},
   {id:'purpose',start:.860,end:.890,text:'Não queremos apenas transformar uma história em filme.',treatment:'social',photo:'screen'},
   {id:'impact',start:.890,end:.920,text:'Parte da renda do filme poderá apoiar projetos como o Amor de Criança.',treatment:'social',photo:'impact',ar:721/844},

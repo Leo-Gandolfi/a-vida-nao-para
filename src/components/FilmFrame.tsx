@@ -149,7 +149,7 @@ export default function FilmFrame({beat,index,total,p,mid,prevMid,nextMid,reduce
         {t==='cold' && <Photograph src={media.neonatal}/>}
         {t==='music' && !photo && <EqualizerBars/>}
         {/* INSERIR FOTO GLEDSON/SIDNEY AQUI: crossfade com caixas e object-position idênticos. */}
-        {t==='cast' && <motion.div className="cast-frame" style={{filter:morphFilter,scale:morphScale}}><Photograph src={media.gledsonPortrait || media.family}/><motion.div className="cast-overlay" style={{opacity:cross}}><Photograph src={media.sidneyPortrait}/></motion.div></motion.div>}
+        {t==='cast' && !photo && <motion.div className="cast-frame" style={{filter:morphFilter,scale:morphScale}}><Photograph src={media.gledsonPortrait || media.family}/><motion.div className="cast-overlay" style={{opacity:cross}}><Photograph src={media.sidneyPortrait}/></motion.div></motion.div>}
         {isLeader && beat.text && <div className="leader-ring" aria-hidden="true"/>}
         {/* O último quadro não tem um próximo quadro para "receber" o texto — ele fica
             estático (sem a coreografia de palavras por scroll) para nunca desvanecer
