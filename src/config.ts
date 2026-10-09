@@ -32,7 +32,7 @@ export const media = {
   // Usada no elenco enquanto os retratos de Gledson/Sidney não chegam.
   family: '/media/family-illustration.svg',
   // Tema instrumental do projeto, fornecido localmente ("A Vida Não Para - Tema 1").
-  openingTrack: '/media/tema-1.wav',
+  openingTrack: '/media/tema-1.mp3',
   // "Impressionando os Anjos" (Gustavo Mioto), fornecida pelo projeto: entra no encontro
   // com Gustavo Mioto e segue, mais baixa, até o fim.
   finalTrack: '/media/impressionando-os-anjos.mp3',

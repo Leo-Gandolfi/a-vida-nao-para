@@ -37,7 +37,6 @@ const FLOATERS: Spec[] = [
   // Tudo sai de cena antes das fotos de Gledson com os gêmeos e de Samuel (30,5%).
   {id:'ii-mote',   kind:'mote',   tone:'cold', from:.21, to:.30, depth:.22, top:26, size:96,  spin:0},
   {id:'ii-band',   kind:'bracelet',tone:'cold',from:.215,to:.30, depth:.55, top:58, size:120, spin:24},
-  {id:'ii-petal',  kind:'petal',  tone:'cold', from:.23, to:.30, depth:.78, top:80, size:66,  spin:200},
 
   // 39,5%–45%: vazio absoluto. Nenhum objeto agendado — de propósito.
 

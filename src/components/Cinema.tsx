@@ -33,6 +33,14 @@ function slowScrollTo(el:HTMLElement,left:number,duration:number,onDone:()=>void
   return ()=>{cancelled=true;};
 }
 
+/** Alto-falante: com ondas (som ligado) ou cortado (sem som). */
+function SpeakerIcon({on}:{on:boolean}) {
+  return <svg className="speaker-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="none"/>
+    {on ? <><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></> : <><path d="m16 9.5 5 5"/><path d="m21 9.5-5 5"/></>}
+  </svg>;
+}
+
 /** ROLO DE FILME
  * A rolagem é horizontal: arraste ou deslize para o lado (mouse, trackpad, toque ou
  * teclado) para puxar a fita de quadros por uma janela de projeção. Cada quadro entra
@@ -260,8 +268,15 @@ export default function Cinema() {
         <div className="vignette" aria-hidden="true"/>
         <motion.header className="stage-header" style={{opacity:chromeOpacity,pointerEvents:quiet?'none':'auto'}} inert={quiet}>
           <a href="#" className="wordmark" onClick={e=>{e.preventDefault();jump(0);}}>A VIDA NÃO PARA<span>O FILME</span></a>
-          <div className="header-actions"><button className="text-button" onClick={()=>setReading(true)}>Ler a história</button><button className="sound-button" aria-pressed={audio.enabled} disabled={!audio.available} onClick={audio.toggle} title={audio.available?'Ativar ou silenciar trilha':'As trilhas ainda não foram adicionadas'}><span aria-hidden="true">{audio.enabled?'◖))':'◖'}</span>{audio.enabled?'Som ligado':'Sem som'}</button></div>
+          <div className="header-actions"><button className="text-button" onClick={()=>setReading(true)}>Ler a história</button><button className="sound-button" aria-pressed={audio.enabled} disabled={!audio.available} onClick={audio.toggle} title={audio.available?'Ativar ou silenciar trilha':'As trilhas ainda não foram adicionadas'}><SpeakerIcon on={audio.enabled}/>{audio.enabled?'Som ligado':'Ativar som'}</button></div>
         </motion.header>
+        {/* Se o primeiro toque não ligou o som (iPhone no silencioso antigo, navegador do
+            WhatsApp, economia de bateria…), um convite claro no rodapé, até ligar. Some se a
+            pessoa desligou o som de propósito, no silêncio da ruptura e na cartela final. */}
+        {started && audio.available && !audio.enabled && !audio.mutedByUser && !quiet && !final &&
+          <button type="button" className="sound-hint" onClick={()=>void audio.enable()}>
+            <SpeakerIcon on={false}/>{isTouch?'Toque para ativar o som':'Clique para ativar o som'}
+          </button>}
         <motion.div className="final-actions" id="convite" style={{opacity:finalOpacity}} inert={!final}><p className="final-lede">O próximo capítulo pode começar com uma conversa.</p>{controls}<p role="status">{shareMessage}</p>{shareFallback&&<input aria-label="Endereço para compartilhar" readOnly value={window.location.href} onFocus={e=>e.target.select()}/>}</motion.div>
         <motion.footer className="stage-footer" style={{opacity:footerOpacity,pointerEvents:quiet||final?'none':'auto'}} inert={quiet||final}>
           <div className="reel-label"><span>{acts[act].roman}</span><p>{acts[act].label}</p></div>

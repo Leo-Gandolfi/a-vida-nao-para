@@ -6,7 +6,8 @@ import { useInWindow } from '../hooks/useInWindow';
  *  - noite estrelada na abertura → o sol NASCE no prólogo ("Outras, a VIDA escreve primeiro");
  *  - dia claro com o casal e a chegada dos gêmeos;
  *  - o sol SE PÕE no nascimento (27/06/2015), em vermelho, e a noite chega com a ruptura;
- *  - lua e estrelas no silêncio; uma estrela cadente quando "Mallu ficou.";
+ *  - as perdas acontecem sob nuvens pesadas e chuva, que para no vazio do silêncio;
+ *  - em "Mallu ficou." as nuvens se abrem: lua, estrelas e estrelas cadentes;
  *  - o segundo NASCER DO SOL, o mais forte, na volta da luz (Mallu na UTI / continuar);
  *  - dia aberto na travessia do tempo, na canção e no cinema;
  *  - o último PÔR DO SOL acontece em Marília (a foto da tela é um entardecer), e a cartela
@@ -19,9 +20,9 @@ import { useInWindow } from '../hooks/useInWindow';
 const HORIZON = 77;
 
 // Cores do céu: zênite (alto) e horizonte (brilho perto da linha dos morros).
-const SKY_P =       [0,        .03,      .055,     .075,     .10,      .15,      .185,     .215,     .245,     .28,      .44,      .465,     .49,      .52,      .60,      .82,      .88,      .94,      .965,     1];
-const ZENITH =      ['#05060d','#0b0f22','#1d2448','#2c3d6a','#2f5079','#2a4c72','#2c3e5c','#2a2a48','#1a1530','#070a16','#04060e','#241c40','#3a3f6e','#33598a','#2d5680','#2b4e74','#2e3c5e','#2c2448','#1b1534','#0a0b1c'];
-const HORIZON_C =   ['#0f1020','#2a1c34','#a04a4a','#f08a5a','#e09a5c','#c89566','#d98a4c','#e0663e','#8c3048','#141529','#0a0f1c','#c0503e','#ff9a52','#e6a866','#d4a472','#c99666','#eb9a4c','#e8683a','#9a3a46','#3a1f36'];
+const SKY_P =       [0,        .03,      .055,     .075,     .10,      .15,      .185,     .215,     .245,     .28,      .39,      .415,     .44,      .465,     .49,      .52,      .60,      .82,      .88,      .94,      .965,     1];
+const ZENITH =      ['#05060d','#0b0f22','#1d2448','#2c3d6a','#2f5079','#2a4c72','#2c3e5c','#2a2a48','#1d1b2c','#10141b','#0c1016','#05070d','#04060e','#241c40','#3a3f6e','#33598a','#2d5680','#2b4e74','#2e3c5e','#2c2448','#1b1534','#0a0b1c'];
+const HORIZON_C =   ['#0f1020','#2a1c34','#a04a4a','#f08a5a','#e09a5c','#c89566','#d98a4c','#e0663e','#5c2a38','#1d2229','#171b22','#0b0f1a','#0a0f1c','#c0503e','#ff9a52','#e6a866','#d4a472','#c99666','#eb9a4c','#e8683a','#9a3a46','#3a1f36'];
 
 // Altura do sol (-1 bem abaixo do horizonte, 0 tocando a linha, 1 a pino).
 const SUN_P =   [0,   .03, .062, .10, .16, .19, .232, .27, .44, .452, .478, .52, .70, .86, .93, .962, .99, 1];
@@ -52,9 +53,12 @@ function Sun({p}:{p:MotionValue<number>}) {
 }
 
 function Moon({p}:{p:MotionValue<number>}) {
-  const up = useInWindow(p,.235,.47);
-  const alt = useTransform(p,[.24,.29,.36,.43,.46],[-.3,.25,.62,.3,-.3]);
-  const left = useTransform(p,[.24,.46],['80%','24%']);
+  // Na chuva das perdas não há lua: ela só aparece quando as nuvens se abrem, em
+  // "Mallu ficou." — alívio, não luto — e se põe com o amanhecer.
+  const up = useInWindow(p,.405,.475);
+  const alt = useTransform(p,[.405,.43,.448,.472],[-.05,.82,.82,-.3]);
+  // Alta e à direita, fora do quadro "Mallu ficou.", para ser vista.
+  const left = useTransform(p,[.405,.472],['86%','78%']);
   const top = useTransform(alt,a=>`${HORIZON - a*60}%`);
   const opacity = useTransform(alt,a=>clamp((a+.2)/.2));
   if(!up) return null;
@@ -62,9 +66,9 @@ function Moon({p}:{p:MotionValue<number>}) {
 }
 
 function Stars({p}:{p:MotionValue<number>}) {
-  const opacity = useTransform(p,[0,.045,.075,.235,.285,.44,.475,.955,.985,1],[.95,.7,0,0,.9,.9,0,0,.55,.7]);
-  // Só montadas nas três noites (abertura, luto, crepúsculo final).
-  const dawn = useInWindow(p,0,.078), night = useInWindow(p,.232,.478), dusk = useInWindow(p,.952,1);
+  const opacity = useTransform(p,[0,.045,.075,.41,.432,.445,.475,.955,.985,1],[.95,.7,0,0,.85,.9,0,0,.55,.7]);
+  // Só montadas nas noites limpas: abertura, "Mallu ficou." e crepúsculo final.
+  const dawn = useInWindow(p,0,.078), night = useInWindow(p,.405,.478), dusk = useInWindow(p,.952,1);
   if(!dawn && !night && !dusk) return null;
   return <motion.div className="sky-stars" aria-hidden="true" style={{opacity}}>
     {Array.from({length:40}).map((_,i)=><span key={i} style={{
@@ -95,10 +99,10 @@ function CloudLayer({p,color,opacity,clouds,travel,layer}:{p:MotionValue<number>
 
 function Clouds({p}:{p:MotionValue<number>}) {
   const color = useTransform(p,
-    [0,        .06,      .10,      .19,      .235,     .28,      .44,      .48,      .52,      .88,      .94,      .97,      1],
-    ['#1a1c2c','#c47a7a','#f5ddc8','#f2c49a','#e8806a','#24233a','#161a28','#ff9e7a','#f6e6d4','#f2c49a','#ee8a66','#6a3a52','#2a2238']);
-  const far = useTransform(p,[0,.06,.10,.25,.29,.44,.48,.95,1],[.10,.32,.4,.36,.1,.1,.4,.4,.2]);
-  const near = useTransform(p,[0,.06,.10,.25,.29,.44,.48,.95,1],[.12,.42,.52,.48,.12,.12,.52,.52,.25]);
+    [0,        .06,      .10,      .19,      .235,     .28,      .39,      .42,      .44,      .48,      .52,      .88,      .94,      .97,      1],
+    ['#1a1c2c','#c47a7a','#f5ddc8','#f2c49a','#e8806a','#2a2f37','#262b33','#161a28','#161a28','#ff9e7a','#f6e6d4','#f2c49a','#ee8a66','#6a3a52','#2a2238']);
+  const far = useTransform(p,[0,.06,.10,.23,.27,.39,.415,.44,.48,.95,1],[.10,.32,.4,.38,.8,.8,.35,.1,.4,.4,.2]);
+  const near = useTransform(p,[0,.06,.10,.23,.27,.39,.415,.44,.48,.95,1],[.12,.42,.52,.5,.9,.9,.4,.12,.52,.52,.25]);
   return <>
     <CloudLayer p={p} color={color} opacity={far} clouds={FAR_CLOUDS} travel="-40vw" layer="far"/>
     <CloudLayer p={p} color={color} opacity={near} clouds={NEAR_CLOUDS} travel="-170vw" layer="near"/>
@@ -113,17 +117,27 @@ function ShootingStars({p}:{p:MotionValue<number>}) {
   return <div className="shooting-stars" aria-hidden="true"><span/><span/><span/></div>;
 }
 
-/** Na noite do luto, poucos vaga-lumes acendem e apagam perto dos morros: alguma vida
- * miúda continua, mesmo ali. Some antes do vazio absoluto (39,5%). */
-function Fireflies({p}:{p:MotionValue<number>}) {
-  const on = useInWindow(p,.282,.394);
-  const opacity = useTransform(p,[.282,.30,.375,.394],[0,1,1,0]);
+/** As perdas acontecem sob chuva. O céu fecha logo depois do pôr do sol do nascimento
+ * (um banco de nuvens pesadas, cinza-chumbo); a chuva começa em "A despedida de Keila",
+ * engrossa em "Samuel também partiu." e para no vazio — que fica só nublado e escuro,
+ * sem nada. Em "Mallu ficou." as nuvens se abrem e aparecem a lua e as estrelas. */
+function Storm({p}:{p:MotionValue<number>}) {
+  const on = useInWindow(p,.232,.436);
+  const opacity = useTransform(p,[.232,.27,.39,.41,.432],[0,1,1,.65,0]);
   if(!on) return null;
-  return <motion.div className="fireflies" aria-hidden="true" style={{opacity}}>
-    {Array.from({length:12}).map((_,i)=><span key={i} style={{
-      left:`${4+((i*37)%92)}%`, top:`${56+((i*23)%28)}%`,
-      animationDelay:`${-i*1.1}s, ${-i*.7}s`, animationDuration:`${9+(i%4)*3}s, ${2.2+(i%3)*.9}s`,
-    }}/>)}
+  return <motion.div className="storm" aria-hidden="true" style={{opacity}}><span/><span/></motion.div>;
+}
+
+function Rain({p}:{p:MotionValue<number>}) {
+  const on = useInWindow(p,.262,.393);
+  const opacity = useTransform(p,[.262,.285,.378,.392],[0,1,1,0]);
+  const heavy = useTransform(p,[.33,.355,.378,.392],[0,1,1,0]);
+  if(!on) return null;
+  return <motion.div className="rain" aria-hidden="true" style={{opacity}}>
+    <span className="rain-layer rain-layer--far"/>
+    <span className="rain-layer rain-layer--near"/>
+    <motion.span className="rain-layer rain-layer--heavy" style={{opacity:heavy}}/>
+    <span className="rain-mist"/>
   </motion.div>;
 }
 
@@ -164,12 +178,13 @@ export default function StageSky({p,reduced}:{p:MotionValue<number>;reduced:bool
       <Moon p={p}/>
       <Sun p={p}/>
       <Clouds p={p}/>
+      <Storm p={p}/>
       <ShootingStars p={p}/>
     </>}
     <motion.div className="sky-hills sky-hills--far" style={{backgroundPositionX:hillsFar}}/>
     <Skyline p={p}/>
     <motion.div className="sky-hills sky-hills--near" style={{backgroundPositionX:hillsNear}}/>
-    {!reduced && <Fireflies p={p}/>}
+    {!reduced && <Rain p={p}/>}
     {!reduced && <Lanterns p={p}/>}
   </div>;
 }

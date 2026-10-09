@@ -91,7 +91,7 @@ Resultado medido (iPhone 13 emulado): de ~420 para ~100 camadas, e percurso comp
 
 A ordem e os textos seguem o documento "PÁGINA_CAPTÇÃO" (numeração das telas). As artes do Fantástico 2015 e da canção de 2026 (terceira versão da página de captação) não trazem texto impresso: a frase vai na legenda ao lado. A tela do elenco usa a foto de Gledson com Sidney Sampaio (`gledson-sidney.jpg`); o crossfade entre retratos só é usado se não houver essa foto.
 
-O intervalo 39,5–41,5% é vazio intencional. O ato final permanece visível a 100%. Não há mais navegação por marcadores de ato no rodapé (removida a pedido — o nome do ato em texto continua lá, só os pontinhos clicáveis saíram); o link "Ir para o convite" (accessible skip-link) e `jump()` seguem disponíveis para navegação direta. Toque, teclado e scroll nativo funcionam sem interceptação.
+As perdas acontecem sob nuvens pesadas e chuva (`Storm` e `Rain` em `StageSky.tsx`): o céu fecha depois do pôr do sol do nascimento, a chuva começa em "A despedida de Keila", engrossa em Samuel e para no vazio; em "Mallu ficou." as nuvens se abrem e aparecem a lua e as estrelas. O intervalo 39,5–41,5% é vazio intencional. O ato final permanece visível a 100%. Não há mais navegação por marcadores de ato no rodapé (removida a pedido — o nome do ato em texto continua lá, só os pontinhos clicáveis saíram); o link "Ir para o convite" (accessible skip-link) e `jump()` seguem disponíveis para navegação direta. Toque, teclado e scroll nativo funcionam sem interceptação.
 
 ## Assets reais já incluídos
 
@@ -110,6 +110,11 @@ Enquanto faltam, a base usa as fotos fornecidas onde cabem, preto na UTI e tipog
 Use imagens WebP/AVIF em torno de 1600–2000 px para produção. Vídeos MP4 H.264 curtos e sem áudio, com `poster`, `muted`, `playsInline`, `loop`. As cenas só montam perto de sua janela; vídeos pausam quando saem ou quando a aba fica oculta. Falha de autoplay mantém o poster.
 
 ## Ativação do som
+
+- iPhone: o Web Audio obedece à chave de modo silencioso. `startPlaybackSession()` (em `useAudioController`) declara `navigator.audioSession.type = 'playback'` (iOS 17+) e mantém um `<audio>` de silêncio em loop (`silencio.mp3`), o truque que muda a sessão para "playback" em versões anteriores.
+- O som é dado como ligado assim que o contexto de áudio roda, sem esperar as faixas carregarem (no 4G isso demorava).
+- Se o som não ligou, um convite fixo ("Toque/Clique para ativar o som") aparece no rodapé até ligar; o botão do cabeçalho mostra um alto-falante e "Ativar som" / "Som ligado".
+- Trilha de abertura em MP3 (`tema-1.mp3`, 1,8 MB; antes WAV de 21 MB).
 
 Navegadores só deixam tocar áudio depois de um gesto aceito como "ativação do usuário": clique (inclui o toque simples), toque concluído e tecla. Início de toque e rolagem não contam. A cortina de abertura liga o som no toque; além dela, uma escuta global (`click`, `touchend`, `pointerup`, `keydown`) tenta de novo a cada gesto até o som ligar de fato. `enable()` em `useAudioController` é idempotente, para que duas tentativas no mesmo toque não se anulem, e respeita quem desligou o som pelo botão. Os quadros não exibem mais marcador de página (pedido do Gledson); o rodapé mantém "Quadro NN / 30".
 
