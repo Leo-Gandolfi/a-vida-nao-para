@@ -297,7 +297,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .sound-button[aria-pressed="false"]{border-color:#c8a775aa;color:#f0dcb6}
 .speaker-icon{flex:0 0 auto}
 /* ===== Setas laterais do celular: abas finas nas margens, fora da imagem ===== */
-.frame-nav{position:absolute;z-index:9;left:0;right:0;top:45%;height:0;pointer-events:none;transition:top .45s ease}
+/* Posição fixa: não acompanha o quadro — as setas ficam sempre no mesmo lugar. */
+.frame-nav{position:absolute;z-index:9;left:0;right:0;top:42%;height:0;pointer-events:none}
 .frame-nav__btn{position:absolute;top:0;translate:0 -50%;pointer-events:auto;
   width:20px;height:60px;display:grid;place-items:center;padding:0;color:#ecd9b4;
   background:#0b0907b3;border:1px solid #c8a77580;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);

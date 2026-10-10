@@ -111,7 +111,7 @@ Use imagens WebP/AVIF em torno de 1600–2000 px para produção. Vídeos MP4 H.
 
 ## Setas laterais (celular)
 
-Em telas de toque, duas abas finas nas margens (fora do quadro: no celular a largura do quadro é limitada a `100vw − 56px`) avançam/voltam um quadro com o mesmo deslize lento do encaixe. Ficam alinhadas ao centro da imagem do quadro atual, pulam o vazio intencional, somem no primeiro/último quadro e ficam quase apagadas no silêncio. Um arraste do dedo cancela o deslize. No computador não aparecem (roda do mouse e teclado já navegam).
+Em telas de toque, duas abas finas nas margens (fora do quadro: no celular a largura do quadro é limitada a `100vw − 56px`) avançam/voltam um quadro com o mesmo deslize lento do encaixe. Ficam em posição fixa (42% da altura), pulam o vazio intencional, somem no primeiro/último quadro e ficam quase apagadas no silêncio. Um arraste do dedo cancela o deslize. No computador não aparecem (roda do mouse e teclado já navegam).
 
 ## Ativação do som
 
