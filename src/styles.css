@@ -296,6 +296,18 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 .sound-button{border:1px solid #ffffff30;border-radius:40px;padding:10px 17px;background:#0005;font-size:.8rem;display:flex;gap:9px;align-items:center}
 .sound-button[aria-pressed="false"]{border-color:#c8a775aa;color:#f0dcb6}
 .speaker-icon{flex:0 0 auto}
+/* ===== Setas laterais do celular: abas finas nas margens, fora da imagem ===== */
+.frame-nav{position:absolute;z-index:9;left:0;right:0;top:45%;height:0;pointer-events:none;transition:top .45s ease}
+.frame-nav__btn{position:absolute;top:0;translate:0 -50%;pointer-events:auto;
+  width:20px;height:60px;display:grid;place-items:center;padding:0;color:#ecd9b4;
+  background:#0b0907b3;border:1px solid #c8a77580;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  transition:opacity .4s ease,background .2s ease}
+.frame-nav__btn--prev{left:env(safe-area-inset-left,0px);border-radius:0 14px 14px 0;border-left:0}
+.frame-nav__btn--next{right:env(safe-area-inset-right,0px);border-radius:14px 0 0 14px;border-right:0}
+.frame-nav__btn:active{background:#c8a77540}
+.frame-nav__btn:disabled{opacity:0;pointer-events:none}
+/* No silêncio (Samuel → "Mallu ficou."), quase apagadas — continuam lá, sem quebrar o clima. */
+.frame-nav--quiet .frame-nav__btn:not(:disabled){opacity:.3}
 /* Convite para ligar o som (só aparece enquanto o som não ligou). */
 .sound-hint{position:absolute;z-index:11;left:50%;bottom:max(96px,calc(env(safe-area-inset-bottom) + 84px));translate:-50% 0;
   display:flex;align-items:center;gap:10px;padding:12px 20px;border-radius:40px;border:1px solid #c8a775;
@@ -364,9 +376,10 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #e8c5
 @media(orientation:portrait),(max-width:680px){
   .stage{--h:max(200px,calc(100dvh - 330px));
     padding:max(80px,calc(env(safe-area-inset-top) + 72px)) 0 max(84px,calc(env(safe-area-inset-bottom) + 68px))}
-  .frame-card:not(.frame-card--title):not(.frame-card--final){width:min(86vw,calc((var(--h) - var(--cap,0px)) * var(--ar,1.3333)))}
+  /* 100vw − 2 × (seta de 20px + 8px de folga): as setas laterais nunca cobrem o quadro. */
+  .frame-card:not(.frame-card--title):not(.frame-card--final){width:min(calc(100vw - 56px),calc((var(--h) - var(--cap,0px)) * var(--ar,1.3333)))}
   .frame-slot,.frame-slot--side{flex-direction:column;gap:16px}
-  .frame-slot--side .frame-caption{width:min(86vw,max(calc(var(--h) * var(--ar,1.3333)),300px));padding:0 1%}
+  .frame-slot--side .frame-caption{width:min(calc(100vw - 56px),max(calc(var(--h) * var(--ar,1.3333)),300px));padding:0 1%}
   .frame-caption h2{font-size:clamp(1.35rem,5.6vw,1.75rem)}
   .frame-caption--long h2{font-size:clamp(1.05rem,4.3vw,1.3rem)}
   .stage-footer{bottom:max(16px,env(safe-area-inset-bottom))}

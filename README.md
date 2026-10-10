@@ -109,6 +109,10 @@ Enquanto faltam, a base usa as fotos fornecidas onde cabem, preto na UTI e tipog
 
 Use imagens WebP/AVIF em torno de 1600–2000 px para produção. Vídeos MP4 H.264 curtos e sem áudio, com `poster`, `muted`, `playsInline`, `loop`. As cenas só montam perto de sua janela; vídeos pausam quando saem ou quando a aba fica oculta. Falha de autoplay mantém o poster.
 
+## Setas laterais (celular)
+
+Em telas de toque, duas abas finas nas margens (fora do quadro: no celular a largura do quadro é limitada a `100vw − 56px`) avançam/voltam um quadro com o mesmo deslize lento do encaixe. Ficam alinhadas ao centro da imagem do quadro atual, pulam o vazio intencional, somem no primeiro/último quadro e ficam quase apagadas no silêncio. Um arraste do dedo cancela o deslize. No computador não aparecem (roda do mouse e teclado já navegam).
+
 ## Ativação do som
 
 - Plano B automático: se o `AudioContext` não existe, não acorda em 1,5 s, ou acorda mas não passa sinal (um analisador no caminho confere aos 2,5 s e 6 s), as faixas passam a tocar por `<audio>` comum com volume (sem o filtro de timbre).

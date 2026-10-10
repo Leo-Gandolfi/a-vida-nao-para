@@ -144,6 +144,46 @@ export default function Cinema() {
     const el=container.current;if(!el)return null;
     return (el.scrollWidth-el.clientWidth)*value;
   }
+  // ===== Setas laterais (celular): avançar/voltar um quadro com o mesmo deslize suave do
+  // encaixe automático. Ficam nas laterais, alinhadas ao centro da imagem do quadro atual.
+  const navAnim=useRef<(()=>void)|null>(null);
+  const navTarget=useRef<number|null>(null);
+  const [navIndex,setNavIndex]=useState(0);
+  const [navTop,setNavTop]=useState<number|null>(null);
+  function nearestIndex(v:number) {
+    let best=0,d=Infinity;mids.forEach((m,i)=>{const k=Math.abs(v-m);if(k<d){d=k;best=i;}});return best;
+  }
+  useMotionValueEvent(raw,'change',v=>{if(navTarget.current===null){const n=nearestIndex(v);setNavIndex(o=>o===n?o:n);}});
+  function step(dir:1|-1) {
+    const el=container.current;if(!el)return;
+    const from=navTarget.current ?? nearestIndex(raw.get());
+    const to=Math.max(0,Math.min(mids.length-1,from+dir));
+    if(to===from)return;
+    // O vazio intencional (entre Samuel e "Mallu ficou.") não é um quadro: a seta pula direto.
+    navTarget.current=to;setNavIndex(to);
+    navAnim.current?.();
+    const left=leftFor(mids[to]);if(left===null)return;
+    navAnim.current=slowScrollTo(el,left,reduced?0:900,()=>{navAnim.current=null;navTarget.current=null;});
+  }
+  // Um arraste do dedo ou a roda do mouse durante o deslize da seta: a seta cede.
+  useEffect(()=>{
+    const el=container.current;if(!el)return;
+    function cancel(){if(navAnim.current){navAnim.current();navAnim.current=null;navTarget.current=null;}}
+    el.addEventListener('touchstart',cancel,{passive:true});el.addEventListener('wheel',cancel,{passive:true});
+    return ()=>{el.removeEventListener('touchstart',cancel);el.removeEventListener('wheel',cancel);};
+  },[]);
+  // Centro vertical da imagem do quadro ativo (recalculado quando o quadro muda e ao girar a tela).
+  useEffect(()=>{
+    if(!isTouch)return;
+    function measure() {
+      const w=document.querySelector('.frame-card[aria-hidden="false"] .frame-window');
+      if(!w)return;
+      const r=w.getBoundingClientRect();setNavTop(Math.round(r.top+r.height/2));
+    }
+    measure();const t1=window.setTimeout(measure,450),t2=window.setTimeout(measure,1000);
+    window.addEventListener('resize',measure);
+    return ()=>{window.clearTimeout(t1);window.clearTimeout(t2);window.removeEventListener('resize',measure);};
+  },[frame,started,reading]);
   function jump(value:number) {
     const el=container.current;const left=leftFor(value);if(el===null||left===null)return;
     el.scrollTo({left,behavior:'instant'});
@@ -279,6 +319,14 @@ export default function Cinema() {
         {!reduced && <div className="dust" aria-hidden="true">{Array.from({length:8}).map((_,i)=><span key={i}/>)}</div>}
         {!reduced && !isTouch && <div className="film-grain" aria-hidden="true"/>}
         <div className="vignette" aria-hidden="true"/>
+        {isTouch && started && !reading && <nav className={`frame-nav ${quiet?'frame-nav--quiet':''}`} aria-label="Navegar entre os quadros" style={navTop?{top:navTop}:undefined}>
+          <button type="button" className="frame-nav__btn frame-nav__btn--prev" aria-label="Quadro anterior" disabled={navIndex<=0} onClick={()=>step(-1)}>
+            <svg viewBox="0 0 12 24" width="10" height="20" aria-hidden="true"><path d="M9 3 3 12l6 9" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+          <button type="button" className="frame-nav__btn frame-nav__btn--next" aria-label="Próximo quadro" disabled={navIndex>=mids.length-1} onClick={()=>step(1)}>
+            <svg viewBox="0 0 12 24" width="10" height="20" aria-hidden="true"><path d="m3 3 6 9-6 9" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+        </nav>}
         <motion.header className="stage-header" style={{opacity:chromeOpacity,pointerEvents:quiet?'none':'auto'}} inert={quiet}>
           <a href="#" className="wordmark" onClick={e=>{e.preventDefault();jump(0);}}>A VIDA NÃO PARA<span>O FILME</span></a>
           <div className="header-actions"><button className="text-button" onClick={()=>setReading(true)}>Ler a história</button><button className="sound-button" aria-pressed={audio.enabled} disabled={!audio.available} onClick={audio.toggle} title={audio.available?'Ativar ou silenciar trilha':'As trilhas ainda não foram adicionadas'}><SpeakerIcon on={audio.enabled}/>{audio.enabled?'Som ligado':'Ativar som'}</button></div>
