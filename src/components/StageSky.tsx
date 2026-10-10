@@ -1,5 +1,5 @@
 import { motion, useTransform, type MotionValue } from 'framer-motion';
-import { useInWindow } from '../hooks/useInWindow';
+import { isTouch, useInWindow } from '../hooks/useInWindow';
 
 /** O céu inteiro por trás do rolo vive a história como um dia de verdade:
  *
@@ -125,7 +125,8 @@ function Storm({p}:{p:MotionValue<number>}) {
   const on = useInWindow(p,.232,.436);
   const opacity = useTransform(p,[.232,.27,.39,.41,.432],[0,1,1,.65,0]);
   if(!on) return null;
-  return <motion.div className="storm" aria-hidden="true" style={{opacity}}><span/><span/></motion.div>;
+  // No celular, um banco de nuvens só (cada camada de tela cheia custa memória de vídeo).
+  return <motion.div className="storm" aria-hidden="true" style={{opacity}}><span/>{!isTouch && <span/>}</motion.div>;
 }
 
 function Rain({p}:{p:MotionValue<number>}) {
@@ -137,7 +138,8 @@ function Rain({p}:{p:MotionValue<number>}) {
   return <motion.div className="rain" aria-hidden="true" style={{opacity}}>
     <span className="rain-layer rain-layer--far"/>
     <span className="rain-layer rain-layer--near"/>
-    <motion.span className="rain-layer rain-layer--heavy" style={{opacity:heavy}}/>
+    {/* A camada extra do Samuel só no computador: no celular, duas camadas bastam. */}
+    {!isTouch && <motion.span className="rain-layer rain-layer--heavy" style={{opacity:heavy}}/>}
     <span className="rain-mist"/>
   </motion.div>;
 }
