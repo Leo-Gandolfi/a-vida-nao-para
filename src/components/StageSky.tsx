@@ -25,7 +25,9 @@ const ZENITH =      ['#05060d','#0b0f22','#1d2448','#2c3d6a','#2f5079','#2a4c72'
 const HORIZON_C =   ['#0f1020','#2a1c34','#a04a4a','#f08a5a','#e09a5c','#c89566','#d98a4c','#e0663e','#5c2a38','#1d2229','#171b22','#0b0f1a','#0a0f1c','#c0503e','#ff9a52','#e6a866','#d4a472','#c99666','#eb9a4c','#e8683a','#9a3a46','#3a1f36'];
 
 // Altura do sol (-1 bem abaixo do horizonte, 0 tocando a linha, 1 a pino).
-const SUN_P =   [0,   .03, .062, .10, .16, .19, .232, .27, .44, .452, .478, .52, .70, .86, .93, .962, .99, 1];
+// O último pôr do sol termina logo antes de Marília (no celular a legenda fica em cima do
+// horizonte): a tela da cidade fica com o brilho alaranjado de depois do sol se pôr.
+const SUN_P =   [0,   .03, .062, .10, .16, .19, .232, .27, .44, .452, .478, .52, .70, .86, .92, .945, .97, 1];
 const SUN_ALT = [-.4,-.35, 0,    .45, .78, .55, .02, -.35,-.4, -.3,   0,   .48, .86, .62, .24, .01, -.3, -.4];
 
 const clamp = (n:number) => Math.max(0,Math.min(1,n));
@@ -36,7 +38,9 @@ function Sun({p}:{p:MotionValue<number>}) {
   const alt = useTransform(p,SUN_P,SUN_ALT);
   // No primeiro dia o sol anda devagar pela esquerda (atrás das fotos), para não passar por trás
   // das legendas, que ficam à direita; só no pôr do sol do nascimento ele corre para o poente.
-  const left = useTransform(p,[0,.17,.27,.45,1],['14%','30%','84%','14%','86%']);
+  // No segundo dia, idem: o sol fica atrás das fotos (lado esquerdo) e, baixo, se põe no canto
+  // direito — no celular as legendas ficam logo acima do horizonte, no meio da tela.
+  const left = useTransform(p,[0,.17,.27,.45,.90,.93,1],['14%','30%','84%','14%','38%','92%','94%']);
   const top = useTransform(alt,a=>`${HORIZON - a*60}%`);
   const opacity = useTransform(alt,a=>clamp((a+.22)/.18));
   // Perto do horizonte o sol cresce, avermelha e ganha raios: é o nascer/pôr.

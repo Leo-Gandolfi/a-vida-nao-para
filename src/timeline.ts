@@ -39,8 +39,9 @@ export const beats: Beat[] = [
   {id:'birth',start:.200,end:.236,text:'O nascimento.',eyebrow:'27 de junho de 2015',treatment:'cold',photo:'birthCrib',ar:1280/720},
   {id:'hours',start:.236,end:.268,text:'E seis horas depois…',treatment:'cold'},
   {id:'keila',start:.268,end:.305,text:'A despedida de Keila.',treatment:'cold'},
-  // Gledson com Samuel e Mallu, sem texto: os dois juntos, antes de "Onze meses depois".
-  {id:'twins',start:.305,end:.345,text:'',treatment:'photo',photo:'twins2',ar:976/952},
+  // Depois da despedida de Keila, ficaram Gledson e os dois bebês — dá sentido à foto alegre
+  // no meio do luto e prepara "Onze meses depois".
+  {id:'twins',start:.305,end:.345,text:'E ficaram os três.',treatment:'photo',photo:'twins2',ar:976/952},
   {id:'samuel',start:.345,end:.395,text:'Samuel também partiu.',eyebrow:'Onze meses depois.',treatment:'photo',photo:'samuel',ar:622/805},
   // .395–.415: intervalo intencional. Nenhuma imagem, palavra ou som.
   {id:'mallu',start:.415,end:.450,text:'Mallu ficou.',treatment:'void'},
@@ -54,13 +55,13 @@ export const beats: Beat[] = [
   // Tela 16 — O Livro (acrescentada na segunda versão da página de captação).
   {id:'book',start:.614,end:.641,text:'Dessa travessia nasceu um livro.',treatment:'photo',photo:'book',inset:'bookCover',ar:414/523},
   {id:'song',start:.641,end:.672,text:'Onze anos depois, o Brasil descobriu que essa história também havia se tornado canção.',treatment:'press',photo:'song2026',ar:1108/820},
-  {id:'encounter',start:.672,end:.715,text:'Até que a vida me levou ao encontro de quem transformou essa história em canção.',treatment:'music',photo:'mioto',ar:411/505,credit:'Gledson Fonseca + Gustavo Mioto · FACILPA, Lençóis Paulista'},
+  {id:'encounter',start:.672,end:.715,text:'Até que a vida me levou ao encontro de quem a cantou.',treatment:'music',photo:'mioto',ar:411/505,credit:'Gledson Fonseca + Gustavo Mioto · FACILPA, Lençóis Paulista'},
   // Ato IV — o propósito e o convite
-  {id:'destiny',start:.715,end:.745,text:'E talvez essa história ainda tivesse mais um destino.',treatment:'photo',photo:'cinemaRoom',ar:SQUARE},
+  {id:'destiny',start:.715,end:.745,text:'E talvez essa história ainda tenha mais um destino.',treatment:'photo',photo:'cinemaRoom',ar:SQUARE},
   {id:'film',start:.745,end:.778,text:'A VIDA\nNÃO PARA',eyebrow:'O filme',treatment:'title'},
   {id:'cast',start:.778,end:.830,text:'Uma história vivida agora começa a ganhar vida no cinema.',treatment:'cast',photo:'castPhoto',ar:1035/907},
   {id:'why',start:.830,end:.860,text:'Por que esse filme precisa existir?',treatment:'social',photo:'social'},
-  {id:'purpose',start:.860,end:.890,text:'Não queremos apenas transformar uma história em filme.',treatment:'social',photo:'screen'},
+  {id:'purpose',start:.860,end:.890,text:'Não queremos apenas transformar uma história em filme.\nQueremos que esse filme continue gerando histórias.',treatment:'social',photo:'screen'},
   {id:'impact',start:.890,end:.920,text:'Parte da renda do filme poderá apoiar projetos como o Amor de Criança.',treatment:'social',photo:'impact',ar:721/844},
   {id:'invitation',start:.920,end:.948,text:'Nenhuma história como esta chega longe sozinha.',eyebrow:'Talvez você possa fazer parte do próximo capítulo.',treatment:'invite'},
   {id:'marilia',start:.948,end:.978,text:'Foi em *Marília* que esta história começou.\nFoi daqui que ela alcançou o Brasil.\nE é daqui que queremos levar o próximo capítulo ainda mais longe.',treatment:'photo',photo:'marilia'},
