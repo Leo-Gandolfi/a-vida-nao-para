@@ -111,6 +111,10 @@ Use imagens WebP/AVIF em torno de 1600–2000 px para produção. Vídeos MP4 H.
 
 ## Ativação do som
 
+- Plano B automático: se o `AudioContext` não existe, não acorda em 1,5 s, ou acorda mas não passa sinal (um analisador no caminho confere aos 2,5 s e 6 s), as faixas passam a tocar por `<audio>` comum com volume (sem o filtro de timbre).
+- Se nada toca, o convite do rodapé avisa que o navegador bloqueou o som e sugere conferir o volume de mídia.
+- Diagnóstico: `https://avidanaopara.com.br/?som` mostra navegador, modo de áudio, estado do contexto, de cada faixa e o último erro.
+
 - iPhone: o Web Audio obedece à chave de modo silencioso. `startPlaybackSession()` (em `useAudioController`) declara `navigator.audioSession.type = 'playback'` (iOS 17+) e mantém um `<audio>` de silêncio em loop (`silencio.mp3`), o truque que muda a sessão para "playback" em versões anteriores.
 - O som é dado como ligado assim que o contexto de áudio roda, sem esperar as faixas carregarem (no 4G isso demorava).
 - Se o som não ligou, um convite fixo ("Toque/Clique para ativar o som") aparece no rodapé até ligar; o botão do cabeçalho mostra um alto-falante e "Ativar som" / "Som ligado".

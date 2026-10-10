@@ -41,6 +41,19 @@ function SpeakerIcon({on}:{on:boolean}) {
   </svg>;
 }
 
+/** Diagnóstico de som: abra o site com ?som na URL (ex.: avidanaopara.com.br/?som) e mande
+ * um print deste painel — mostra navegador, modo de áudio, estado de cada faixa e o último erro. */
+const debugAudio = typeof location!=='undefined' && new URLSearchParams(location.search).has('som');
+function AudioDebugPanel({read,onTry}:{read:()=>Record<string,unknown>;onTry:()=>void}) {
+  const [info,setInfo]=useState<Record<string,unknown>>(()=>read());
+  useEffect(()=>{const id=window.setInterval(()=>setInfo(read()),500);return ()=>window.clearInterval(id);},[read]);
+  return <div className="audio-debug">
+    <strong>Diagnóstico de som</strong>
+    {Object.entries(info).map(([k,v])=><div key={k}><b>{k}:</b> {String(v)}</div>)}
+    <button type="button" onClick={onTry}>Tentar ligar o som</button>
+  </div>;
+}
+
 /** ROLO DE FILME
  * A rolagem é horizontal: arraste ou deslize para o lado (mouse, trackpad, toque ou
  * teclado) para puxar a fita de quadros por uma janela de projeção. Cada quadro entra
@@ -275,7 +288,10 @@ export default function Cinema() {
             pessoa desligou o som de propósito, no silêncio da ruptura e na cartela final. */}
         {started && audio.available && !audio.enabled && !audio.mutedByUser && !quiet && !final &&
           <button type="button" className="sound-hint" onClick={()=>void audio.enable()}>
-            <SpeakerIcon on={false}/>{isTouch?'Toque para ativar o som':'Clique para ativar o som'}
+            <SpeakerIcon on={false}/>
+            {audio.blocked
+              ? <span className="sound-hint__text">O navegador bloqueou o som · {isTouch?'toque':'clique'} para tentar de novo<small>Confira também o volume de mídia do aparelho</small></span>
+              : (isTouch?'Toque para ativar o som':'Clique para ativar o som')}
           </button>}
         <motion.div className="final-actions" id="convite" style={{opacity:finalOpacity}} inert={!final}><p className="final-lede">O próximo capítulo pode começar com uma conversa.</p>{controls}<p role="status">{shareMessage}</p>{shareFallback&&<input aria-label="Endereço para compartilhar" readOnly value={window.location.href} onFocus={e=>e.target.select()}/>}</motion.div>
         <motion.footer className="stage-footer" style={{opacity:footerOpacity,pointerEvents:quiet||final?'none':'auto'}} inert={quiet||final}>
@@ -284,6 +300,7 @@ export default function Cinema() {
         </motion.footer>
         <motion.div className="progress-track" style={{opacity:chromeOpacity}}><motion.div style={{scaleX:p}}/></motion.div>
         <p className="sr-only" role="status">{audio.error}</p>
+        {debugAudio && <AudioDebugPanel read={audio.debug} onTry={()=>void audio.enable()}/>}
       </div>
       </div>
     </main>
